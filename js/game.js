@@ -1,4 +1,12 @@
 /*
+	GENERAL TODOS:
+		Modularize this code better:
+		create more js files, and use a similar type of idea of modularization
+		as in assignment 2, where there are scene objects, and variables to the
+		objects --> this will allow faster editing for different files concurrently
+*/
+
+/*
 	Main game rendering/logic variables
 */
 var sceneWidth;
@@ -258,6 +266,31 @@ function addBasicObstacle(startAtFarPlane){
 	basicObstacles.push(obstacle);
 }
 
+function checkIfCollided(plane, object) {
+	// console.log("hi")
+	// console.log(plane.children)
+	// console.log(object)
+	// source: https://stackoverflow.com/questions/11473755/how-to-detect-collision-in-three-js
+	
+	for (var i = 0; i < plane.children; i++) {
+		var child = plane.children[i]
+		for (var j = 0; j < child.geometry.vertices.length; j++) {
+			var localVertex = child.geometry.vertices[vertexIndex].clone();
+			var globalVertex = localVertex.applyMatrix4( child.matrix );
+			var directionVector = globalVertex.sub( child.position );
+			var originPoint = child.position.clone()
+			
+			var ray = new THREE.Raycaster( originPoint, directionVector.clone().normalize() );
+			var collisionResults = ray.intersectObjects( object );
+			if ( collisionResults.length > 0 && collisionResults[0].distance < directionVector.length() ) {
+				console.log("Hit")
+				return true
+			}
+		}
+	}
+	return false
+}
+
 // This removes objects that have gone out of view, and also checks if the
 // plane is in contact with the obstacles
 function doObjectLogic(){
@@ -280,6 +313,8 @@ function doObjectLogic(){
 				console.log("hit")
 				hasCollided = true;
 			}
+			// hasCollided = checkIfCollided(plane, element)
+
 		}
 	})
 
@@ -348,6 +383,8 @@ function handleKeyDown(keyEvent){
 
 var friction = 0.98
 // TODO: lots of this is heuristic, make this smoother
+// http://stemkoski.github.io/Three.js/Collision-Detection.html
+// ^ that above link might have better movement handling, it is more specific to threejs
 function handlePlaneMovement(left) {
 	// based off of this:
 	// https://stackoverflow.com/questions/15344104/smooth-character-movement-in-canvas-game-using-keyboard-controls
