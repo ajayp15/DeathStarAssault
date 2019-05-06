@@ -72,7 +72,7 @@ function init() {
 	createScene();
 
 	//call game loop
-	update();
+	animate();
 }
 
 function createScene(){
@@ -332,21 +332,7 @@ function doObjectLogic(){
 	})
 }
 
-function update(){
-	if (showStats) {
-		stats.update()
-	}
-
-	//animate
-
-	/*
-		Go through for each of our obstacles currently, and move them closer to
-		the near plane according to the moving speed of the plane
-	*/
-	for (var i = 0; i < basicObstacles.length; i++) {
-		basicObstacles[i].position.y += movementSpeed
-	}
-
+function handleObstacleGeneration() {
 	// if sufficient time has passed, add in a new obstacle (the basic obstacle
 	// function will handle if too many obstacles already in the scene)
 	// note: this is sort of a heuristic, since we could generate more obstacles
@@ -363,12 +349,32 @@ function update(){
 			scoreText.innerHTML="Score: " + score.toString();
 		}
 	}
+}
 
+function handleObstacleMovement() {
+	/*
+		Go through for each of our obstacles currently, and move them closer to
+		the near plane according to the moving speed of the plane
+	*/
+	for (var i = 0; i < basicObstacles.length; i++) {
+		basicObstacles[i].position.y += movementSpeed
+	}
+}
+
+function animate(){
+	if (showStats) {
+		stats.update()
+	}
+	update();
+	render();
+	requestAnimationFrame(animate);//request next update
+}
+
+function update() {
+	handleObstacleMovement();
+	handleObstacleGeneration();
 	doObjectLogic();
 	handlePlaneMovement();
-	// doExplosionLogic();
-	render();
-	requestAnimationFrame(update);//request next update
 }
 
 
@@ -404,11 +410,13 @@ function handlePlaneMovement() {
 	// for added effect: rotate the plane in the direction it is trying to go
 	// TODO: make this effect smoother, round it out
 	if (planeVelocityX < 0) {
-		plane.rotation.z = Math.PI / 4
+		plane.rotation.z += turnSpeed;
+		plane.rotation.z = Math.min(plane.rotation.z, Math.PI / 4);
 	} else if (planeVelocityX > 0) {
-		plane.rotation.z = - Math.PI / 4
+		plane.rotation.z -= turnSpeed;
+		plane.rotation.z = Math.max(plane.rotation.z, - Math.PI / 4);
 	} else {
-		plane.rotation.z = 0
+		plane.rotation.z /= 1.3;
 	}
 }
 
