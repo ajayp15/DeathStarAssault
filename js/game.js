@@ -314,6 +314,8 @@ function update(){
 	// function will handle if too many obstacles already in the scene)
 	// note: this is sort of a heuristic, since we could generate more obstacles
 	// when some go out of view?
+	// TODO: play around with this generation time, or find a different way to do this
+	// because we aren't generating max amount of objects nearly ever
 	if(clock.getElapsedTime() > objectGenerationTime){
 		clock.start(); // restart the clock
 		addBasicObstacle(true)
@@ -368,8 +370,16 @@ function handlePlaneMovement(left) {
 	// we must move the camera, as well as the plane, since we always want to
 	// keep the camera focused on the plane
 	plane.position.x += velocity
-	// camera.lookAt(plane.position)
 	camera.position.x += velocity
+
+	// for added effect: rotate the plane in the direction it is trying to go
+	// TODO: make this effect smoother, round it out
+	if (velocity < 0) {
+		plane.rotation.z = Math.PI / 4
+	} else {
+		plane.rotation.z = - Math.PI / 4
+	}
+
 }
 
 // function doExplosionLogic(){
