@@ -33,6 +33,9 @@ var nearPlane = 6 // sort of arbitrary for detecting if gone out of view
 // this causes weird behavior: used to be 1.8
 var planeInitY = 1.8 // arbitrary positioning (TODO: figure out for sure which axes are which)
 var planeInitZ = 4.5
+var turnSpeed = 0.25;
+var maxVelocity = 0.5;
+var windowOffset = 10; // to make it not have scroll bars
 
 /*
 	Logical constants/variables
@@ -43,29 +46,11 @@ var stats;
 var scoreText;
 var score;
 
+var velocity = 0
 
-var rollingGroundSphere;
-var heroSphere;
-var rollingSpeed=0.008;
-var heroRollingSpeed;
-var worldRadius=26;
-var heroRadius=0.2;
-var sphericalHelper;
-var pathAngleValues;
-var heroBaseY=1.8;
-var bounceValue=0.1;
+
 var gravity=0.005;
-var leftLane=-1;
-var rightLane=1;
-var middleLane=0;
-var currentLane;
-var jumping;
-var treeReleaseInterval=0.5;
-var lastTreeReleaseTime=0;
-var particleGeometry;
-var particleCount=20;
-var explosionPower =1.06;
-var particles;
+
 
 
 init();
@@ -88,15 +73,15 @@ function createScene(){
 	basicObstacles = [];
 	clock=new THREE.Clock();
 	clock.start();
-	heroRollingSpeed=(rollingSpeed*worldRadius/heroRadius)/5;
+	// heroRollingSpeed=(rollingSpeed*worldRadius/heroRadius)/5;
 	sphericalHelper = new THREE.Spherical();
 	pathAngleValues=[1.52,1.57,1.62];
 
 	/*
 		Initialize scene general parameters
 	*/
-	sceneWidth = window.innerWidth;
-	sceneHeight = window.innerHeight;
+	sceneWidth = window.innerWidth - windowOffset;
+	sceneHeight = window.innerHeight - windowOffset;
 	scene = new THREE.Scene(); // the 3d scene
 
 	// this adds an exponentially increasing fog w/ distance (can experiment with scale factor)
@@ -130,7 +115,7 @@ function createScene(){
 	// could not add these initially, and just wait for them to have to be generated
 	// by the general game loop
 	// createAndAddInitialBasicObstacles(); // adds in basic sprites to block path
-	addHero();
+	addPlane();
 	addLight();
 	// addExplosion();
 
@@ -138,6 +123,9 @@ function createScene(){
 	// aerial?)
 	camera.position.z = 6.5;
 	camera.position.y = 2.5;
+
+	// TODO: this faces the camera towards the object, is it better?
+	camera.lookAt(plane.position)
 	window.addEventListener('resize', onWindowResize, false);//resize callback
 
 	document.onkeydown = handleKeyDown;
@@ -153,40 +141,47 @@ function createScene(){
 	scoreText.style.left = 10 + 'px';
 	document.body.appendChild(scoreText);
 
-  var infoText = document.createElement('div');
-	infoText.style.position = 'absolute';
-	infoText.style.width = 100;
-	infoText.style.height = 100;
-	infoText.style.backgroundColor = "yellow";
-	infoText.innerHTML = "UP - Jump, Left/Right - Move";
-	infoText.style.top = 10 + 'px';
-	infoText.style.left = 10 + 'px';
-	document.body.appendChild(infoText);
+  // var infoText = document.createElement('div');
+	// infoText.style.position = 'absolute';
+	// infoText.style.width = 100;
+	// infoText.style.height = 100;
+	// infoText.style.backgroundColor = "yellow";
+	// infoText.innerHTML = "UP - Jump, Left/Right - Move";
+	// infoText.style.top = 10 + 'px';
+	// infoText.style.left = 10 + 'px';
+	// document.body.appendChild(infoText);
 }
 
 /*
 		HELPER METHODS FOR CREATING SCENE
 */
 // creates the main plane
-function addHero(){
-	var sphereGeometry = new THREE.DodecahedronGeometry( heroRadius, 1);
-	var sphereMaterial = new THREE.MeshStandardMaterial( { color: 0xe5f2f2 ,shading:THREE.FlatShading} )
-	jumping=false;
-	heroSphere = new THREE.Mesh( sphereGeometry, sphereMaterial );
-	heroSphere.receiveShadow = true;
-	heroSphere.castShadow=true;
-	scene.add( heroSphere );
-	heroSphere.position.y = planeInitY;
-	heroSphere.position.z = planeInitZ;
-	currentLane=middleLane;
-	heroSphere.position.x=currentLane;
+function addPlane(){
+	// arbitrary size
+	var boxGeometry = new THREE.BoxGeometry(0.4, 0.1, 0.5)
+	var boxMaterial = new THREE.MeshStandardMaterial({color: 0xe5f2f2}) // shading: THREE.FlatShading
+	var body = new THREE.Mesh(boxGeometry, boxMaterial)
+
+	plane = new THREE.Object3D()
+	plane.add(body)
+
+	// TODO: add wing meshes onto this object
+
+	// TODO: look into why shadows are not being cast onto the main floor
+	plane.receiveShadow = true;
+	plane.castShadow = true;
+
+	// add to scene
+	scene.add(plane)
+
+	plane.position.set(0, planeInitY, planeInitZ)
 }
 
 // This creates a basic obstacle for the games
 function createBasicObstacle(){
 	// create a basic box mesh
 	var boxGeometry = new THREE.BoxGeometry(1, 1, 1);
-	var boxMaterial = new THREE.MeshStandardMaterial( { color: 0x33ff33, shading:THREE.FlatShading  } );
+	var boxMaterial = new THREE.MeshStandardMaterial( { color: 0xffa500  } ); // shading:THREE.FlatShading
 	var mesh = new THREE.Mesh(boxGeometry, boxMaterial);
 
 	// can move around the mesh position, absolute position
@@ -214,7 +209,7 @@ function createFloor(){
 	var material = new THREE.MeshBasicMaterial( {color: 0x4191E1, side: THREE.DoubleSide} );
 	
 	ground = new THREE.Mesh( geometry, material );
-	ground.rotation.x = Math.PI / 2; // rotate it to make it appear as expected
+	ground.rotation.x += Math.PI / 2; // rotate it to make it appear as expected
 	ground.position.y = 1 // set the plane to be y == 0 (can change)
 
 	ground.receiveShadow = true;
@@ -251,6 +246,9 @@ function addBasicObstacle(startAtFarPlane){
 		y = -30 // arbitrary, should be based on screen height?
 	}
 
+	// TODO: don't just randomly place them, change the coordinate system of everything
+	// to reflect where the plane is now
+
 	// -1 to shift all of them up
 	obstacle.position.set(x, y, -1);
 
@@ -269,13 +267,16 @@ function doObjectLogic(){
 		pos.setFromMatrixPosition(element.matrixWorld);
 
 		// check if this has gone out of view zone
-		if (pos.z > nearPlane && element.visible) {
+		// TODO: since the plane will be moving, this needs to be done for not only
+		// the z planes, but also the x planes
+		var outOfView = (pos.z > nearPlane)
+		if (outOfView && element.visible) {
 			objToRemove.push(element)
 		} else { 
 			// check if collision occurred with character
 			// TODO: should make this more realistic (can check for actual collisiions, instead
 			// of some sort of heuristic)
-			if (pos.distanceTo(heroSphere.position) <= 0.6) {
+			if (pos.distanceTo(plane.position) <= 0.6) {
 				console.log("hit")
 				hasCollided = true;
 			}
@@ -309,16 +310,6 @@ function update(){
 		basicObstacles[i].position.y += movementSpeed
 	}
 
-	// rollingGroundSphere.rotation.x += rollingSpeed;
-	heroSphere.rotation.x -= heroRollingSpeed;
-	if(heroSphere.position.y<=heroBaseY){
-		jumping=false;
-		bounceValue=(Math.random()*0.04)+0.005;
-	}
-	heroSphere.position.y+=bounceValue;
-	heroSphere.position.x=THREE.Math.lerp(heroSphere.position.x,currentLane, 2*clock.getDelta());//clock.getElapsedTime());
-	bounceValue-=gravity;
-
 	// if sufficient time has passed, add in a new obstacle (the basic obstacle
 	// function will handle if too many obstacles already in the scene)
 	// note: this is sort of a heuristic, since we could generate more obstacles
@@ -333,6 +324,7 @@ function update(){
 			scoreText.innerHTML="Score: " + score.toString();
 		}
 	}
+
 	doObjectLogic();
 	// doExplosionLogic();
 	render();
@@ -343,37 +335,41 @@ function update(){
 /*
 	General HELPER methods
 */
+// TODO: would adding in keyUp and keyDown handlers separately make this any smoother?
 function handleKeyDown(keyEvent){
-	if(jumping)return;
-	var validMove=true;
 	if ( keyEvent.keyCode === 37) {//left
-		if(currentLane==middleLane){
-			currentLane=leftLane;
-		}else if(currentLane==rightLane){
-			currentLane=middleLane;
-		}else{
-			validMove=false;
-		}
+		handlePlaneMovement(true) // true == left
 	} else if ( keyEvent.keyCode === 39) {//right
-		if(currentLane==middleLane){
-			currentLane=rightLane;
-		}else if(currentLane==leftLane){
-			currentLane=middleLane;
-		}else{
-			validMove=false;
-		}
-	}else{
-		if ( keyEvent.keyCode === 38){//up, jump
-			bounceValue=0.1;
-			jumping=true;
-		}
-		validMove=false;
+		handlePlaneMovement(false) // true == left
 	}
-	//heroSphere.position.x=currentLane;
-	if(validMove){
-		jumping=true;
-		bounceValue=0.06;
+}
+
+var friction = 0.98
+// TODO: lots of this is heuristic, make this smoother
+function handlePlaneMovement(left) {
+	// based off of this:
+	// https://stackoverflow.com/questions/15344104/smooth-character-movement-in-canvas-game-using-keyboard-controls
+	var movement = (left) ? -turnSpeed : turnSpeed;
+
+	// turn rapidly
+	if (velocity > 0 && left) {
+		velocity = 0.1 // make it small enough that it is smooth
+	} else if (velocity < 0 && !left) {
+		velocity = -0.1
 	}
+
+	// add movement to velocity
+	if (Math.abs(velocity + movement) <= maxVelocity) {
+		velocity += movement
+	}
+
+	// velocity *= friction // add friction (?), not sure if necessary
+
+	// we must move the camera, as well as the plane, since we always want to
+	// keep the camera focused on the plane
+	plane.position.x += velocity
+	// camera.lookAt(plane.position)
+	camera.position.x += velocity
 }
 
 // function doExplosionLogic(){
@@ -425,6 +421,7 @@ function addLight(){
 	sun.position.set( 12,6,-7 );
 	sun.castShadow = true;
 	scene.add(sun);
+
 	//Set up shadow properties for the sun light
 	sun.shadow.mapSize.width = 256;
 	sun.shadow.mapSize.height = 256;
@@ -433,16 +430,21 @@ function addLight(){
 }
 
 function render(){
-    renderer.render(scene, camera);//draw
+	// check if game over or not (TODO: this is just a temporary addition to stop animation)
+	if (hasCollided) {
+		return;
+	}
+
+	renderer.render(scene, camera);//draw
 }
 function gameOver () {
-  //cancelAnimationFrame( globalRenderID );
-  //window.clearInterval( powerupSpawnIntervalID );
+  // cancelAnimationFrame( globalRenderID );
+  // window.clearInterval( powerupSpawnIntervalID );
 }
 function onWindowResize() {
 	//resize & align
-	sceneHeight = window.innerHeight;
-	sceneWidth = window.innerWidth;
+	sceneHeight = window.innerHeight - windowOffset;
+	sceneWidth = window.innerWidth - windowOffset;
 	renderer.setSize(sceneWidth, sceneHeight);
 	camera.aspect = sceneWidth/sceneHeight;
 	camera.updateProjectionMatrix();
