@@ -29,7 +29,7 @@ var grid;
 var obstaclesInScene = 0;
 
 /*
-	Constants
+	Game Constants
 */
 var showStats = true; // turns stats on and off
 var maxBasicObstacles = 50;
@@ -46,6 +46,12 @@ var maxVelocity = 0.5;
 var windowOffset = 10; // to make it not have scroll bars
 
 /*
+	Physical constants
+*/
+var gravity = 0.005;
+
+
+/*
 	Logical constants/variables
 */
 var clock;
@@ -54,12 +60,10 @@ var stats;
 var scoreText;
 var score;
 
-var velocity = 0
-
-
-var gravity=0.005;
-
-
+/*
+	Game user inputs
+*/
+var planeVelocityX = 0
 
 init();
 
@@ -81,9 +85,6 @@ function createScene(){
 	basicObstacles = [];
 	clock=new THREE.Clock();
 	clock.start();
-	// heroRollingSpeed=(rollingSpeed*worldRadius/heroRadius)/5;
-	sphericalHelper = new THREE.Spherical();
-	pathAngleValues=[1.52,1.57,1.62];
 
 	/*
 		Initialize scene general parameters
@@ -94,10 +95,10 @@ function createScene(){
 
 	// this adds an exponentially increasing fog w/ distance (can experiment with scale factor)
 	scene.fog = new THREE.FogExp2( 0xffffff, 0.05);
-	
+
 	// this adds a general color to the background
 	// scene.background = new THREE.Color(0x000000)
-	
+
 	camera = new THREE.PerspectiveCamera( 60, sceneWidth / sceneHeight, 0.1, 1000 );//perspective camera
 	renderer = new THREE.WebGLRenderer({alpha:true}); // allow somewhat transparent items (alpha buffer)
 	renderer.setClearColor(0xfffafa, 1);
@@ -137,6 +138,7 @@ function createScene(){
 	window.addEventListener('resize', onWindowResize, false);//resize callback
 
 	document.onkeydown = handleKeyDown;
+	document.onkeyup = handleKeyUp;
 
 	scoreText = document.createElement('div');
 	scoreText.style.position = 'absolute';
@@ -215,7 +217,7 @@ function createFloor(){
 	floorWidth = sceneWidth // make it stretch to the whole width of screen
 	var geometry = new THREE.PlaneGeometry(floorWidth, floorHeight);
 	var material = new THREE.MeshBasicMaterial( {color: 0x4191E1, side: THREE.DoubleSide} );
-	
+
 	ground = new THREE.Mesh( geometry, material );
 	ground.rotation.x += Math.PI / 2; // rotate it to make it appear as expected
 	ground.position.y = 1 // set the plane to be y == 0 (can change)
@@ -242,14 +244,14 @@ function addBasicObstacle(startAtFarPlane){
 		console.log("hit max, size is: " + basicObstacles.length)
 		return; // don't create more if we have already hit the max
 	}
-	
+
 	var obstacle = createBasicObstacle();
 	obstacle.visible = true;
 
 	// place randomly across the floor
 	var x = (2 * Math.random() - 1) * 10; // arbitrary values for now
 	var y = (Math.random() - 1) * 15; // seems like y coords are negative to go forward
-	
+
 	if (startAtFarPlane) { // if they should start far away from the player (generated)
 		y = -30 // arbitrary, should be based on screen height?
 	}
@@ -271,7 +273,7 @@ function checkIfCollided(plane, object) {
 	// console.log(plane.children)
 	// console.log(object)
 	// source: https://stackoverflow.com/questions/11473755/how-to-detect-collision-in-three-js
-	
+
 	for (var i = 0; i < plane.children; i++) {
 		var child = plane.children[i]
 		for (var j = 0; j < child.geometry.vertices.length; j++) {
@@ -279,7 +281,7 @@ function checkIfCollided(plane, object) {
 			var globalVertex = localVertex.applyMatrix4( child.matrix );
 			var directionVector = globalVertex.sub( child.position );
 			var originPoint = child.position.clone()
-			
+
 			var ray = new THREE.Raycaster( originPoint, directionVector.clone().normalize() );
 			var collisionResults = ray.intersectObjects( object );
 			if ( collisionResults.length > 0 && collisionResults[0].distance < directionVector.length() ) {
@@ -305,7 +307,7 @@ function doObjectLogic(){
 		var outOfView = (pos.z > nearPlane)
 		if (outOfView && element.visible) {
 			objToRemove.push(element)
-		} else { 
+		} else {
 			// check if collision occurred with character
 			// TODO: should make this more realistic (can check for actual collisiions, instead
 			// of some sort of heuristic)
@@ -363,6 +365,7 @@ function update(){
 	}
 
 	doObjectLogic();
+	handlePlaneMovement();
 	// doExplosionLogic();
 	render();
 	requestAnimationFrame(update);//request next update
@@ -375,48 +378,38 @@ function update(){
 // TODO: would adding in keyUp and keyDown handlers separately make this any smoother?
 function handleKeyDown(keyEvent){
 	if ( keyEvent.keyCode === 37) {//left
-		handlePlaneMovement(true) // true == left
+		planeVelocityX = -0.1
 	} else if ( keyEvent.keyCode === 39) {//right
-		handlePlaneMovement(false) // true == left
+		planeVelocityX = 0.1
 	}
 }
 
-var friction = 0.98
-// TODO: lots of this is heuristic, make this smoother
+function handleKeyUp(keyEvent){
+	if (keyEvent.keyCode === 37 || keyEvent.keyCode === 39) {
+		planeVelocityX = 0
+	}
+}
+
 // http://stemkoski.github.io/Three.js/Collision-Detection.html
 // ^ that above link might have better movement handling, it is more specific to threejs
-function handlePlaneMovement(left) {
+function handlePlaneMovement() {
 	// based off of this:
 	// https://stackoverflow.com/questions/15344104/smooth-character-movement-in-canvas-game-using-keyboard-controls
-	var movement = (left) ? -turnSpeed : turnSpeed;
-
-	// turn rapidly
-	if (velocity > 0 && left) {
-		velocity = 0.1 // make it small enough that it is smooth
-	} else if (velocity < 0 && !left) {
-		velocity = -0.1
-	}
-
-	// add movement to velocity
-	if (Math.abs(velocity + movement) <= maxVelocity) {
-		velocity += movement
-	}
-
-	// velocity *= friction // add friction (?), not sure if necessary
 
 	// we must move the camera, as well as the plane, since we always want to
 	// keep the camera focused on the plane
-	plane.position.x += velocity
-	camera.position.x += velocity
+	plane.position.x += planeVelocityX
+	camera.position.x += planeVelocityX
 
 	// for added effect: rotate the plane in the direction it is trying to go
 	// TODO: make this effect smoother, round it out
-	if (velocity < 0) {
+	if (planeVelocityX < 0) {
 		plane.rotation.z = Math.PI / 4
-	} else {
+	} else if (planeVelocityX > 0) {
 		plane.rotation.z = - Math.PI / 4
+	} else {
+		plane.rotation.z = 0
 	}
-
 }
 
 // function doExplosionLogic(){
