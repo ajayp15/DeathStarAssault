@@ -46,12 +46,6 @@ var maxVelocity = 0.5;
 var windowOffset = 10; // to make it not have scroll bars
 
 /*
-	Physical constants
-*/
-var gravity = 0.005;
-
-
-/*
 	Logical constants/variables
 */
 var clock;
@@ -121,15 +115,9 @@ function createScene(){
 		Add objects into the scene
 	*/
 	createFloor();
-	// could not add these initially, and just wait for them to have to be generated
-	// by the general game loop
-	// createAndAddInitialBasicObstacles(); // adds in basic sprites to block path
 	addPlane();
 	addLight();
-	// addExplosion();
 
-	// TODO: maybe rotate camera more down onto scene, and move it up (to make it more
-	// aerial?)
 	camera.position.z = 6.5;
 	camera.position.y = 2.5;
 
@@ -150,16 +138,6 @@ function createScene(){
 	scoreText.style.top = 50 + 'px';
 	scoreText.style.left = 10 + 'px';
 	document.body.appendChild(scoreText);
-
-  // var infoText = document.createElement('div');
-	// infoText.style.position = 'absolute';
-	// infoText.style.width = 100;
-	// infoText.style.height = 100;
-	// infoText.style.backgroundColor = "yellow";
-	// infoText.innerHTML = "UP - Jump, Left/Right - Move";
-	// infoText.style.top = 10 + 'px';
-	// infoText.style.left = 10 + 'px';
-	// document.body.appendChild(infoText);
 }
 
 /*
@@ -181,10 +159,22 @@ function addPlane(){
 	plane.receiveShadow = true;
 	plane.castShadow = true;
 
-	// add to scene
-	scene.add(plane)
-
-	plane.position.set(0, planeInitY, planeInitZ)
+	var texture = new THREE.TextureLoader().load( 'models/ju-87_obj/diff.jpg' );
+	var material = new THREE.MeshPhongMaterial( { map: texture } );
+	console.log(material);
+	var loader = new THREE.OBJLoader();
+  loader.load( 'models/ju-87_obj/ju-87.obj', function ( object ) {
+		object.traverse( function ( node ) {
+    	if ( node.isMesh ) node.material = boxMaterial;
+	  } );
+    object.rotation.z = Math.PI;
+		object.rotation.y = 0 //Math.PI;
+		object.scale.set(0.0015, 0.0015, 0.0015);
+    scene.add( object );
+		plane = object;
+		plane.position.set(0, planeInitY, planeInitZ)
+    //document.querySelector('h1').style.display = 'none';
+  } );
 }
 
 // This creates a basic obstacle for the games
@@ -226,14 +216,6 @@ function createFloor(){
 	ground.castShadow = false;
 
 	scene.add( ground );
-
-	// add a grid to the floor
-	var size = 50;
-	var divisions = 10;
-
-	var white = new THREE.Color(0x000000)
-	grid = new THREE.GridHelper(size, divisions, white, white);
-	// scene.add( grid );
 }
 
 // This adds a basic obstacle to the scene
@@ -419,48 +401,6 @@ function handlePlaneMovement() {
 		plane.rotation.z /= 1.3;
 	}
 }
-
-// function doExplosionLogic(){
-// 	if(!particles.visible)return;
-// 	for (var i = 0; i < particleCount; i ++ ) {
-// 		particleGeometry.vertices[i].multiplyScalar(explosionPower);
-// 	}
-// 	if(explosionPower>1.005){
-// 		explosionPower-=0.001;
-// 	}else{
-// 		particles.visible=false;
-// 	}
-// 	particleGeometry.verticesNeedUpdate = true;
-// }
-// function explode(){
-// 	particles.position.y=2;
-// 	particles.position.z=4.8;
-// 	particles.position.x=heroSphere.position.x;
-// 	for (var i = 0; i < particleCount; i ++ ) {
-// 		var vertex = new THREE.Vector3();
-// 		vertex.x = -0.2+Math.random() * 0.4;
-// 		vertex.y = -0.2+Math.random() * 0.4 ;
-// 		vertex.z = -0.2+Math.random() * 0.4;
-// 		particleGeometry.vertices[i]=vertex;
-// 	}
-// 	explosionPower=1.07;
-// 	particles.visible=true;
-// }
-
-// function addExplosion(){
-// 	particleGeometry = new THREE.Geometry();
-// 	for (var i = 0; i < particleCount; i ++ ) {
-// 		var vertex = new THREE.Vector3();
-// 		particleGeometry.vertices.push( vertex );
-// 	}
-// 	var pMaterial = new THREE.ParticleBasicMaterial({
-// 	  color: 0xfffafa,
-// 	  size: 0.2
-// 	});
-// 	particles = new THREE.Points( particleGeometry, pMaterial );
-// 	scene.add( particles );
-// 	particles.visible=false;
-// }
 
 function addLight(){
 	var hemisphereLight = new THREE.HemisphereLight(0xfffafa,0x000000, .9)
