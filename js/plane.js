@@ -79,7 +79,8 @@ function createPlaneMesh() {
     plane.receiveShadow = true;
     plane.castShadow = true;
 
-    plane.position.set(0, planeInitY, planeInitZ)
+    // plane.position.set(0, planeInitY, planeInitZ)
+    plane.position.set(0, center, planeInitZ) // place it at camera center
 
     return plane
 }

@@ -50,9 +50,18 @@ function Scene() {
     this.scene.remove(mesh)
 	}
 	
-	this.handleCameraMovement = function(dx = 0, dy = 0, dz = 0) {
-		// this.camera.position.x += dx
-		// this.camera.position.y += dy
-		// this.camera.position.z += dz
+	this.handleCameraMovement = function(dx = 0, dy = 0, dz = 0, planePos) {
+		// add some sort of small drift to the camera to reflect plane movement
+		this.camera.position.x += dx * cameraDrift
+		this.camera.position.y += dy * cameraDrift
+		this.camera.position.z += dz * cameraDrift
+
+		// clamp camera movement as well (based on if the plane is clamped)
+		if (Math.abs(planePos.x + dx) >= 1) {
+			this.camera.position.x -= dx * cameraDrift // undo the movement
+		}
+		if ((planePos.y + dy) >= 4 || (planePos.y + dy) <= 1.8) {
+			this.camera.position.y -= dy * cameraDrift
+		}
 	}
 }

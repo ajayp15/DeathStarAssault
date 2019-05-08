@@ -93,7 +93,7 @@ function update() {
 	obstacles.doObjectLogic();
 	plane.handlePlaneMovement(planeVelocityX, planeVelocityY);
 	plane.handleLaserMovements();
-	scene.handleCameraMovement(planeVelocityX, planeVelocityY);
+	scene.handleCameraMovement(planeVelocityX, planeVelocityY, 0, plane.mesh.position);
 
 	if(clock.getElapsedTime() > objectGenerationTime){
 		clock.start(); // restart the clock
