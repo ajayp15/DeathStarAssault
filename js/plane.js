@@ -40,6 +40,8 @@ function createPlaneMesh() {
     var bodyMaterial = new THREE.MeshStandardMaterial({ color: 0xe5f2f2 })
     var body = new THREE.Mesh(bodyGeometry, bodyMaterial)
 
+    body.geometry.computeBoundingBox()
+
     var plane = new THREE.Object3D()
     plane.add(body)
 

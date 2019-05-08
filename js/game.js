@@ -12,7 +12,6 @@ var obstacles
 var showStats = true; // turns stats on and off
 var floorWidth = 10
 var floorHeight = 50
-var objectGenerationTime = 0.5;
 
 /*
 	Game variables
@@ -52,7 +51,7 @@ function setup(){
 	obstacles = new Obstacles(scene, ground, plane)
 
 	scene.addMesh(ground.mesh)
-	scene.addMesh(plane.mesh, true)
+	scene.addMesh(plane.mesh, false)
 
 	// add the renderer to the actual html
 	document.body.appendChild(scene.renderer.domElement)
@@ -101,7 +100,7 @@ function update() {
 
 		// add score if player still hasn't collided with anything
 		if(!hasCollided){
-			score += 2 * objectGenerationTime;
+			score += Math.ceil(objectGenerationTime);
 			scoreText.innerHTML="Score: " + score.toString();
 		}
 	}
@@ -117,16 +116,16 @@ function render(){
 function handleKeyDown(keyEvent){
 	// possible TODO: need to add clock.delta() here? or does velocity solve the issue
 	if ( keyEvent.keyCode === 37) { // left
-		planeVelocityX = -0.1
+		planeVelocityX = -planeVelocityConst
 		keyboard[37] = true
 	} else if ( keyEvent.keyCode === 38) { // up
-		planeVelocityY = 0.1
+		planeVelocityY = planeVelocityConst
 		keyboard[38] = true
 	} else if ( keyEvent.keyCode === 39) { // right
-		planeVelocityX = 0.1
+		planeVelocityX = planeVelocityConst
 		keyboard[39] = true
 	} else if ( keyEvent.keyCode === 40) { // down
-		planeVelocityY = -0.1
+		planeVelocityY = -planeVelocityConst
 		keyboard[40] = true
 	}
 }

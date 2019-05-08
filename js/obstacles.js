@@ -13,7 +13,9 @@ function Obstacles(scene, ground, plane) {
         var boxGeometry = new THREE.BoxGeometry(1, 1, 1);
         var boxMaterial = new THREE.MeshStandardMaterial({ color: 0xffa500 });
         var mesh = new THREE.Mesh(boxGeometry, boxMaterial);
-        mesh.position.y = 0.25
+        mesh.position.y = 1
+
+        mesh.geometry.computeBoundingBox()
 
         var obj = new THREE.Object3D();
         obj.add(mesh);
@@ -21,10 +23,12 @@ function Obstacles(scene, ground, plane) {
         obj.castShadow = true
 
         return obj;
+        // return mesh
     }
 
     this.addBasicObstacle = function (startAtFarPlane) {
         if (this.basicObstacles.length >= maxBasicObstacles) {
+            // TODO: this seems to be printing out at some periodicity, why?
             console.log("hit max, size is: " + this.basicObstacles.length)
             return; // don't create more if we have already hit the max
         }
@@ -33,17 +37,21 @@ function Obstacles(scene, ground, plane) {
         obstacle.visible = true;
 
         // place randomly across the floor
-        var x = (2 * Math.random() - 1) * 10; // arbitrary values for now
-        var y = (Math.random() - 1) * 15; // seems like y coords are negative to go forward
+        // x = left and right
+        // y = up and down
+        // z = into and out of screen
+        var x = (2 * Math.random() - 1) * (center); // arbitrary values for now
+        var y = Math.random() * (center * 2); // go from [0, center * 2] (0.5? to not cut off blocks)
+        var z = (Math.random() - 1) * 15;
 
         if (startAtFarPlane) { // if they should start far away from the player (generated)
-            y = -30 // arbitrary, should be based on screen height?
+            z = -30 // arbitrary, should be based on screen height?
         }
 
-        // -1 to shift all of them up
-        obstacle.position.set(x, y, -1);
+        obstacle.position.set(x, y, z)
 
-        this.ground.addMeshToGround(obstacle);
+        // add to scene (adding to floor reverses axes, better to keep it this way)
+        this.scene.addMesh(obstacle)
 
         // push it to the general basicObstacles array
         this.basicObstacles.push(obstacle);
@@ -70,9 +78,9 @@ function Obstacles(scene, ground, plane) {
                 objToRemove.push(element)
             } else {
                 // check if collision occurred with character
-                // TODO: should make this more realistic (can check for actual collisiions, instead
-                // of some sort of heuristic)
-                if (pos.distanceTo(this.plane.mesh.position) <= 0.6) {
+                // var collided = (pos.distanceTo(this.plane.mesh.position) <= 0.6)
+                var collided = checkIfCollidedCheap(this.plane.mesh, element)
+                if (collided) {
                     hasCollided = true;
                 }
             }
@@ -85,13 +93,13 @@ function Obstacles(scene, ground, plane) {
 
             // remove from the scene as well (remove from ground, more aptly)
             // this.scene.removeMesh(element)
-            this.ground.removeMeshFromGround(element)
+            this.scene.removeMesh(element)
         })
     }
 
     this.handleObstacleMovement = function () {
         for (var i = 0; i < this.basicObstacles.length; i++) {
-            this.basicObstacles[i].position.y += movementSpeed
+            this.basicObstacles[i].position.z += movementSpeed
         }
     }
 }

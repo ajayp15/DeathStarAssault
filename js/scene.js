@@ -12,8 +12,10 @@ function Scene() {
 
 	// create camera
 	this.camera = new THREE.PerspectiveCamera( 60, this.sceneWidth / this.sceneHeight, 0.1, 1000 );//perspective camera
-  this.camera.position.z = 6.5;
-  this.camera.position.y = 2.5;
+  // this.camera.position.z = 6.5;
+	// this.camera.position.y = 2.5;
+	this.camera.position.z = 6.5;
+	this.camera.position.y = center
 
 	// create renderer
 	this.renderer = new THREE.WebGLRenderer({alpha:true}); // allow somewhat transparent items (alpha buffer)
@@ -37,7 +39,6 @@ function Scene() {
 	this.scene.add(sun);
 
   this.addMesh = function(mesh, lookAt = false) {
-		console.log(mesh)
     this.scene.add(mesh);
     if (lookAt == true) {
       this.camera.lookAt(mesh.position)
@@ -50,8 +51,8 @@ function Scene() {
 	}
 	
 	this.handleCameraMovement = function(dx = 0, dy = 0, dz = 0) {
-		this.camera.position.x += dx
-		this.camera.position.y += dy
-		this.camera.position.z += dz
+		// this.camera.position.x += dx
+		// this.camera.position.y += dy
+		// this.camera.position.z += dz
 	}
 }
