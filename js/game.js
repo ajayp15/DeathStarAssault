@@ -22,6 +22,7 @@ var hasCollided;
 var stats;
 var scoreText;
 var score;
+var keyboard = {}
 
 /*
 	Game user inputs
@@ -113,15 +114,27 @@ function render(){
 }
 
 function handleKeyDown(keyEvent){
+	// possible TODO: need to add clock.delta() here? or does velocity solve the issue
 	if ( keyEvent.keyCode === 37) {//left
 		planeVelocityX = -0.1
+		keyboard[37] = true
 	} else if ( keyEvent.keyCode === 39) {//right
 		planeVelocityX = 0.1
+		keyboard[39] = true
 	}
 }
 
 function handleKeyUp(keyEvent){
-	if (keyEvent.keyCode === 37 || keyEvent.keyCode === 39) {
+	// TODO: there is still a bug if you rapidly press buttons, you might end
+	// up going left when you are actually pressing right --> might be because 
+	// keyboard detection isn't done in the update loop?
+	if (keyEvent.keyCode == 37) {
+		keyboard[37] = false
+	} else if (keyEvent.keyCode == 39) {
+		keyboard[39] = false
+	}
+
+	if (!keyboard[37] && !keyboard[39]) {
 		planeVelocityX = 0
 	}
 }
