@@ -27,6 +27,7 @@ var score;
 	Game user inputs
 */
 var planeVelocityX = 0
+var planeVelocityY = 0
 var keyboard = {}
 
 init();
@@ -91,8 +92,8 @@ function animate(){
 function update() {
 	obstacles.handleObstacleMovement();
 	obstacles.doObjectLogic();
-	plane.handlePlaneMovement(planeVelocityX);
-	scene.handleCameraMovement(planeVelocityX);
+	plane.handlePlaneMovement(planeVelocityX, planeVelocityY);
+	scene.handleCameraMovement(planeVelocityX, planeVelocityY);
 
 	if(clock.getElapsedTime() > objectGenerationTime){
 		clock.start(); // restart the clock
@@ -115,12 +116,18 @@ function render(){
 
 function handleKeyDown(keyEvent){
 	// possible TODO: need to add clock.delta() here? or does velocity solve the issue
-	if ( keyEvent.keyCode === 37) {//left
+	if ( keyEvent.keyCode === 37) { // left
 		planeVelocityX = -0.1
 		keyboard[37] = true
-	} else if ( keyEvent.keyCode === 39) {//right
+	} else if ( keyEvent.keyCode === 38) { // up
+		planeVelocityY = 0.1
+		keyboard[38] = true
+	} else if ( keyEvent.keyCode === 39) { // right
 		planeVelocityX = 0.1
 		keyboard[39] = true
+	} else if ( keyEvent.keyCode === 40) { // down
+		planeVelocityY = -0.1
+		keyboard[40] = true
 	}
 }
 
@@ -130,12 +137,19 @@ function handleKeyUp(keyEvent){
 	// keyboard detection isn't done in the update loop?
 	if (keyEvent.keyCode == 37) {
 		keyboard[37] = false
-	} else if (keyEvent.keyCode == 39) {
+	} else if (keyEvent.keyCode == 38) {
+		keyboard[38] = false
+	}	else if (keyEvent.keyCode == 39) {
 		keyboard[39] = false
+	} else if (keyEvent.keyCode == 40) {
+		keyboard[40] = false
 	}
 
 	if (!keyboard[37] && !keyboard[39]) {
 		planeVelocityX = 0
+	}
+	if (!keyboard[38] && !keyboard[40]) {
+		planeVelocityY = 0
 	}
 }
 

@@ -7,9 +7,11 @@
 function Plane() {
     this.mesh = createPlaneMesh()
 
-    this.handlePlaneMovement = function (planeVelocityX) {
+    this.handlePlaneMovement = function (planeVelocityX, planeVelocityY) {
         this.mesh.position.x += planeVelocityX
+        this.mesh.position.y += planeVelocityY
 
+        // handle x movement
         if (planeVelocityX < 0) {
             this.mesh.rotation.z += turnSpeed;
             this.mesh.rotation.z = Math.min(this.mesh.rotation.z, Math.PI / 4);
@@ -18,6 +20,17 @@ function Plane() {
             this.mesh.rotation.z = Math.max(this.mesh.rotation.z, - Math.PI / 4);
         } else {
             this.mesh.rotation.z /= 1.3;
+        }
+
+        // handle y movement (flip the directions, seems to work this way, axis flipped)
+        if (planeVelocityY > 0) {
+          this.mesh.rotation.x += turnSpeed;
+          this.mesh.rotation.x = Math.min(this.mesh.rotation.x, Math.PI / 4);
+        } else if (planeVelocityY < 0) {
+            this.mesh.rotation.x -= turnSpeed;
+            this.mesh.rotation.x = Math.max(this.mesh.rotation.x, - Math.PI / 4);
+        } else {
+            this.mesh.rotation.x /= 1.3;
         }
     }
 }
