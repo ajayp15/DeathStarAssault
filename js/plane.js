@@ -11,6 +11,16 @@ function Plane() {
         this.mesh.position.x += planeVelocityX
         this.mesh.position.y += planeVelocityY
 
+        // clamp the motion, to prevent it from going too far out from the screen
+        // TODO: this is arbitrary for now - you can calculate the range of x and y of 
+        // screen using FOV and aspect of the camera (which give angles, etc.)
+        if (Math.abs(this.mesh.position.x) >= 1) {
+          this.mesh.position.x -= planeVelocityX // undo the movement
+        }
+        if (this.mesh.position.y >= 4 || this.mesh.position.y <= 1.8) {
+          this.mesh.position.y -= planeVelocityY
+        }
+
         // handle x movement
         if (planeVelocityX < 0) {
             this.mesh.rotation.z += turnSpeed;
