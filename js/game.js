@@ -47,7 +47,7 @@ function setup(){
 
 	scene = new Scene()
 	ground = new Ground(scene.sceneWidth, floorHeight) // TODO: change these arbitrary values?
-	plane = new Plane()
+	plane = new Plane(scene)
 	obstacles = new Obstacles(scene, ground, plane)
 
 	scene.addMesh(ground.mesh)
@@ -92,6 +92,7 @@ function update() {
 	obstacles.handleObstacleMovement();
 	obstacles.doObjectLogic();
 	plane.handlePlaneMovement(planeVelocityX, planeVelocityY);
+	plane.handleLaserMovements();
 	scene.handleCameraMovement(planeVelocityX, planeVelocityY);
 
 	if(clock.getElapsedTime() > objectGenerationTime){
@@ -127,6 +128,9 @@ function handleKeyDown(keyEvent){
 	} else if ( keyEvent.keyCode === 40) { // down
 		planeVelocityY = -planeVelocityConst
 		keyboard[40] = true
+	} else if ( keyEvent.keyCode == 32) { // space
+		keyboard[32] = true
+		plane.shootLaser();
 	}
 }
 

@@ -4,8 +4,10 @@
     animate it, etc.
 */
 
-function Plane() {
+function Plane(scene) {
     this.mesh = createPlaneMesh()
+    this.scene = scene
+    this.shots = []
 
     this.handlePlaneMovement = function (planeVelocityX, planeVelocityY) {
         this.mesh.position.x += planeVelocityX
@@ -42,6 +44,25 @@ function Plane() {
         } else {
             this.mesh.rotation.x /= 1.3;
         }
+    }
+
+    this.shootLaser = function() {
+      let plasmaBall = new THREE.Mesh(new THREE.SphereGeometry(0.1, 8, 4), new THREE.MeshBasicMaterial({
+        color: "aqua"
+      }));
+      var wpVector = new THREE.Vector3()
+      this.mesh.getWorldPosition(wpVector)
+      plasmaBall.position.copy(wpVector); // start position - the tip of the weapon
+      plasmaBall.quaternion.copy(this.scene.camera.quaternion); // apply camera's quaternion
+      this.scene.addMesh(plasmaBall);
+      this.shots.push(plasmaBall);
+    }
+
+    this.handleLaserMovements = function() {
+      var delta = clock.getDelta()
+      this.shots.forEach(b => {
+        b.translateZ(-5 * delta)
+      })
     }
 }
 
