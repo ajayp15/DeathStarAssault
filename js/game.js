@@ -45,9 +45,9 @@ function setup(){
 	clock.start()
 
 	scene = new Scene()
-	ground = new Ground(scene.sceneWidth, scene.sceneHeight)
+	ground = new Ground(scene.sceneWidth, floorHeight) // TODO: change these arbitrary values?
 	plane = new Plane()
-	obstacles = new Obstacles(scene)
+	obstacles = new Obstacles(scene, ground, plane)
 
 	scene.addMesh(ground.mesh)
 	scene.addMesh(plane.mesh, true)
@@ -90,7 +90,8 @@ function animate(){
 function update() {
 	obstacles.handleObstacleMovement();
 	obstacles.doObjectLogic();
-	plane.handlePlaneMovement();
+	plane.handlePlaneMovement(planeVelocityX);
+	scene.handleCameraMovement(planeVelocityX);
 
 	if(clock.getElapsedTime() > objectGenerationTime){
 		clock.start(); // restart the clock
@@ -108,7 +109,7 @@ function render(){
 	if (hasCollided) {
 		return;
 	}
-	renderer.render(scene, camera);
+	scene.renderer.render(scene.scene, scene.camera);
 }
 
 function handleKeyDown(keyEvent){
@@ -126,9 +127,9 @@ function handleKeyUp(keyEvent){
 }
 
 function onWindowResize() {
-	sceneHeight = window.innerHeight - windowOffset;
-	sceneWidth = window.innerWidth - windowOffset;
-	renderer.setSize(sceneWidth, sceneHeight);
-	camera.aspect = sceneWidth/sceneHeight;
-	camera.updateProjectionMatrix();
+	scene.sceneHeight = window.innerHeight - windowOffset;
+	scene.sceneWidth = window.innerWidth - windowOffset;
+	scene.renderer.setSize(scene.sceneWidth, scene.sceneHeight);
+	scene.camera.aspect = scene.sceneWidth/scene.sceneHeight;
+	scene.camera.updateProjectionMatrix();
 }

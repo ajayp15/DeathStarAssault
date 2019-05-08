@@ -4,41 +4,40 @@
     animate it, etc.
 */
 
-var turnSpeed = 0.25;
-
 function Plane() {
-    this.mesh = this.createPlaneMesh()
+    this.mesh = createPlaneMesh()
 
-    this.createPlaneMesh = function() {
-        var bodyGeometry = new THREE.BoxGeometry(0.4, 0.1, 0.5)
-      	var bodyMaterial = new THREE.MeshStandardMaterial({color: 0xe5f2f2})
-      	var body = new THREE.Mesh(bodyGeometry, bodyMaterial)
-
-      	var plane = new THREE.Object3D()
-      	plane.add(body)
-
-      	plane.receiveShadow = true;
-      	plane.castShadow = true;
-
-        plane.position.set(0, planeInitY, planeInitZ)
-        return plane
-    }
-
-    this.handlePlaneMovement(planeVelocityX) {
+    this.handlePlaneMovement = function (planeVelocityX) {
         this.mesh.position.x += planeVelocityX
-      	this.mesh.position.x += planeVelocityX
 
-      	if (planeVelocityX < 0) {
-      		this.mesh.rotation.z += turnSpeed;
-      		this.mesh.rotation.z = Math.min(this.mesh.rotation.z, Math.PI / 4);
-      	} else if (planeVelocityX > 0) {
-      		this.mesh.rotation.z -= turnSpeed;
-      		this.mesh.rotation.z = Math.max(this.mesh.rotation.z, - Math.PI / 4);
-      	} else {
-      		this.mesh.rotation.z /= 1.3;
-      	}
+        if (planeVelocityX < 0) {
+            this.mesh.rotation.z += turnSpeed;
+            this.mesh.rotation.z = Math.min(this.mesh.rotation.z, Math.PI / 4);
+        } else if (planeVelocityX > 0) {
+            this.mesh.rotation.z -= turnSpeed;
+            this.mesh.rotation.z = Math.max(this.mesh.rotation.z, - Math.PI / 4);
+        } else {
+            this.mesh.rotation.z /= 1.3;
+        }
     }
 }
+
+function createPlaneMesh() {
+    var bodyGeometry = new THREE.BoxGeometry(0.4, 0.1, 0.5)
+    var bodyMaterial = new THREE.MeshStandardMaterial({ color: 0xe5f2f2 })
+    var body = new THREE.Mesh(bodyGeometry, bodyMaterial)
+
+    var plane = new THREE.Object3D()
+    plane.add(body)
+
+    plane.receiveShadow = true;
+    plane.castShadow = true;
+
+    plane.position.set(0, planeInitY, planeInitZ)
+
+    return plane
+}
+
 
 /*
 function addPlane(){
