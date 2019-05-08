@@ -17,6 +17,9 @@ function Obstacles(scene, ground, plane) {
 
         var obj = new THREE.Object3D();
         obj.add(mesh);
+
+        obj.castShadow = true
+
         return obj;
     }
 

@@ -22,12 +22,12 @@ var hasCollided;
 var stats;
 var scoreText;
 var score;
-var keyboard = {}
 
 /*
 	Game user inputs
 */
 var planeVelocityX = 0
+var keyboard = {}
 
 init();
 

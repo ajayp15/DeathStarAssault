@@ -19,7 +19,7 @@ function Scene() {
 	this.renderer = new THREE.WebGLRenderer({alpha:true}); // allow somewhat transparent items (alpha buffer)
 	this.renderer.setClearColor(0xfffafa, 1);
 	this.renderer.shadowMap.enabled = true; //enable shadow
-	this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+	// this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 	this.renderer.setSize( this.sceneWidth, this.sceneHeight );
 
 	// add the light in the scene
@@ -27,12 +27,13 @@ function Scene() {
 	this.scene.add(hemisphereLight);
 	
 	var sun = new THREE.DirectionalLight( 0xcdc1c5, 0.9);
-	sun.position.set( 12,6,-7 );
+	sun.position.set( 3,6,-7 );
 	sun.castShadow = true;
-  sun.shadow.mapSize.width = 256;
-	sun.shadow.mapSize.height = 256;
+  sun.shadow.mapSize.width = 512;
+	sun.shadow.mapSize.height = 512;
+
 	sun.shadow.camera.near = 0.5;
-	sun.shadow.camera.far = 50 ;
+	sun.shadow.camera.far = 500;
 	this.scene.add(sun);
 
   this.addMesh = function(mesh, lookAt = false) {
