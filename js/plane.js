@@ -9,26 +9,28 @@ function Plane(scene) {
     this.scene = scene
     this.shots = []
 
-    this.handlePlaneMovement = function (planeVelocityX, planeVelocityY) {
-        this.mesh.position.x += planeVelocityX
-        this.mesh.position.y += planeVelocityY
+    this.handlePlaneMovement = function (planeVelocityX, planeVelocityY, delta) {
+        this.mesh.position.x += planeVelocityX * delta
+        this.mesh.position.y += planeVelocityY * delta
 
         // clamp the motion, to prevent it from going too far out from the screen
         // TODO: this is arbitrary for now - you can calculate the range of x and y of 
         // screen using FOV and aspect of the camera (which give angles, etc.)
-        if (Math.abs(this.mesh.position.x) >= 1) {
-          this.mesh.position.x -= planeVelocityX // undo the movement
-        }
-        if (this.mesh.position.y >= 4 || this.mesh.position.y <= 1.8) {
-          this.mesh.position.y -= planeVelocityY
-        }
+        // var projector = new THREE.Projector()
+        // projector.projectVector(vector.setFromMatrixPosition(this.mesh.position.))
+        // if (Math.abs(this.mesh.position.x) >= scene.screenWidth / 2) {
+        //   this.mesh.position.x -= planeVelocityX // undo the movement
+        // }
+        // if (this.mesh.position.y >= 4.5 || this.mesh.position.y <= 1.25) { // arbitrary values
+        //   this.mesh.position.y -= planeVelocityY
+        // }
 
         // handle x movement
         if (planeVelocityX < 0) {
-            this.mesh.rotation.z += turnSpeed;
+            this.mesh.rotation.z += turnSpeed * delta;
             this.mesh.rotation.z = Math.min(this.mesh.rotation.z, Math.PI / 4);
         } else if (planeVelocityX > 0) {
-            this.mesh.rotation.z -= turnSpeed;
+            this.mesh.rotation.z -= turnSpeed * delta;
             this.mesh.rotation.z = Math.max(this.mesh.rotation.z, - Math.PI / 4);
         } else {
             this.mesh.rotation.z /= 1.3;
@@ -36,10 +38,10 @@ function Plane(scene) {
 
         // handle y movement (flip the directions, seems to work this way, axis flipped)
         if (planeVelocityY > 0) {
-          this.mesh.rotation.x += turnSpeed;
+          this.mesh.rotation.x += turnSpeed * delta;
           this.mesh.rotation.x = Math.min(this.mesh.rotation.x, Math.PI / 4);
         } else if (planeVelocityY < 0) {
-            this.mesh.rotation.x -= turnSpeed;
+            this.mesh.rotation.x -= turnSpeed * delta;
             this.mesh.rotation.x = Math.max(this.mesh.rotation.x, - Math.PI / 4);
         } else {
             this.mesh.rotation.x /= 1.3;
@@ -58,8 +60,7 @@ function Plane(scene) {
       this.shots.push(plasmaBall);
     }
 
-    this.handleLaserMovements = function() {
-      var delta = clock.getDelta()
+    this.handleLaserMovements = function(delta) {
       this.shots.forEach(b => {
         b.translateZ(-5 * delta)
       })
@@ -79,7 +80,7 @@ function createPlaneMesh() {
     plane.receiveShadow = true;
     plane.castShadow = true;
 
-    plane.position.set(0, planeInitY, planeInitZ)
+    plane.position.set(0, center, planeInitZ)
 
     return plane
 }

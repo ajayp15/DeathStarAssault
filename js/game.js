@@ -56,7 +56,7 @@ function setup(){
 	scene.addMesh(plane.mesh, false)
 
 	// generate initial obstacles
-	obstacles.generateInitialObstacles()
+	// obstacles.generateInitialObstacles()
 
 	// add the renderer to the actual html
 	document.body.appendChild(scene.renderer.domElement)
@@ -94,12 +94,14 @@ function animate(){
 }
 
 function update() {
-	obstacles.handleObstacleMovement();
+	var delta = clock.getDelta() // use this to adjust for variable frame rates
+
+	obstacles.handleObstacleMovement(delta);
 	obstacles.doObjectLogic();
-	plane.handlePlaneMovement(planeVelocityX, planeVelocityY);
-	plane.handleLaserMovements();
-	ground.updateGroundEvolution(1.0 / 60.0);
-	scene.handleCameraMovement(planeVelocityX, planeVelocityY, 0, plane.mesh.position);
+	plane.handlePlaneMovement(planeVelocityX, planeVelocityY, delta);
+	plane.handleLaserMovements(delta);
+	// ground.updateGroundEvolution(delta);
+	scene.handleCameraMovement(planeVelocityX, planeVelocityY, 0, plane.mesh.position, delta);
 
 	if(clock.getElapsedTime() > objectGenerationTime){
 		clock.start(); // restart the clock

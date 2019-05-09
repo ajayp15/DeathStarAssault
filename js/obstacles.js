@@ -9,13 +9,24 @@ function Obstacles(scene, ground, plane) {
     this.ground = ground
     this.basicObstacles = []
 
-    this.createBasicObstacle = function () {
-        var boxGeometry = new THREE.BoxGeometry(1, 1, 1);
-        var boxMaterial = new THREE.MeshStandardMaterial({ color: 0xffa500 });
-        var mesh = new THREE.Mesh(boxGeometry, boxMaterial);
-        mesh.position.y = 1
+    this.createBasicObstacle = function (box = false) {
+        var mesh;
+        if (obstaclesType == "box") {
+            var boxGeometry = new THREE.BoxGeometry(1, 1, 1);
+            var boxMaterial = new THREE.MeshStandardMaterial({ color: 0xffa500 });
+            mesh = new THREE.Mesh(boxGeometry, boxMaterial);
+            mesh.position.y = 1
 
-        mesh.geometry.computeBoundingBox()
+            mesh.geometry.computeBoundingBox()
+        } else if (obstaclesType == "sphere") {
+            // consider making this octahedron later -- just need to figure out the
+            // collisions with that
+            var sphereGeometry = new THREE.SphereGeometry(obstaclesRadius, 32, 32)
+            var material = new THREE.MeshStandardMaterial({color: 0xffa500})
+            mesh = new THREE.Mesh(sphereGeometry, material);
+            
+            mesh.geometry.computeBoundingSphere()
+        }
 
         var obj = new THREE.Object3D();
         obj.add(mesh);
@@ -29,7 +40,7 @@ function Obstacles(scene, ground, plane) {
     this.addBasicObstacle = function (startAtFarPlane) {
         if (this.basicObstacles.length >= maxBasicObstacles) {
             // TODO: this seems to be printing out at some periodicity, why?
-            console.log("hit max, size is: " + this.basicObstacles.length)
+            // console.log("hit max, size is: " + this.basicObstacles.length)
             return; // don't create more if we have already hit the max
         }
 
@@ -40,9 +51,16 @@ function Obstacles(scene, ground, plane) {
         // x = left and right
         // y = up and down
         // z = into and out of screen
-        var x = (2 * Math.random() - 1) * (center); // arbitrary values for now
-        var y = Math.random() * (center * 2); // go from [0, center * 2] (0.5? to not cut off blocks)
-        var z = (Math.random() - 1) * 15;
+        // ADDITION: generate near the plane, so use plane's position as "center" of world (in x and y)
+        // and also generate blocks sufficiently away from plane that moving plane will still
+        // be difficult into "blank" areas of screen
+        // var x = (2 * Math.random() - 1) * (center); // arbitrary values for now
+        // var y = Math.random() * (center * 2); // go from [0, center * 2] (0.5? to not cut off blocks)
+        // var z = (Math.random() - 1) * 15;
+        var planePos = this.plane.mesh.position
+        var x = planePos.x + (2 * Math.random() - 1) * xFar
+        var y = planePos.y + (2 * Math.random() - 1) * yFar
+        var z = 0
 
         if (startAtFarPlane) { // if they should start far away from the player (generated)
             z = farPlane // arbitrary, should be based on screen height?
@@ -66,12 +84,13 @@ function Obstacles(scene, ground, plane) {
             var obstacle = this.createBasicObstacle();
             obstacle.visible = true
 
-            var x = (2 * Math.random() - 1) * (center);
-            var y = Math.random() * (center * 2);
+            var planePos = this.plane.mesh.position
+            var x = planePos.x + (2 * Math.random() - 1) * xFar
+            var y = planePos.y + (2 * Math.random() - 1) * yFar
 
-            // range from [farPlane, farPlane * 2] because we want a continuous
+            // range from [farPlane, farPlane * 2 - nearPlane] because we want a continuous
             // spread over such a range
-            var z = farPlane + (Math.random()) * farPlane;
+            var z = farPlane + (Math.random()) * (farPlane - nearPlane);
 
             obstacle.position.set(x, y, z)
 
@@ -96,13 +115,23 @@ function Obstacles(scene, ground, plane) {
             // check if this has gone out of view zone
             // TODO: since the plane will be moving, this needs to be done for not only
             // the z planes, but also the x planes
-            var outOfView = (pos.z > nearPlane)
+            var outOfViewZ = (pos.z > nearPlane)
+
+            // consider something out of view in the x and y planes if it has moved
+            // sufficiently out of view that moving it out and back into view won't
+            // easily despawn it, making game too easy (add some leeway for keeping things)
+            // in memory
+            var planePos = this.plane.mesh.position
+            var outOfViewX = Math.abs(planePos.x - pos.x) >= xFar
+            var outOfViewY = Math.abs(planePos.y - pos.y) >= yFar
+
+            var outOfView = outOfViewZ || outOfViewX || outOfViewY
             if (outOfView && element.visible) {
                 objToRemove.push(element)
             } else {
                 // check if collision occurred with character
                 // var collided = (pos.distanceTo(this.plane.mesh.position) <= 0.6)
-                var collided = checkIfCollidedCheap(this.plane.mesh, element)
+                var collided = checkIfCollidedCheap(this.plane.mesh, element, "box", obstaclesType)
                 if (collided) {
                     hasCollided = true;
                 }
@@ -120,9 +149,9 @@ function Obstacles(scene, ground, plane) {
         })
     }
 
-    this.handleObstacleMovement = function () {
+    this.handleObstacleMovement = function (delta) {
         for (var i = 0; i < this.basicObstacles.length; i++) {
-            this.basicObstacles[i].position.z += movementSpeed
+            this.basicObstacles[i].position.z += movementSpeed * delta
         }
     }
 }

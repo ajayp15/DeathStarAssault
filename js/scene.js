@@ -4,8 +4,8 @@
 */
 
 function Scene() {
-	this.sceneWidth = window.innerWidth;
-	this.sceneHeight = window.innerHeight;
+	this.sceneWidth = window.innerWidth - windowOffset;
+	this.sceneHeight = window.innerHeight - windowOffset;
 
 	this.scene = new THREE.Scene(); // the 3d scene
 	this.scene.fog = new THREE.FogExp2( 0xffffff, 0.05);
@@ -55,11 +55,11 @@ function Scene() {
     this.scene.remove(mesh)
 	}
 
-	this.handleCameraMovement = function(dx, dy, dz, planePos) {
+	this.handleCameraMovement = function(dx, dy, dz, planePos, delta) {
 		// add some sort of small drift to the camera to reflect plane movement
-		this.camera.position.x += dx * cameraDrift
-		this.camera.position.y += dy * cameraDrift
-		this.camera.position.z += dz * cameraDrift
+		this.camera.position.x += dx * cameraDrift * delta
+		this.camera.position.y += dy * cameraDrift * delta
+		this.camera.position.z += dz * cameraDrift * delta
 
 		/*this.camera.position.x = planeMesh.position.x;
 		this.camera.position.y = planeMesh.position.y + 0.5;
@@ -67,11 +67,11 @@ function Scene() {
 		this.camera.rotation.z = planeMesh.rotation.z / 3.0;*/
 
 		// clamp camera movement as well (based on if the plane is clamped)
-		if (Math.abs(planePos.x + dx) >= 1) {
-			this.camera.position.x -= dx * cameraDrift // undo the movement
-		}
-		if ((planePos.y + dy) >= 4 || (planePos.y + dy) <= 1.8) {
-			this.camera.position.y -= dy * cameraDrift
-		}
+		// if (Math.abs(planePos.x + dx) >= 1) {
+		// 	this.camera.position.x -= dx * cameraDrift // undo the movement
+		// }
+		// if ((planePos.y + dy) >= 4 || (planePos.y + dy) <= 1.8) {
+		// 	this.camera.position.y -= dy * cameraDrift
+		// }
 	}
 }
