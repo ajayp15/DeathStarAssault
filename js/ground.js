@@ -1,5 +1,9 @@
-function Ground(w, h) {
-  this.mesh = createGround(w, h);
+function Ground(w, h, l) {
+  this.mesh = createGround(w, h, l);
+
+  this.updateGroundEvolution = function(dt) {
+    this.mesh.material.uniforms[ 'time' ].value += dt;
+  }
 
   this.addMeshToGround = function(m) {
     this.mesh.add(m);
@@ -10,16 +14,25 @@ function Ground(w, h) {
   }
 }
 
-function createGround(width, height) {
-  var geometry = new THREE.PlaneGeometry(width, height);
-  var material = new THREE.MeshBasicMaterial( {color: 0x4191E1, side: THREE.DoubleSide} );
-
-  var mesh = new THREE.Mesh( geometry, material );
-  mesh.rotation.x += Math.PI / 2;
-  mesh.position.y = 1
-
-  mesh.receiveShadow = true;
-  mesh.castShadow = false;
+function createGround(width, height, light) {
+  var waterGeometry = new THREE.PlaneBufferGeometry( 10000, 10000 );
+	water = new THREE.Water(
+		waterGeometry,
+		{
+			textureWidth: width,
+			textureHeight: height,
+			waterNormals: new THREE.TextureLoader().load( 'textures/waternormals.jpg', function ( texture ) {
+				texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+			} ),
+			alpha: 1.0,
+			sunDirection: light.position.clone().normalize(),
+			sunColor: 0xffffff,
+			waterColor: 0x001e0f,
+			distortionScale: 3.7,
+			fog: scene.fog !== undefined
+		}
+	);
+	water.rotation.x = - Math.PI / 2;
   // mesh.visible = false
-  return mesh
+  return water;
 }

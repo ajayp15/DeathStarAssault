@@ -5,6 +5,7 @@ var scene
 var ground
 var plane
 var obstacles
+var environment
 
 /*
 	Game Constants
@@ -46,7 +47,8 @@ function setup(){
 	clock.start()
 
 	scene = new Scene()
-	ground = new Ground(scene.sceneWidth, floorHeight) // TODO: change these arbitrary values?
+	ground = new Ground(scene.sceneWidth, floorHeight, scene.light) // TODO: change these arbitrary values?
+	//environment = new Environment(scene, ground);
 	plane = new Plane(scene)
 	obstacles = new Obstacles(scene, ground, plane)
 
@@ -96,6 +98,7 @@ function update() {
 	obstacles.doObjectLogic();
 	plane.handlePlaneMovement(planeVelocityX, planeVelocityY);
 	plane.handleLaserMovements();
+	ground.updateGroundEvolution(1.0 / 60.0);
 	scene.handleCameraMovement(planeVelocityX, planeVelocityY, 0, plane.mesh.position);
 
 	if(clock.getElapsedTime() > objectGenerationTime){
@@ -139,7 +142,7 @@ function handleKeyDown(keyEvent){
 
 function handleKeyUp(keyEvent){
 	// TODO: there is still a bug if you rapidly press buttons, you might end
-	// up going left when you are actually pressing right --> might be because 
+	// up going left when you are actually pressing right --> might be because
 	// keyboard detection isn't done in the update loop?
 	if (keyEvent.keyCode == 37) {
 		keyboard[37] = false
