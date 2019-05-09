@@ -45,7 +45,7 @@ function Obstacles(scene, ground, plane) {
         var z = (Math.random() - 1) * 15;
 
         if (startAtFarPlane) { // if they should start far away from the player (generated)
-            z = -30 // arbitrary, should be based on screen height?
+            z = farPlane // arbitrary, should be based on screen height?
         }
 
         obstacle.position.set(x, y, z)
@@ -56,6 +56,29 @@ function Obstacles(scene, ground, plane) {
         // push it to the general basicObstacles array
         this.basicObstacles.push(obstacle);
         return obstacle
+    }
+
+    // this function generates an initial amount of maxObstacles number of 
+    // obstacles, randomly spread out (beyond the far plane), so as to give a
+    // more continuous generation of blocks as they go out of scope of the screen
+    this.generateInitialObstacles = function() {
+        for (var i = 0; i < maxBasicObstacles; i++) {
+            var obstacle = this.createBasicObstacle();
+            obstacle.visible = true
+
+            var x = (2 * Math.random() - 1) * (center);
+            var y = Math.random() * (center * 2);
+
+            // range from [farPlane, farPlane * 2] because we want a continuous
+            // spread over such a range
+            var z = farPlane + (Math.random()) * farPlane;
+
+            obstacle.position.set(x, y, z)
+
+            this.scene.addMesh(obstacle)
+
+            this.basicObstacles.push(obstacle);
+        }
     }
 
     // This removes objects that have gone out of view, and also checks if the
