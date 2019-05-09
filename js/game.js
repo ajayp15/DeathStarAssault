@@ -55,6 +55,9 @@ function setup(){
 	scene.addMesh(ground.mesh)
 	scene.addMesh(plane.mesh, false)
 
+	// generate initial obstacles
+	obstacles.generateInitialObstacles()
+
 	// add the renderer to the actual html
 	document.body.appendChild(scene.renderer.domElement)
 
