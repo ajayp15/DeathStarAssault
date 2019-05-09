@@ -48,12 +48,13 @@ function setup(){
 
 	scene = new Scene()
 	ground = new Ground(scene.sceneWidth, floorHeight, scene.light) // TODO: change these arbitrary values?
-	environment = new Environment(scene, ground);
+	environment = new Environment();
 	plane = new Plane(scene)
 	obstacles = new Obstacles(scene, ground, plane)
 
 	scene.addMesh(ground.mesh)
 	scene.addMesh(plane.mesh, false)
+	scene.addMesh(environment.mesh)
 
 	// generate initial obstacles
 	// obstacles.generateInitialObstacles()
