@@ -28,7 +28,7 @@ function Environment(scene, ground) {
     this.scene.light.position.y = parameters.distance * Math.sin( phi ) * Math.sin( theta );
     this.scene.light.position.z = parameters.distance * Math.sin( phi ) * Math.cos( theta );
     this.sky.material.uniforms[ 'sunPosition' ].value = scene.light.position.copy( this.scene.light.position );
-    this.ground.material.uniforms[ 'sunDirection' ].value.copy( this.scene.light.position ).normalize();
+    this.ground.mesh.material.uniforms[ 'sunDirection' ].value.copy( this.scene.light.position ).normalize();
     this.cubeCamera.update( this.scene.renderer, this.sky );
   }
   this.updateSun();

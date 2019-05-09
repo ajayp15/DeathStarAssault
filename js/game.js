@@ -48,7 +48,7 @@ function setup(){
 
 	scene = new Scene()
 	ground = new Ground(scene.sceneWidth, floorHeight, scene.light) // TODO: change these arbitrary values?
-	//environment = new Environment(scene, ground);
+	environment = new Environment(scene, ground);
 	plane = new Plane(scene)
 	obstacles = new Obstacles(scene, ground, plane)
 
