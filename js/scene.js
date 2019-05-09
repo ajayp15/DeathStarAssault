@@ -8,10 +8,10 @@ function Scene() {
 	this.sceneHeight = window.innerHeight;
 
 	this.scene = new THREE.Scene(); // the 3d scene
-	this.scene.fog = new THREE.FogExp2( 0xffffff, 0.05);
+	//this.scene.fog = new THREE.FogExp2( 0xffffff, 0.05);
 
 	// create camera
-	this.camera = new THREE.PerspectiveCamera( 60, this.sceneWidth / this.sceneHeight, 0.1, 1000 );//perspective camera
+	this.camera = new THREE.PerspectiveCamera( 55, window.innerWidth / window.innerHeight, 0.1, 20000 );//perspective camera
   // this.camera.position.z = 6.5;
 	// this.camera.position.y = 2.5;
 	this.camera.position.z = 6.5;
@@ -40,7 +40,10 @@ function Scene() {
 
 	this.scene.add(sun);*/
 
-	this.light = new THREE.DirectionalLight( 0xffffff, 0.8 );
+	var ambient = new THREE.AmbientLight( 0xffffff, 1 );
+	this.scene.add( ambient );
+
+	this.light = new THREE.DirectionalLight( 0xffffff, 1 );
 	this.scene.add( this.light );
 
   this.addMesh = function(mesh, lookAt = false) {
