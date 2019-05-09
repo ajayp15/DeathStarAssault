@@ -4,8 +4,8 @@
 */
 
 function Scene() {
-	this.sceneWidth = window.innerWidth - windowOffset;
-	this.sceneHeight = window.innerHeight - windowOffset;
+	this.sceneWidth = window.innerWidth;
+	this.sceneHeight = window.innerHeight;
 
 	this.scene = new THREE.Scene(); // the 3d scene
 	this.scene.fog = new THREE.FogExp2( 0xffffff, 0.05);
@@ -25,9 +25,9 @@ function Scene() {
 	this.renderer.setSize( this.sceneWidth, this.sceneHeight );
 
 	// add the light in the scene
-  var hemisphereLight = new THREE.HemisphereLight(0xfffafa,0x000000, .9)
+  /*var hemisphereLight = new THREE.HemisphereLight(0xfffafa,0x000000, .9)
 	this.scene.add(hemisphereLight);
-	
+
 	var sun = new THREE.DirectionalLight( 0xcdc1c5, 0.9);
 	sun.position.set( 3,6,-7 );
 	sun.castShadow = true;
@@ -36,7 +36,12 @@ function Scene() {
 
 	sun.shadow.camera.near = 0.5;
 	sun.shadow.camera.far = 500;
-	this.scene.add(sun);
+	this.sun = sun;
+
+	this.scene.add(sun);*/
+
+	this.light = new THREE.DirectionalLight( 0xffffff, 0.8 );
+	this.scene.add( this.light );
 
   this.addMesh = function(mesh, lookAt = false) {
     this.scene.add(mesh);
@@ -44,17 +49,22 @@ function Scene() {
       this.camera.lookAt(mesh.position)
     }
 	}
-	
+
   this.removeMesh = function(mesh) {
     mesh.visible = false
     this.scene.remove(mesh)
 	}
-	
-	this.handleCameraMovement = function(dx = 0, dy = 0, dz = 0, planePos) {
+
+	this.handleCameraMovement = function(dx, dy, dz, planePos) {
 		// add some sort of small drift to the camera to reflect plane movement
 		this.camera.position.x += dx * cameraDrift
 		this.camera.position.y += dy * cameraDrift
 		this.camera.position.z += dz * cameraDrift
+
+		/*this.camera.position.x = planeMesh.position.x;
+		this.camera.position.y = planeMesh.position.y + 0.5;
+		this.camera.rotation.x = planeMesh.rotation.x / 3.0;
+		this.camera.rotation.z = planeMesh.rotation.z / 3.0;*/
 
 		// clamp camera movement as well (based on if the plane is clamped)
 		if (Math.abs(planePos.x + dx) >= 1) {
