@@ -1,6 +1,6 @@
 
 function Environment() {
-  var skyGeo = new THREE.SphereGeometry(1000, 25, 25);
+  var skyGeo = new THREE.SphereGeometry(10000, 25, 25);
   var loader  = new THREE.TextureLoader(),
   texture = loader.load( "images/background.jpg" );
   var material = new THREE.MeshPhongMaterial({

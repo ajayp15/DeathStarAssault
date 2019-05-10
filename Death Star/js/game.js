@@ -25,18 +25,25 @@ function setup(){
 	scene = new Scene()
 
 	var environment = new Environment();
-	scene.addMesh(environment.mesh);
+	scene.addObj(environment.mesh);
 
 	var deathstar_position = new THREE.Vector3(0, 0, 0);
 	deathstar = new Deathstar(
-									deathstar_radius,
-									deathstar_position,
+									deathstar_plane_size,
 									deathstar_turret_count,
 									deathstar_small_structure_count);
-	scene.addMesh(deathstar.mesh, true);
+	scene.addObj(deathstar.mesh, true);
 
-	var ship_position = new THREE.Vector3(0, 0, deathstar_radius + altitude);
+	var ship_position = new THREE.Vector3(0, altitude, 0);
 	ship = new Ship(scene, ship_position);
+
+	var ambient = new THREE.AmbientLight( 0xffffff, 0.3 );
+	scene.addObj( ambient );
+
+	var directional = new THREE.DirectionalLight( 0xffffff, 1);
+	directional.position.set(3000, 3000, 3000);
+	directional.castShadow = true;
+	scene.addObj( directional );
 
 	document.body.appendChild(scene.renderer.domElement)
 
