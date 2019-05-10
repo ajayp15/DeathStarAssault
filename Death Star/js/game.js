@@ -1,5 +1,5 @@
 
-var altitude = 2;
+var altitude = 5;
 
 var scene;
 var ship;
@@ -28,12 +28,15 @@ function setup(){
 	scene.addMesh(environment.mesh);
 
 	var deathstar_position = new THREE.Vector3(0, 0, 0);
-	deathstar = new Deathstar(deathstar_radius, deathstar_position, deathstar_turret_count);
+	deathstar = new Deathstar(
+									deathstar_radius,
+									deathstar_position,
+									deathstar_turret_count,
+									deathstar_small_structure_count);
 	scene.addMesh(deathstar.mesh, true);
 
 	var ship_position = new THREE.Vector3(0, 0, deathstar_radius + altitude);
-	ship = new Ship(ship_position);
-	scene.addMesh(ship.mesh);
+	ship = new Ship(scene, ship_position);
 
 	document.body.appendChild(scene.renderer.domElement)
 
