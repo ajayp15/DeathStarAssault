@@ -5,13 +5,18 @@
 */
 
 function Ship(scene, position) {
-    this.shots = []
+    this.lasers = []
+
+    this.velocity = new THREE.Vector3()
 
     this.rollAngle = 0;
     this.yawAngle = 0;
     this.pitchAngle = 0;
 
     this.shipLoaded = false;
+
+    this.laserClock = new THREE.Clock();
+    this.laserClock.start();
 
     var loader = new THREE.GLTFLoader();
 
@@ -43,12 +48,29 @@ function Ship(scene, position) {
     );
 
     this.fireLasers = function() {
-
+      if (this.laserClock.getElapsedTime() < shipWeaponMinimumTimeDelay) {
+        return
+      }
+      this.laserClock.start();
+      var laser = new Laser(this.mesh.position, this.velocity.clone().multiplyScalar(5), 0xff2222);
+      scene.addObj(laser.mesh);
+      this.lasers.push(laser);
     }
 
     this.update = function(dt, trackingCamera) {
       if (this.shipLoaded == false) {
         return;
+      }
+
+      // update any laser positions
+      for (var i = 0; i < this.lasers.length; ++i) {
+        this.lasers[i].update(dt);
+      }
+      for (var i = this.lasers.length - 1; i >= 0; --i) {
+        if (this.lasers[i].alive == false) {
+          scene.removeObj(this.lasers[i].mesh)
+          this.lasers.splice(i, 1)
+        }
       }
 
       // update angles & rotation from user inputs
@@ -78,6 +100,8 @@ function Ship(scene, position) {
       var vx = shipVelocity * Math.cos(this.pitchAngle) * Math.sin(this.yawAngle)
       var vy = shipVelocity * Math.sin(this.pitchAngle);
       var vz = shipVelocity * Math.cos(this.pitchAngle) * Math.cos(this.yawAngle)
+
+      this.velocity.set(vx, vy, vz);
 
       this.mesh.rotation.x = 0
       this.mesh.rotation.y = 0

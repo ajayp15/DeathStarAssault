@@ -36,7 +36,7 @@ function Scene() {
 	}
 
   this.removeObj = function(obj) {
-    mesh.visible = false
+    obj.visible = false
     this.scene.remove(obj)
 	}
 }

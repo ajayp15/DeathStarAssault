@@ -25,6 +25,7 @@ var shipPitchMaximumAngle = 70 * 3.14 / 180
 var shipMinimumAltitude = 4.5
 var shipMaximumAltitude = 200
 var shipMaximumPlaneCoord = 2500
+var shipWeaponMinimumTimeDelay = 0.1
 
 var SPACE = 32
 var LEFT = 37
