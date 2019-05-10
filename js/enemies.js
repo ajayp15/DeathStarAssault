@@ -171,14 +171,33 @@ function Enemies(scene, plane) {
     }
 
     // when being shot at
-    this.handleLaserCollisions = function(shotsFromPlane) {
+    this.handleLaserCollisions = function() {
+        var shotsFromPlane = this.plane.shots
+        var shotsMissed = [] // return the shots that didn't hit anything, set plane shots buffer to that
         for (var i = 0; i < shotsFromPlane.length; i++) {
+            var hitShip = false
             for (var j = 0; j < this.enemies.length; j++) {
                 if (this.enemies[j].checkIfCollided(shotsFromPlane[i])) {
-                    console.log("ship hit")
+                    hitShip = true
+
+                    // explode the enemy and remove it from the scene
+                    // (but don't actually remove it from the scene, just "explode" it
+                    // and move it back to the far plane --> is this going to cause
+                    // inefficiencies with things being generated in bulks sometimes?)
+                    this.enemies[j].mesh.position.z = farPlane
+                    this.enemies[j].mesh.position.x = (Math.random() * 2 - 1) * 1.5
+                    this.enemies[j].mesh.position.y = Math.random() * (4 - 1) + 2
                 }
             }
+
+            if (!hitShip) {
+                shotsMissed.push(shotsFromPlane[i])
+            } else {
+                this.scene.removeMesh(shotsFromPlane[i])
+            }
         }
+
+        this.plane.shots = shotsMissed
 
     }
 }

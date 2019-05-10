@@ -71,9 +71,9 @@ function Plane(scene, walls, ground) {
       var shotsToKeep = []
       for (var i = 0; i < this.shots.length; i++) {
         this.shots[i].translateY(-5 * delta) // y because rotated around x
-
+        
         // check if it has gone out of scene, remove it then
-        if (this.shots[i].y > farPlane) {
+        if (this.shots[i].position.z < farPlane / 16) {  // arbitrary distance to stop them at
           this.scene.removeMesh(this.shots[i])
         } else {
           shotsToKeep.push(this.shots[i])
