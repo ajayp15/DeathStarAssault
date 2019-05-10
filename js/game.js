@@ -53,7 +53,7 @@ function setup(){
 	walls = new Walls(scene)
 	environment = new Environment();
 	plane = new Plane(scene, walls, ground)
-	enemies = new Enemies(scene)
+	enemies = new Enemies(scene, plane)
 	// obstacles = new Obstacles(scene, ground, plane, walls)
 
 	scene.addMesh(ground.mesh)
@@ -104,6 +104,8 @@ function update() {
 	// obstacles.handleObstacleMovement(delta);
 	// obstacles.doObjectLogic();
 	enemies.handleEnemyMovements(delta)
+	enemies.handleLaserCollisions(plane.shots)
+	// enemies.handleLaserMovements(delta)
 	walls.handleWallMovements(delta)
 	ground.handleGroundMovements(delta)
 	plane.handlePlaneMovement(planeVelocityX, planeVelocityY, delta);

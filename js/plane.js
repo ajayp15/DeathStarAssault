@@ -54,21 +54,33 @@ function Plane(scene, walls, ground) {
     }
 
     this.shootLaser = function() {
-      let plasmaBall = new THREE.Mesh(new THREE.SphereGeometry(0.1, 8, 4), new THREE.MeshBasicMaterial({
-        color: "aqua"
-      }));
-      var wpVector = new THREE.Vector3()
-      this.mesh.getWorldPosition(wpVector)
-      plasmaBall.position.copy(wpVector); // start position - the tip of the weapon
-      plasmaBall.quaternion.copy(this.scene.camera.quaternion); // apply camera's quaternion
-      this.scene.addMesh(plasmaBall);
-      this.shots.push(plasmaBall);
+      var laserGeometry = new THREE.CylinderGeometry(0.01, 0.01, 1, 4)
+      var laserMaterial = new THREE.MeshLambertMaterial({
+        color: 0x1bd127,
+      })
+      let laser = new THREE.Mesh(laserGeometry, laserMaterial);
+      laser.rotation.x = Math.PI / 2
+
+      var wpVector = this.mesh.position.clone()
+      laser.position.copy(wpVector); // start position - the tip of the weapon
+      this.scene.addMesh(laser);
+      this.shots.push(laser);
     }
 
     this.handleLaserMovements = function(delta) {
-      this.shots.forEach(b => {
-        b.translateZ(-5 * delta)
-      })
+      var shotsToKeep = []
+      for (var i = 0; i < this.shots.length; i++) {
+        this.shots[i].translateY(-5 * delta) // y because rotated around x
+
+        // check if it has gone out of scene, remove it then
+        if (this.shots[i].y > farPlane) {
+          this.scene.removeMesh(this.shots[i])
+        } else {
+          shotsToKeep.push(this.shots[i])
+        }
+      }
+
+      this.shots = shotsToKeep
     }
 }
 

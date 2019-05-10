@@ -2,25 +2,86 @@
     This file will define the enemy tie-fighters that will spring into action and start shooting at the player.
 */
 
+var fighterRadius = obstaclesRadius / 1.3
+var wingRadius = obstaclesRadius * 1.5
+
 // singular enemy
-function Enemy() {
+function Enemy(scene) {
+    this.scene = scene
     this.mesh = createEnemy()
+    this.shots = []
+
+    this.checkIfCollided = function(shape) {
+        var boundingShape = new THREE.Box3().setFromObject(shape)
+
+        // first check if it hit the cockpit
+        var boundingSphere = new THREE.Sphere(this.mesh.position, fighterRadius)
+
+        if (boundingShape.intersectsSphere(boundingSphere)) {
+            return true
+        }
+
+        // next check if it hit the wings
+        // TODO: fix this: seems like it is partially working
+        // var boundingBox1 = new THREE.Box3()
+        // var boundingBox2 = new THREE.Box3()
+        // boundingBox1.min = new THREE.Vector3(-0.1, -wingRadius, -wingRadius)
+        // boundingBox1.max = new THREE.Vector3(0.1, wingRadius, wingRadius)
+        // boundingBox2.min = new THREE.Vector3(-0.1, -wingRadius, -wingRadius)
+        // boundingBox2.max = new THREE.Vector3(0.1, wingRadius, wingRadius)
+        // var offset1 = this.mesh.position.clone()
+        // offset1.x -= fighterRadius
+        // var offset2 = this.mesh.position.clone()
+        // offset2.x += fighterRadius
+        // boundingBox1 = boundingBox1.translate(offset1)
+        // boundingBox2 = boundingBox2.translate(offset2)
+        // var mat4 = new THREE.Matrix4()
+        // mat4.extractRotation (this.mesh.matrixWorld)
+        // boundingBox1.applyMatrix4(mat4)
+        // boundingBox2.applyMatrix4(mat4)
+
+
+        // if (boundingShape.intersectsBox(boundingBox1)) {
+        //     return true
+        // }
+        // if (boundingShape.intersectsBox(boundingBox2)) {
+        //     return true
+        // }
+
+        return false
+    }
+
+    this.shootAtTarget = function(target) {
+        let plasmaBall = new THREE.Mesh(new THREE.SphereGeometry(0.1, 8, 4), new THREE.MeshBasicMaterial({
+            color: "aqua"
+        }));
+        plasmaBall.position = this.mesh.position.clone()
+        this.scene.addMesh(plasmaBall);
+        var direction = new THREE.Vector3().subVectors(target.mesh.position, this.mesh.position).normalize()
+        this.shots.push([plasmaBall, direction]);
+    }
+    
+    this.handleLaserMovements = function(delta) {
+        for (var i = 0; i < this.shots.length; i++) {
+            var dir = this.shots[i][1]
+            this.shots[i][0].translateOnAxis(dir.clone(), 5 * delta)
+        }
+    }
 }
 
 function createEnemy() {
-    var fighterRadius = obstaclesRadius / 1.3
     var sphereGeometry = new THREE.SphereGeometry(fighterRadius, 8, 5) // make it as low resolution as possible, to optimize
     var bodyMaterial = new THREE.MeshLambertMaterial({color: 0x393f49, side : THREE.DoubleSide})
     var body = new THREE.Mesh(sphereGeometry, bodyMaterial);
 
     // create wings now (just as circles) (6 segments, just like in real tie fighter)
-    var circleGeometry1 = new THREE.CircleGeometry(obstaclesRadius * 1.5, 6)
+    var circleGeometry1 = new THREE.CircleGeometry(wingRadius, 6)
     var wingMaterial1 = new THREE.MeshLambertMaterial({color: 0x151616, side : THREE.DoubleSide})
     var wing1 = new THREE.Mesh(circleGeometry1, wingMaterial1)
     wing1.position.x = -fighterRadius
     wing1.rotation.y = Math.PI / 2.1
 
-    var circleGeometry2 = new THREE.CircleGeometry(obstaclesRadius * 1.5, 6)
+    var circleGeometry2 = new THREE.CircleGeometry(wingRadius, 6)
     var wingMaterial2 = new THREE.MeshLambertMaterial({color: 0x151616, side : THREE.DoubleSide})
     var wing2 = new THREE.Mesh(circleGeometry2, wingMaterial2)
     wing2.position.x = fighterRadius
@@ -37,7 +98,7 @@ function createEnemy() {
     var bodyWire = new THREE.Mesh(sphereGeometryWire, bodyMaterialWire);
 
     // create wings now (just as circles) (6 segments, just like in real tie fighter)
-    var circleGeometry1Wire = new THREE.CircleGeometry(obstaclesRadius * 1.5, 6)
+    var circleGeometry1Wire = new THREE.CircleGeometry(wingRadius, 6)
     var wingMaterial1Wire = new THREE.MeshLambertMaterial({color: 0x393f49, 
         side : THREE.DoubleSide,
         wireframe: true})
@@ -45,7 +106,7 @@ function createEnemy() {
     wing1Wire.position.x = -fighterRadius
     wing1Wire.rotation.y = Math.PI / 2.1
 
-    var circleGeometry2Wire = new THREE.CircleGeometry(obstaclesRadius * 1.5, 6)
+    var circleGeometry2Wire = new THREE.CircleGeometry(wingRadius, 6)
     var wingMaterial2Wire = new THREE.MeshLambertMaterial({color: 0x393f49, 
         side : THREE.DoubleSide,
         wireframe: true})
@@ -65,7 +126,7 @@ function createEnemy() {
     obj.add(body)
     obj.add(wing1)
     obj.add(wing2)
-    obj.add(bodyWire)
+    // obj.add(bodyWire)
     obj.add(wing1Wire)
     obj.add(wing2Wire)
     obj.add(cockpit)
@@ -76,8 +137,9 @@ function createEnemy() {
 }
 
 // all enemies that are in-scene
-function Enemies(scene) {
+function Enemies(scene, plane) {
     this.scene = scene
+    this.plane = plane
     this.enemies = createEnemies()
 
     this.handleEnemyMovements = function(delta) {
@@ -92,7 +154,32 @@ function Enemies(scene) {
                 this.enemies[i].mesh.position.x = (Math.random() * 2 - 1) * 1.5
                 this.enemies[i].mesh.position.y = Math.random() * (4 - 1) + 2
             }
+
+            // also check if the player has hit any of them
+            var shape = this.plane.mesh
+            if (this.enemies[i].checkIfCollided(shape)) {
+                hasCollided = true
+                console.log("hit")
+            }
         }
+    }
+
+    this.handleLaserMovements = function(delta) {
+        for (var i = 0; i < this.enemies.length; i++) {
+            this.enemies[i].handleLaserMovements(delta)
+        }
+    }
+
+    // when being shot at
+    this.handleLaserCollisions = function(shotsFromPlane) {
+        for (var i = 0; i < shotsFromPlane.length; i++) {
+            for (var j = 0; j < this.enemies.length; j++) {
+                if (this.enemies[j].checkIfCollided(shotsFromPlane[i])) {
+                    console.log("ship hit")
+                }
+            }
+        }
+
     }
 }
 
@@ -101,7 +188,7 @@ function createEnemies() {
     var enemies = []
 
     for (var i = 1; i <= numEnemies; i++) {
-        enemy = new Enemy()
+        enemy = new Enemy(this.scene)
         enemies.push(enemy)
 
         enemy.mesh.position.x = (Math.random() * 2 - 1) * 2
