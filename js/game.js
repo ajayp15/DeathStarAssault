@@ -6,6 +6,7 @@ var ground
 var plane
 var obstacles
 var environment
+var walls
 
 /*
 	Game Constants
@@ -47,14 +48,15 @@ function setup(){
 	clock.start()
 
 	scene = new Scene()
-	ground = new Ground(scene.sceneWidth, floorHeight, scene.light) // TODO: change these arbitrary values?
+	ground = new Ground(scene) // TODO: change these arbitrary values?
+	walls = new Walls(scene)
 	environment = new Environment();
-	plane = new Plane(scene)
+	plane = new Plane(scene, walls, ground)
 	obstacles = new Obstacles(scene, ground, plane)
 
 	scene.addMesh(ground.mesh)
 	scene.addMesh(plane.mesh, false)
-	scene.addMesh(environment.mesh)
+	// scene.addMesh(environment.mesh)
 
 	// generate initial obstacles
 	// obstacles.generateInitialObstacles()
@@ -97,23 +99,19 @@ function animate(){
 function update() {
 	var delta = clock.getDelta() // use this to adjust for variable frame rates
 
-	obstacles.handleObstacleMovement(delta);
-	obstacles.doObjectLogic();
+	// obstacles.handleObstacleMovement(delta);
+	// obstacles.doObjectLogic();
 	plane.handlePlaneMovement(planeVelocityX, planeVelocityY, delta);
 	plane.handleLaserMovements(delta);
 	// ground.updateGroundEvolution(delta);
-	scene.handleCameraMovement(planeVelocityX, planeVelocityY, 0, plane.mesh.position, delta);
+	scene.handleCameraMovement(planeVelocityX, planeVelocityY, 0, plane, delta, walls, ground);
 
-	if(clock.getElapsedTime() > objectGenerationTime){
-		clock.start(); // restart the clock
-		obstacles.addBasicObstacle(true)
-
-		// add score if player still hasn't collided with anything
-		if(!hasCollided){
-			score += Math.ceil(objectGenerationTime);
-			scoreText.innerHTML="Score: " + score.toString();
-		}
+	// add score if player still hasn't collided with anything
+	if(!hasCollided) {
+		score += Math.ceil(objectGenerationTime);
+		scoreText.innerHTML="Score: " + score.toString();
 	}
+
 }
 
 function render(){

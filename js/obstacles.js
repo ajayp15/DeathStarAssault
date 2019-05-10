@@ -34,10 +34,9 @@ function Obstacles(scene, ground, plane) {
         obj.castShadow = true
 
         return obj;
-        // return mesh
     }
 
-    this.addBasicObstacle = function (startAtFarPlane) {
+    this.addBasicObstacle = function (startAtFarPlane = true) {
         if (this.basicObstacles.length >= maxBasicObstacles) {
             // TODO: this seems to be printing out at some periodicity, why?
             // console.log("hit max, size is: " + this.basicObstacles.length)
@@ -51,15 +50,8 @@ function Obstacles(scene, ground, plane) {
         // x = left and right
         // y = up and down
         // z = into and out of screen
-        // ADDITION: generate near the plane, so use plane's position as "center" of world (in x and y)
-        // and also generate blocks sufficiently away from plane that moving plane will still
-        // be difficult into "blank" areas of screen
-        // var x = (2 * Math.random() - 1) * (center); // arbitrary values for now
-        // var y = Math.random() * (center * 2); // go from [0, center * 2] (0.5? to not cut off blocks)
-        // var z = (Math.random() - 1) * 15;
-        var planePos = this.plane.mesh.position
-        var x = planePos.x + (2 * Math.random() - 1) * xFar
-        var y = planePos.y + (2 * Math.random() - 1) * yFar
+        var x = (2 * Math.random() - 1) * xFar
+        var y = yFar + (2 * Math.random() - 1) * yFar
         var z = 0
 
         if (startAtFarPlane) { // if they should start far away from the player (generated)
@@ -84,9 +76,8 @@ function Obstacles(scene, ground, plane) {
             var obstacle = this.createBasicObstacle();
             obstacle.visible = true
 
-            var planePos = this.plane.mesh.position
-            var x = planePos.x + (2 * Math.random() - 1) * xFar
-            var y = planePos.y + (2 * Math.random() - 1) * yFar
+            var x = (2 * Math.random() - 1) * xFar
+            var y = yFar + (2 * Math.random() - 1) * yFar
 
             // range from [farPlane, farPlane * 2 - nearPlane] because we want a continuous
             // spread over such a range
@@ -103,50 +94,39 @@ function Obstacles(scene, ground, plane) {
     // This removes objects that have gone out of view, and also checks if the
     // plane is in contact with the obstacles
     this.doObjectLogic = function () {
-        var objToRemove = []
         var pos = new THREE.Vector3()
-
-        // need to use reference in this function... javascript is not picking it up in inner funcs
         var basicObstaclesRef = this.basicObstacles
+        var obstaclesToKeep = []
+        var obstaclesRemovedCount = 0
 
-        basicObstaclesRef.forEach(function (element, index) {
+        // check if any objects are out of view, or if collided with anything
+        for (var i = 0; i < basicObstaclesRef.length; i++) {
+            var element = basicObstaclesRef[i]
             pos.setFromMatrixPosition(element.matrixWorld);
+            var outOfView = (pos.z > nearPlane)
 
-            // check if this has gone out of view zone
-            // TODO: since the plane will be moving, this needs to be done for not only
-            // the z planes, but also the x planes
-            var outOfViewZ = (pos.z > nearPlane)
-
-            // consider something out of view in the x and y planes if it has moved
-            // sufficiently out of view that moving it out and back into view won't
-            // easily despawn it, making game too easy (add some leeway for keeping things)
-            // in memory
-            var planePos = this.plane.mesh.position
-            var outOfViewX = Math.abs(planePos.x - pos.x) >= xFar
-            var outOfViewY = Math.abs(planePos.y - pos.y) >= yFar
-
-            var outOfView = outOfViewZ || outOfViewX || outOfViewY
-            if (outOfView && element.visible) {
-                objToRemove.push(element)
+            if (outOfView) {
+                // remove if it is out of view
+                this.scene.removeMesh(element)
+                obstaclesRemovedCount += 1
             } else {
                 // check if collision occurred with character
-                // var collided = (pos.distanceTo(this.plane.mesh.position) <= 0.6)
                 var collided = checkIfCollidedCheap(this.plane.mesh, element, "box", obstaclesType)
                 if (collided) {
-                    hasCollided = true;
+                    hasCollided = true
                 }
+                
+                obstaclesToKeep.push(element)
             }
-        })
+        }
 
-        // remove all necessary objects
-        objToRemove.forEach(function (element, index) {
-            var indexInBasicObstacles = basicObstaclesRef.indexOf(element)
-            basicObstaclesRef.splice(indexInBasicObstacles, 1); // remove it
+        this.basicObstacles = obstaclesToKeep
 
-            // remove from the scene as well (remove from ground, more aptly)
-            // this.scene.removeMesh(element)
-            this.scene.removeMesh(element)
-        })
+        // add back in the appropriate amount of obstacles, according to how many
+        // were removed (start them at back wall again)
+        for (var i = 0; i < obstaclesRemovedCount; i++) {
+            this.addBasicObstacle(true)
+        }
     }
 
     this.handleObstacleMovement = function (delta) {

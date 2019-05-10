@@ -21,11 +21,11 @@ function Scene() {
 	this.renderer = new THREE.WebGLRenderer({alpha:true}); // allow somewhat transparent items (alpha buffer)
 	this.renderer.setClearColor(0xfffafa, 1);
 	this.renderer.shadowMap.enabled = true; //enable shadow
-	// this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+	this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 	this.renderer.setSize( this.sceneWidth, this.sceneHeight );
 
 	// add the light in the scene
-  /*var hemisphereLight = new THREE.HemisphereLight(0xfffafa,0x000000, .9)
+  var hemisphereLight = new THREE.HemisphereLight(0xfffafa,0x000000, .9)
 	this.scene.add(hemisphereLight);
 
 	var sun = new THREE.DirectionalLight( 0xcdc1c5, 0.9);
@@ -38,13 +38,13 @@ function Scene() {
 	sun.shadow.camera.far = 500;
 	this.sun = sun;
 
-	this.scene.add(sun);*/
+	this.scene.add(sun);
 
-	var ambient = new THREE.AmbientLight( 0xffffff, 1 );
-	this.scene.add( ambient );
+	// var ambient = new THREE.AmbientLight( 0xffffff, 1 );
+	// this.scene.add( ambient );
 
-	this.light = new THREE.DirectionalLight( 0xffffff, 1 );
-	this.scene.add( this.light );
+	// this.light = new THREE.DirectionalLight( 0xffffff, 1 );
+	// this.scene.add( this.light );
 
   this.addMesh = function(mesh, lookAt = false) {
     this.scene.add(mesh);
@@ -58,23 +58,29 @@ function Scene() {
     this.scene.remove(mesh)
 	}
 
-	this.handleCameraMovement = function(dx, dy, dz, planePos, delta) {
+	this.handleCameraMovement = function(dx, dy, dz, plane, delta, walls, ground) {
 		// add some sort of small drift to the camera to reflect plane movement
 		this.camera.position.x += dx * cameraDrift * delta
 		this.camera.position.y += dy * cameraDrift * delta
 		this.camera.position.z += dz * cameraDrift * delta
 
-		/*this.camera.position.x = planeMesh.position.x;
-		this.camera.position.y = planeMesh.position.y + 0.5;
-		this.camera.rotation.x = planeMesh.rotation.x / 3.0;
-		this.camera.rotation.z = planeMesh.rotation.z / 3.0;*/
+		// clamp the motion, compute the new plane's coords first
+		var planePos = plane.mesh.position
+		var newPlanePos = new THREE.Vector3(planePos.x + dx * delta, planePos.y + dy * delta, planePos.z)
+		var newPlaneX = newPlanePos.x
+		var newPlaneY = newPlanePos.y
 
-		// clamp camera movement as well (based on if the plane is clamped)
-		// if (Math.abs(planePos.x + dx) >= 1) {
-		// 	this.camera.position.x -= dx * cameraDrift // undo the movement
-		// }
-		// if ((planePos.y + dy) >= 4 || (planePos.y + dy) <= 1.8) {
-		// 	this.camera.position.y -= dy * cameraDrift
-		// }
+		var screenCoords = newPlanePos.project(this.camera)
+		screenCoords.y = -(screenCoords.y * (this.sceneHeight / 2)) + this.sceneHeight/2
+
+		// clamp the motion, to prevent it from going too far out from the screen
+		if (newPlaneX + wallsLeeway >= walls.rightWallX 
+				|| newPlaneX - wallsLeeway <= walls.leftWallX) {
+			this.camera.position.x -= dx * cameraDrift * delta // undo the movement
+		}
+		if (screenCoords.y <= ceilingLeeway
+			|| newPlaneY - groundLeeway <= ground.groundTop) { // arbitrary values
+			this.camera.position.y -= dy * cameraDrift * delta
+		}
 	}
 }

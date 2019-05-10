@@ -4,9 +4,11 @@
     animate it, etc.
 */
 
-function Plane(scene) {
+function Plane(scene, walls, ground) {
     this.mesh = createPlaneMesh()
     this.scene = scene
+    this.walls = walls
+    this.ground = ground
     this.shots = []
 
     this.handlePlaneMovement = function (planeVelocityX, planeVelocityY, delta) {
@@ -14,16 +16,19 @@ function Plane(scene) {
         this.mesh.position.y += planeVelocityY * delta
 
         // clamp the motion, to prevent it from going too far out from the screen
-        // TODO: this is arbitrary for now - you can calculate the range of x and y of 
-        // screen using FOV and aspect of the camera (which give angles, etc.)
-        // var projector = new THREE.Projector()
-        // projector.projectVector(vector.setFromMatrixPosition(this.mesh.position.))
-        // if (Math.abs(this.mesh.position.x) >= scene.screenWidth / 2) {
-        //   this.mesh.position.x -= planeVelocityX // undo the movement
-        // }
-        // if (this.mesh.position.y >= 4.5 || this.mesh.position.y <= 1.25) { // arbitrary values
-        //   this.mesh.position.y -= planeVelocityY
-        // }
+        // for y coords, compute if the plane is about to go off the screen by projecting
+        // its position to screen coordintes
+        var screenCoords = this.mesh.position.clone().project(this.scene.camera)
+        screenCoords.y = -(screenCoords.y * (this.scene.sceneHeight / 2)) + this.scene.sceneHeight/2
+
+        if (this.mesh.position.x + wallsLeeway >= this.walls.rightWallX 
+            || this.mesh.position.x - wallsLeeway <= this.walls.leftWallX) {
+          this.mesh.position.x -= planeVelocityX * delta // undo the movement
+        }
+        if (screenCoords.y <= ceilingLeeway // indexed from 0 at ceiling
+          || this.mesh.position.y - groundLeeway <= this.ground.groundTop) { // arbitrary values
+          this.mesh.position.y -= planeVelocityY * delta
+        }
 
         // handle x movement
         if (planeVelocityX < 0) {

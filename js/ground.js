@@ -1,20 +1,38 @@
-function Ground(w, h, l) {
-  this.mesh = createGround(w, h, l);
+function Ground(scene) {
+  this.scene = scene
+  this.mesh = createGround();
 
   this.updateGroundEvolution = function(dt) {
     this.mesh.material.uniforms[ 'time' ].value += dt;
   }
 
-  this.addMeshToGround = function(m) {
-    this.mesh.add(m);
+  this.computeGroundTop = function() {
+    this.mesh.geometry.computeBoundingBox()
+    return this.mesh.geometry.boundingBox.max.y + this.mesh.position.y
   }
 
-  this.removeMeshFromGround = function(m) {
-    this.mesh.remove(m);
-  }
+  this.groundTop = this.computeGroundTop()
 }
 
-function createGround(width, height, light) {
+function createGround() {
+  var groundWidth = 10
+  var groundHeight = 5
+  var groundDepth = 60
+
+  var geometry = new THREE.BoxGeometry(groundWidth, groundHeight, groundDepth)
+  var material = new THREE.MeshBasicMaterial({ color: 0x606670 });
+  var mesh = new THREE.Mesh( geometry, material );
+
+  mesh.position.y = -2
+
+  mesh.receiveShadow = true;
+  mesh.castShadow = true;
+
+  return mesh
+}
+
+// not being used as of now
+function waterGeometry(width, height, light) {
   var waterGeometry = new THREE.PlaneBufferGeometry( 10000, 10000 );
 	water = new THREE.Water(
 		waterGeometry,
@@ -32,7 +50,6 @@ function createGround(width, height, light) {
 			fog: scene.fog !== undefined
 		}
 	);
-	water.rotation.x = - Math.PI / 2;
-  // mesh.visible = false
-  return water;
+  water.rotation.x = - Math.PI / 2;
+  return water
 }

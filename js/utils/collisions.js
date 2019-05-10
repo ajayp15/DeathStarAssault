@@ -50,24 +50,4 @@ function checkIfCollidedCheap(object1, object2, object1Type, object2Type) {
     } else {
         return false // default case
     }
-
-
-    // for (var i = 0; i < object1.children.length; i++) {
-    //     // var box1 = object1.children[i]
-    //     // var bounding1 = box1.geometry.boundingBox.clone();
-    //     // bounding1.applyMatrix4(box1.matrixWorld);
-    //     var bounding1 = new THREE.Box3().setFromObject(object1) // --> this takes rotations of mesh into account (maybe tighter box)
-    //     for (var j = 0; j < object2.children.length; j++) {
-    //         var box2 = object2.children[j]
-    //         var bounding2 = box2.geometry.boundingBox.clone();
-    //         bounding2.applyMatrix4(box2.matrixWorld);
-
-    //         if (bounding1.intersectsBox(bounding2)) {
-    //             return true;
-    //         }
-    //     }
-    // }
-
-    // debugger
-    return false
 }
