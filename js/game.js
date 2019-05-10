@@ -113,7 +113,6 @@ function update() {
 	ground.handleGroundMovements(delta)
 	plane.handlePlaneMovement(planeVelocityX, planeVelocityY, delta);
 	plane.handleLaserMovements(delta);
-	// ground.updateGroundEvolution(delta);
 	scene.handleCameraMovement(planeVelocityX, planeVelocityY, 0, plane, delta, walls, ground);
 
 	// add score if player still hasn't collided with anything
