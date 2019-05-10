@@ -20,6 +20,7 @@ function Walls(scene) {
 
     this.leftWallX = this.computeWallBoundary("left")
     this.rightWallX = this.computeWallBoundary("right")
+    this.backMesh = createBackWall()
 }
 
 function createWall(side) {
@@ -45,5 +46,25 @@ function createWall(side) {
 
     this.scene.addMesh(wall)
 
+    return wall
+}
+
+function createBackWall() {
+    var wallWidth = 10
+    var wallHeight = 30
+    var wallDepth = 5
+
+    var geometry = new THREE.BoxGeometry(wallWidth, wallHeight, wallDepth)
+    var material = new THREE.MeshPhongMaterial({ color: 0x606670 , side: THREE.DoubleSide});
+
+    var wall = new THREE.Mesh(geometry, material);
+    
+    wall.position.z = -60; // as far as side walls go
+
+    wall.receiveShadow = true;
+    wall.castShadow = true;
+
+    // this.scene.addMesh(wall)
+    // console.log("hi")
     return wall
 }

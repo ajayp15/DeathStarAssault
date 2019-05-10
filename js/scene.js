@@ -42,10 +42,10 @@ function Scene() {
 
 	// this.scene.add(sun);
 	var SHADOW_MAP_WIDTH = 2048, SHADOW_MAP_HEIGHT = 1024;
-	// var ambient = new THREE.AmbientLight( 0xffffff, 1 );
-	// this.scene.add( ambient );
+	var ambient = new THREE.AmbientLight( 0xffffff, 0.5 );
+	this.scene.add( ambient );
 
-	var spotLight = new THREE.SpotLight( 0xffffff, 1, 0, Math.PI / 2 );
+	var spotLight = new THREE.SpotLight( 0xffffff, 1, 10, Math.PI / 2 );
 	spotLight.position.set( 0, 0, nearPlane );
 	spotLight.target.position.set( 0, center, planeInitZ);
 	// spotLight.castShadow = true;
@@ -57,7 +57,7 @@ function Scene() {
 	spotLight.shadow.camera.near = 0.5
 	spotLight.shadow.camera.far = 500
 
-	this.scene.add(spotLight)
+	// this.scene.add(spotLight)
 
   this.addMesh = function(mesh, lookAt = false) {
     this.scene.add(mesh);

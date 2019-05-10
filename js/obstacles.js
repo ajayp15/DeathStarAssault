@@ -9,6 +9,7 @@ function Obstacles(scene, ground, plane, walls) {
     this.ground = ground
     this.walls = walls
     this.basicObstacles = []
+    this.removed = 0
 
     this.createBasicObstacle = function (box = false) {
         var mesh;
@@ -75,7 +76,7 @@ function Obstacles(scene, ground, plane, walls) {
     // obstacles, randomly spread out (beyond the far plane), so as to give a
     // more continuous generation of blocks as they go out of scope of the screen
     this.generateInitialObstacles = function() {
-        for (var i = 0; i < maxBasicObstacles; i++) {
+        for (var i = 1; i <= maxBasicObstacles; i++) {
             var obstacle = this.createBasicObstacle();
             obstacle.visible = true
 
@@ -84,7 +85,8 @@ function Obstacles(scene, ground, plane, walls) {
             var y = (Math.random()) * yFar + groundLeeway
             // range from [farPlane, farPlane * 2 - nearPlane] because we want a continuous
             // spread over such a range
-            var z = farPlane + (Math.random()) * (farPlane - nearPlane);
+            // var z = farPlane + (Math.random()) * (farPlane - nearPlane);
+            var z = farPlane + (i / maxBasicObstacles) * (farPlane - nearPlane)
 
             obstacle.position.set(x, y, z)
 
@@ -105,31 +107,33 @@ function Obstacles(scene, ground, plane, walls) {
         // check if any objects are out of view, or if collided with anything
         for (var i = 0; i < basicObstaclesRef.length; i++) {
             var element = basicObstaclesRef[i]
-            pos.setFromMatrixPosition(element.matrixWorld);
+            var pos = element.position
             var outOfView = (pos.z > nearPlane)
 
             if (outOfView) {
-                // remove if it is out of view
-                this.scene.removeMesh(element)
-                obstaclesRemovedCount += 1
+                // don't remove it from the scene, but just set its position to 
+                // be at the far plane
+                this.basicObstacles[i].position.z = farPlane
+                this.removed += 1
+                console.log(this.removed)
             } else {
                 // check if collision occurred with character
                 var collided = checkIfCollidedCheap(this.plane.mesh, element, "box", obstaclesType)
                 if (collided) {
-                    hasCollided = true
+                    // hasCollided = true
                 }
                 
-                obstaclesToKeep.push(element)
+                // obstaclesToKeep.push(element)
             }
         }
 
-        this.basicObstacles = obstaclesToKeep
+        // this.basicObstacles = obstaclesToKeep
 
         // add back in the appropriate amount of obstacles, according to how many
         // were removed (start them at back wall again)
-        for (var i = 0; i < obstaclesRemovedCount; i++) {
-            this.addBasicObstacle(true)
-        }
+        // for (var i = 0; i < obstaclesRemovedCount; i++) {
+        //     this.addBasicObstacle(true)
+        // }
     }
 
     this.handleObstacleMovement = function (delta) {
