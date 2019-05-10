@@ -13,7 +13,7 @@ function Obstacles(scene, ground, plane) {
         var mesh;
         if (obstaclesType == "box") {
             var boxGeometry = new THREE.BoxGeometry(1, 1, 1);
-            var boxMaterial = new THREE.MeshStandardMaterial({ color: 0xffa500 });
+            var boxMaterial = new THREE.MeshPhongMaterial({ color: 0xffa500 , side: THREE.DoubleSide});
             mesh = new THREE.Mesh(boxGeometry, boxMaterial);
             mesh.position.y = 1
 
@@ -22,8 +22,9 @@ function Obstacles(scene, ground, plane) {
             // consider making this octahedron later -- just need to figure out the
             // collisions with that
             var sphereGeometry = new THREE.SphereGeometry(obstaclesRadius, 32, 32)
-            var material = new THREE.MeshStandardMaterial({color: 0xffa500})
+            var material = new THREE.MeshPhongMaterial({color: 0xffa500, side : THREE.DoubleSide})
             mesh = new THREE.Mesh(sphereGeometry, material);
+            // mesh.castShadow = true
             
             mesh.geometry.computeBoundingSphere()
         }
@@ -31,7 +32,7 @@ function Obstacles(scene, ground, plane) {
         var obj = new THREE.Object3D();
         obj.add(mesh);
 
-        obj.castShadow = true
+        // obj.castShadow = true
 
         return obj;
     }

@@ -8,7 +8,7 @@ function Scene() {
 	this.sceneHeight = window.innerHeight - windowOffset;
 
 	this.scene = new THREE.Scene(); // the 3d scene
-	//this.scene.fog = new THREE.FogExp2( 0xffffff, 0.05);
+	this.scene.fog = new THREE.FogExp2( 0x000000, 0.05);
 
 	// create camera
 	this.camera = new THREE.PerspectiveCamera( 55, window.innerWidth / window.innerHeight, 0.1, 20000 );//perspective camera
@@ -28,23 +28,36 @@ function Scene() {
   var hemisphereLight = new THREE.HemisphereLight(0xfffafa,0x000000, .9)
 	this.scene.add(hemisphereLight);
 
-	var sun = new THREE.DirectionalLight( 0xcdc1c5, 0.9);
-	sun.position.set( 3,6,-7 );
-	sun.castShadow = true;
-  sun.shadow.mapSize.width = 512;
-	sun.shadow.mapSize.height = 512;
+	// var sun = new THREE.DirectionalLight( 0xcdc1c5, 0.9);
+	// sun.position.set(0, 4, 1);
+	// sun.castShadow = true;
+	// this.scene.add(sun)
 
-	sun.shadow.camera.near = 0.5;
-	sun.shadow.camera.far = 500;
-	this.sun = sun;
+  // sun.shadow.mapSize.width = 2048;
+	// sun.shadow.mapSize.height = 1024;
 
-	this.scene.add(sun);
+	// sun.shadow.camera.near = 0;
+	// sun.shadow.camera.far = 1000;
+	// this.sun = sun;
 
+	// this.scene.add(sun);
+	var SHADOW_MAP_WIDTH = 2048, SHADOW_MAP_HEIGHT = 1024;
 	// var ambient = new THREE.AmbientLight( 0xffffff, 1 );
 	// this.scene.add( ambient );
 
-	// this.light = new THREE.DirectionalLight( 0xffffff, 1 );
-	// this.scene.add( this.light );
+	var spotLight = new THREE.SpotLight( 0xffffff, 1, 0, Math.PI / 2 );
+	spotLight.position.set( 0, 0, nearPlane );
+	spotLight.target.position.set( 0, center, planeInitZ);
+	// spotLight.castShadow = true;
+
+	spotLight.shadow = new THREE.LightShadow(  new THREE.PerspectiveCamera( 50, 1, 1200, 2500 ));
+	// spotLight.shadow.bias = 0.0001;
+	spotLight.shadow.mapSize.width = SHADOW_MAP_WIDTH;
+	spotLight.shadow.mapSize.height = SHADOW_MAP_HEIGHT;
+	spotLight.shadow.camera.near = 0.5
+	spotLight.shadow.camera.far = 500
+
+	this.scene.add(spotLight)
 
   this.addMesh = function(mesh, lookAt = false) {
     this.scene.add(mesh);

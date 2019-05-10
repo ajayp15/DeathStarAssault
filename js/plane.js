@@ -74,7 +74,7 @@ function Plane(scene, walls, ground) {
 
 function createPlaneMesh() {
     var bodyGeometry = new THREE.BoxGeometry(0.4, 0.1, 0.5)
-    var bodyMaterial = new THREE.MeshStandardMaterial({ color: 0xe5f2f2 })
+    var bodyMaterial = new THREE.MeshPhongMaterial({ color: 0xe5f2f2 , side: THREE.DoubleSide})
     var body = new THREE.Mesh(bodyGeometry, bodyMaterial)
 
     body.geometry.computeBoundingBox()
@@ -82,7 +82,7 @@ function createPlaneMesh() {
     var plane = new THREE.Object3D()
     plane.add(body)
 
-    plane.receiveShadow = true;
+    plane.receiveShadow = false;
     plane.castShadow = true;
 
     plane.position.set(0, center, planeInitZ)

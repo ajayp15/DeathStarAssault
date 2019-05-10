@@ -20,13 +20,13 @@ function createGround() {
   var groundDepth = 60
 
   var geometry = new THREE.BoxGeometry(groundWidth, groundHeight, groundDepth)
-  var material = new THREE.MeshBasicMaterial({ color: 0x606670 });
+  var material = new THREE.MeshPhongMaterial({ color: 0x606670 , side: THREE.DoubleSide});
   var mesh = new THREE.Mesh( geometry, material );
 
   mesh.position.y = -2
 
   mesh.receiveShadow = true;
-  mesh.castShadow = true;
+  mesh.castShadow = false;
 
   return mesh
 }

@@ -29,7 +29,7 @@ function createWall(side) {
     var wallShift = 5
 
     var geometry = new THREE.BoxGeometry(wallWidth, wallHeight, wallDepth)
-    var material = new THREE.MeshBasicMaterial({ color: 0x606670 });
+    var material = new THREE.MeshPhongMaterial({ color: 0x606670 , side: THREE.DoubleSide});
 
     var wall = new THREE.Mesh(geometry, material);
 
