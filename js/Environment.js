@@ -5,6 +5,7 @@ function Environment() {
   // var sky = new THREE.Mesh(skyGeo, material);
   // sky.material.side = THREE.BackSide;
   // this.mesh = sky;
+  // images from http://www.custommapmakers.org/skyboxes.php
   var geometry = new THREE.CubeGeometry(200, 200, 200);
   var cubeMaterials = [
     getTexture("ft"),

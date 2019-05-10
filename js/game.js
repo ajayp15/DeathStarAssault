@@ -101,6 +101,8 @@ function update() {
 
 	// obstacles.handleObstacleMovement(delta);
 	// obstacles.doObjectLogic();
+	walls.handleWallMovements(delta)
+	ground.handleGroundMovements(delta)
 	plane.handlePlaneMovement(planeVelocityX, planeVelocityY, delta);
 	plane.handleLaserMovements(delta);
 	// ground.updateGroundEvolution(delta);

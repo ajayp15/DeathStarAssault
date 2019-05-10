@@ -1,6 +1,7 @@
 function Ground(scene) {
   this.scene = scene
   this.mesh = createGround();
+  this.designsOnGround = createDesignsOnGround()
 
   this.updateGroundEvolution = function(dt) {
     this.mesh.material.uniforms[ 'time' ].value += dt;
@@ -12,6 +13,16 @@ function Ground(scene) {
   }
 
   this.groundTop = this.computeGroundTop()
+
+  this.handleGroundMovements = function (delta) {
+    for (var i = 0; i < this.designsOnGround.length; i++) {
+        this.designsOnGround[i].position.z += movementSpeed * delta
+        if (this.designsOnGround[i].position.z > nearPlane) {
+            this.designsOnGround[i].position.z = farPlane
+        }
+    }
+  } 
+
 }
 
 function createGround() {
@@ -20,7 +31,7 @@ function createGround() {
   var groundDepth = 60
 
   var geometry = new THREE.BoxGeometry(groundWidth, groundHeight, groundDepth)
-  var material = new THREE.MeshPhongMaterial({ color: 0x606670 , side: THREE.DoubleSide});
+  var material = new THREE.MeshLambertMaterial({ color: 0x606670 , side: THREE.DoubleSide});
   var mesh = new THREE.Mesh( geometry, material );
 
   mesh.position.y = -2
@@ -30,6 +41,36 @@ function createGround() {
 
   return mesh
 }
+
+function createDesignsOnGround() {
+  var numDesigns = 50
+  var designsOnGround = []
+  var width = 5
+  var height = 1
+  var depth = 5
+
+  for (var i = 0; i < numDesigns; i++) {
+      var compWidth = Math.random() * width
+      var compHeight = Math.random() * height
+      var compDepth = Math.random() * depth
+
+      var geometry = new THREE.BoxGeometry(compWidth, compHeight, compDepth)
+      var material = new THREE.MeshLambertMaterial({ color: 0x606670 , side: THREE.DoubleSide});
+
+      var box = new THREE.Mesh(geometry, material)
+
+      box.receiveShadow = true;
+      box.castShadow = true;
+
+      box.position.x = (2 * Math.random() - 1) * 5
+      box.position.y = 0.5
+      box.position.z = (i / numDesigns) * farPlane + nearPlane
+      this.scene.addMesh(box)
+      designsOnGround.push(box)
+  }
+  return designsOnGround
+}
+
 
 // not being used as of now
 function waterGeometry(width, height, light) {

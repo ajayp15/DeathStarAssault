@@ -5,8 +5,9 @@
 
 function Walls(scene) {
     this.scene = scene
-    this.leftMesh = createWall("left", scene)
-    this.rightMesh = createWall("right", scene)
+    this.leftMesh = createWall("left")
+    this.rightMesh = createWall("right")
+    this.designsOnWalls = createDesigns()
 
     this.computeWallBoundary = function(side) {
         if (side == "left") {
@@ -21,6 +22,15 @@ function Walls(scene) {
     this.leftWallX = this.computeWallBoundary("left")
     this.rightWallX = this.computeWallBoundary("right")
     this.backMesh = createBackWall()
+
+    this.handleWallMovements = function (delta) {
+        for (var i = 0; i < this.designsOnWalls.length; i++) {
+            this.designsOnWalls[i].position.z += movementSpeed * delta
+            if (this.designsOnWalls[i].position.z > nearPlane) {
+                this.designsOnWalls[i].position.z = farPlane
+            }
+        }
+    }
 }
 
 function createWall(side) {
@@ -30,7 +40,7 @@ function createWall(side) {
     var wallShift = 5
 
     var geometry = new THREE.BoxGeometry(wallWidth, wallHeight, wallDepth)
-    var material = new THREE.MeshPhongMaterial({ color: 0x606670 , side: THREE.DoubleSide});
+    var material = new THREE.MeshLambertMaterial({ color: 0x606670 , side: THREE.DoubleSide});
 
     var wall = new THREE.Mesh(geometry, material);
 
@@ -49,13 +59,64 @@ function createWall(side) {
     return wall
 }
 
+function createDesigns() {
+    var numDesigns = 50
+    var designsOnWalls = []
+    var width = 1
+    var height = 5
+    var depth = 5
+    var wallShift = 2.5
+
+    // left wall
+    for (var i = 0; i < numDesigns; i++) {
+        var compWidth = Math.random() * width
+        var compHeight = Math.random() * height
+        var compDepth = Math.random() * depth
+
+        var geometry = new THREE.BoxGeometry(compWidth, compHeight, compDepth)
+        var material = new THREE.MeshLambertMaterial({ color: 0x606670 , side: THREE.DoubleSide});
+
+        var box = new THREE.Mesh(geometry, material)
+
+        box.receiveShadow = true;
+        box.castShadow = true;
+
+        box.position.x = -wallShift
+        box.position.y = Math.random() * 7
+        box.position.z = (i / numDesigns) * farPlane
+        this.scene.addMesh(box)
+        designsOnWalls.push(box)
+    }
+    // right wall
+    for (var i = 0; i < numDesigns; i++) {
+        var compWidth = Math.random() * width
+        var compHeight = Math.random() * height
+        var compDepth = Math.random() * depth
+
+        var geometry = new THREE.BoxGeometry(compWidth, compHeight, compDepth)
+        var material = new THREE.MeshLambertMaterial({ color: 0x606670 , side: THREE.DoubleSide});
+
+        var box = new THREE.Mesh(geometry, material)
+
+        box.receiveShadow = true;
+        box.castShadow = true;
+
+        box.position.x = wallShift
+        box.position.y = Math.random() * 7
+        box.position.z = (i / numDesigns) * farPlane
+        this.scene.addMesh(box)
+        designsOnWalls.push(box)
+    }
+    return designsOnWalls
+}
+
 function createBackWall() {
     var wallWidth = 10
     var wallHeight = 30
     var wallDepth = 5
 
     var geometry = new THREE.BoxGeometry(wallWidth, wallHeight, wallDepth)
-    var material = new THREE.MeshPhongMaterial({ color: 0x606670 , side: THREE.DoubleSide});
+    var material = new THREE.MeshLambertMaterial({ color: 0x606670 , side: THREE.DoubleSide});
 
     var wall = new THREE.Mesh(geometry, material);
     
