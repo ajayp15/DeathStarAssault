@@ -93,6 +93,9 @@ function animate(){
 	if (showStats) {
 		stats.update()
 	}
+	if (hasCollided) {
+		return;
+	}
 	update();
 	render();
 	requestAnimationFrame(animate);//request next update
@@ -122,9 +125,6 @@ function update() {
 }
 
 function render(){
-	if (hasCollided) {
-		return;
-	}
 	scene.renderer.render(scene.scene, scene.camera);
 }
 

@@ -111,7 +111,7 @@ function Enemy(scene) {
         }
         // stop it after some arbitrary time, don't want to render those particles
         // forever
-        var seconds = 4
+        var seconds = 2
         if (this.explosionParticles != undefined && 
             this.explosionIterations >= 60 * seconds) { // assume called every 1/60th second
             this.scene.removeMesh(this.explosionParticles);
@@ -218,7 +218,6 @@ function Enemies(scene, plane) {
             var shape = this.plane.mesh
             if (this.enemies[i].checkIfCollided(shape)) {
                 hasCollided = true
-                console.log("hit")
             }
 
             // update explosions while here

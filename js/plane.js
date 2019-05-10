@@ -54,6 +54,8 @@ function Plane(scene, walls, ground) {
     }
 
     this.shootLaser = function() {
+      var maxLasers = 20
+      if (this.shots.length >= maxLasers) return
       var laserGeometry = new THREE.CylinderGeometry(0.01, 0.01, 1, 4)
       var laserMaterial = new THREE.MeshLambertMaterial({
         color: 0x1bd127,
@@ -116,7 +118,7 @@ function load() {
   
 }
 
-function createPlaneMesh() { // async
+function createPlaneMesh() {
     var bodyGeometry = new THREE.BoxGeometry(0.4, 0.1, 0.5)
     var bodyMaterial = new THREE.MeshPhongMaterial({ color: 0xe5f2f2 , side: THREE.DoubleSide})
     var body = new THREE.Mesh(bodyGeometry, bodyMaterial)
@@ -132,27 +134,47 @@ function createPlaneMesh() { // async
     plane.position.set(0, center, planeInitZ)
 
     return plane
-    // var plane;
-    // const GLTFPromiseLoader = promisifyLoader( new THREE.GLTFLoader() );
-    // await GLTFPromiseLoader.load( 'models/x-wing/scene.gltf')
-    // .then( ( loadedObject) => {
-    //   var obj = new THREE.Object3D()
-    //   obj.add(loadedObject.scene)
-    //   plane = obj
-    //   this.mesh = obj;
-    //   this.mesh.position.set(0, center, planeInitZ)
-    //   this.mesh.scale.x = 0.004
-    //   this.mesh.scale.y = 0.004
-    //   this.mesh.scale.z = 0.004
-    //   this.scene.addMesh(this.mesh);
-    //   loaded = true
-    // } )
-    // .catch( ( err) => { console.error( err ) } );
+    // var scale = 5
+    // var radiusTop = 0.5 / scale
+    // var radiusBottom = 1 / scale
+    // var height = 3 / scale
+    // var bodyGeometry = new THREE.CylinderBufferGeometry(radiusTop, radiusBottom, height, 5)
+    // var bodyMaterial = new THREE.MeshLambertMaterial({color: 0xe5f2f2, side: THREE.DoubleSide})
+    // var body = new THREE.Mesh(bodyGeometry, bodyMaterial)
+    // body.rotation.x = -Math.PI / 2
 
-    // console.log("hi")
-    // console.log(plane)
-    // console.log(plane.resolve())
-    // return plane;
+    // var plane = new THREE.Object3D()
+    // plane.add(body)
+
+    // plane.receiveShadow = false;
+    // plane.castShadow = true;
+
+    // plane.position.set(0, center, planeInitZ)
+    // return plane
+}
+
+async function createGLTFPlane() {
+  var plane;
+  const GLTFPromiseLoader = promisifyLoader( new THREE.GLTFLoader() );
+  await GLTFPromiseLoader.load( 'models/x-wing/scene.gltf')
+  .then( ( loadedObject) => {
+    var obj = new THREE.Object3D()
+    obj.add(loadedObject.scene)
+    plane = obj
+    this.mesh = obj;
+    this.mesh.position.set(0, center, planeInitZ)
+    this.mesh.scale.x = 0.004
+    this.mesh.scale.y = 0.004
+    this.mesh.scale.z = 0.004
+    this.scene.addMesh(this.mesh);
+    loaded = true
+  } )
+  .catch( ( err) => { console.error( err ) } );
+
+  console.log("hi")
+  console.log(plane)
+  console.log(plane.resolve())
+  return plane;
 }
 
 
