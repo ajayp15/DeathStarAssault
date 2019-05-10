@@ -10,6 +10,7 @@ function Enemy(scene) {
     this.scene = scene
     this.mesh = createEnemy()
     this.shots = []
+    this.shotDirs = []
 
     // explosion stuff
     this.dirs = undefined
@@ -66,11 +67,43 @@ function Enemy(scene) {
         this.shots.push([plasmaBall, direction]);
     }
 
+    this.shootForward = function () {
+        var maxLasers = 5
+        if (this.shots.length >= maxLasers) return
+        var laserGeometry = new THREE.CylinderGeometry(0.01, 0.01, 1, 4)
+        var laserMaterial = new THREE.MeshLambertMaterial({
+            color: 0xff0000,
+        })
+        let laser = new THREE.Mesh(laserGeometry, laserMaterial);
+        laser.rotation.x = Math.PI / 2
+
+        var wpVector = this.mesh.position.clone()
+        laser.position.copy(wpVector); // start position - the tip of the weapon
+        this.scene.addMesh(laser);
+        this.shots.push(laser);
+
+        // also, when you shoot, shoot at a somewhat un-even angle so that the shots 
+        // are more randomized
+    }
+
     this.handleLaserMovements = function (delta) {
+        // for (var i = 0; i < this.shots.length; i++) {
+        //     // var dir = this.shots[i][1]
+        //     // this.shots[i][0].translateOnAxis(dir.clone(), 5 * delta)
+        // }
+        var shotsToKeep = []
         for (var i = 0; i < this.shots.length; i++) {
-            var dir = this.shots[i][1]
-            this.shots[i][0].translateOnAxis(dir.clone(), 5 * delta)
+            this.shots[i].translateY(50 * delta) // y because rotated around x
+
+            // check if it has gone out of scene, remove it then
+            if (this.shots[i].position.z > nearPlane) {  // arbitrary distance to stop them at
+                this.scene.removeMesh(this.shots[i])
+            } else {
+                shotsToKeep.push(this.shots[i])
+            }
         }
+
+        this.shots = shotsToKeep
     }
 
     this.explode = function () {
@@ -96,7 +129,7 @@ function Enemy(scene) {
         // this.currentExplosionParticles = particles
     }
 
-    this.updateExplosion = function(delta) {
+    this.updateExplosion = function (delta) {
         var numParticles = 100
         if (this.explosionParticles != undefined) {
             for (var i = 0; i < numParticles; i++) {
@@ -112,7 +145,7 @@ function Enemy(scene) {
         // stop it after some arbitrary time, don't want to render those particles
         // forever
         var seconds = 2
-        if (this.explosionParticles != undefined && 
+        if (this.explosionParticles != undefined &&
             this.explosionIterations >= 60 * seconds) { // assume called every 1/60th second
             this.scene.removeMesh(this.explosionParticles);
             this.explosionParticles = undefined;
@@ -200,6 +233,8 @@ function Enemies(scene, plane) {
     this.scene = scene
     this.plane = plane
     this.enemies = createEnemies()
+    this.clock = new THREE.Clock()
+    this.clock.start()
 
     this.handleEnemyMovements = function (delta) {
         for (var i = 0; i < this.enemies.length; i++) {
@@ -226,6 +261,14 @@ function Enemies(scene, plane) {
     }
 
     this.handleLaserMovements = function (delta) {
+        // get clock time --> if time since last shot is past a threshold, pick a random
+        // one of the enemies and make them shoot
+        if (clock.getElapsedTime() > 0.1) {
+            var enemyIndex = Math.floor(Math.random() * this.enemies.length)
+            this.enemies[enemyIndex].shootForward()
+            clock.start()
+        }
+
         for (var i = 0; i < this.enemies.length; i++) {
             this.enemies[i].handleLaserMovements(delta)
         }

@@ -108,7 +108,7 @@ function update() {
 	// obstacles.doObjectLogic();
 	enemies.handleEnemyMovements(delta)
 	enemies.handleLaserCollisions(plane.shots)
-	// enemies.handleLaserMovements(delta)
+	enemies.handleLaserMovements(delta)
 	walls.handleWallMovements(delta)
 	ground.handleGroundMovements(delta)
 	plane.handlePlaneMovement(planeVelocityX, planeVelocityY, delta);
