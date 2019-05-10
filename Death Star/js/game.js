@@ -37,12 +37,19 @@ function setup(){
 	var ship_position = new THREE.Vector3(0, altitude, 0);
 	ship = new Ship(scene, ship_position);
 
-	var ambient = new THREE.AmbientLight( 0xffffff, 0.3 );
+	var ambient = new THREE.AmbientLight( 0xffffff, 0.35 );
 	scene.addObj( ambient );
+
+	var sunGeo = new THREE.SphereGeometry( 200, 100, 100 );
+	var sunMat = new THREE.MeshBasicMaterial( {color: 0xf4b342} );
+	var sun = new THREE.Mesh( sunGeo, sunMat );
+	sun.position.set(3000, 3000, 3000);
+	scene.addObj( sun );
 
 	var directional = new THREE.DirectionalLight( 0xffffff, 1);
 	directional.position.set(3000, 3000, 3000);
 	directional.castShadow = true;
+	console.log(directional)
 	scene.addObj( directional );
 
 	document.body.appendChild(scene.renderer.domElement)
@@ -88,7 +95,7 @@ function handleKeyUp(keyEvent){
 }
 
 function handleKeyEvent(keyEvent, val) {
-	if ( keyEvent.keyCode === LEFT) { // left
+	/*if ( keyEvent.keyCode === LEFT) { // left
 		keyboard[LEFT] = val
 	} else if ( keyEvent.keyCode === UP) { // up
 		keyboard[UP] = val
@@ -98,7 +105,8 @@ function handleKeyEvent(keyEvent, val) {
 		keyboard[DOWN] = val
 	} else if ( keyEvent.keyCode == SPACE) { // space
 		keyboard[SPACE] = val
-	}
+	} else if ( key)*/
+	keyboard[keyEvent.keyCode] = val
 }
 
 function onWindowResize() {

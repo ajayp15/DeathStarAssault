@@ -62,9 +62,9 @@ function Ship(scene, position) {
     	} else {
         this.rollAngle /= 1.3 ;
       }
-      if (keyboard[DOWN] == true || this.mesh.position.y < shipMinimumAltitude) {
+      if ((keyboard[DOWN] == true && this.mesh.position.y < shipMaximumAltitude) || this.mesh.position.y <= shipMinimumAltitude) {
     		this.pitchAngle = Math.min(shipPitchVelocity * dt + this.pitchAngle, shipPitchMaximumAngle);
-    	} else if (keyboard[UP] == true) {
+    	} else if (keyboard[UP] == true || this.mesh.position.y >= shipMaximumAltitude) {
         this.pitchAngle = Math.max(-shipPitchVelocity * dt + this.pitchAngle, -shipPitchMaximumAngle)
       }
 
@@ -87,13 +87,20 @@ function Ship(scene, position) {
       this.mesh.rotateOnWorldAxis(new THREE.Vector3(-vz, 0, vx).normalize(), this.pitchAngle);
       this.mesh.rotateOnWorldAxis(new THREE.Vector3(vx, vy, vz).normalize(), -this.rollAngle);
 
-      this.mesh.position.x += vx * dt;
-      this.mesh.position.y += vy * dt;
-      this.mesh.position.z += vz * dt;
+      this.mesh.position.x = Math.max(Math.min(this.mesh.position.x + vx * dt, shipMaximumPlaneCoord), -shipMaximumPlaneCoord);
+      this.mesh.position.y = Math.max(Math.min(this.mesh.position.y + vy * dt, shipMaximumAltitude), shipMinimumAltitude);
+      this.mesh.position.z = Math.max(Math.min(this.mesh.position.z + vz * dt, shipMaximumPlaneCoord), -shipMaximumPlaneCoord);
 
       trackingCamera.position.copy(p);
       var vector = new THREE.Vector3(vx, vy, vz).multiplyScalar(1 / shipVelocity);
-      trackingCamera.position.add(vector.multiplyScalar(-15));
+
+      var cameraConst = undefined
+      if (keyboard[FRONT] == true) {
+        cameraConst = 15
+      } else {
+        cameraConst = -15
+      }
+      trackingCamera.position.add(vector.multiplyScalar(cameraConst));
       trackingCamera.position.y = Math.max(1, trackingCamera.position.y);
       trackingCamera.rotation.copy(this.mesh.rotation);
       trackingCamera.position.add(trackingCamera.up.clone().multiplyScalar(3));
