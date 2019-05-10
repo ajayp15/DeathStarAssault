@@ -52,14 +52,14 @@ function setup(){
 	walls = new Walls(scene)
 	environment = new Environment();
 	plane = new Plane(scene, walls, ground)
-	// obstacles = new Obstacles(scene, ground, plane, walls)
+	obstacles = new Obstacles(scene, ground, plane, walls)
 
 	scene.addMesh(ground.mesh)
 	scene.addMesh(plane.mesh, false)
 	scene.addMesh(environment.mesh)
 
 	// generate initial obstacles
-	// obstacles.generateInitialObstacles()
+	obstacles.generateInitialObstacles()
 
 	// add the renderer to the actual html
 	document.body.appendChild(scene.renderer.domElement)
@@ -99,8 +99,8 @@ function animate(){
 function update() {
 	var delta = clock.getDelta() // use this to adjust for variable frame rates
 
-	// obstacles.handleObstacleMovement(delta);
-	// obstacles.doObjectLogic();
+	obstacles.handleObstacleMovement(delta);
+	obstacles.doObjectLogic();
 	walls.handleWallMovements(delta)
 	ground.handleGroundMovements(delta)
 	plane.handlePlaneMovement(planeVelocityX, planeVelocityY, delta);

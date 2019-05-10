@@ -11,7 +11,7 @@ function Obstacles(scene, ground, plane, walls) {
     this.basicObstacles = []
     this.removed = 0
 
-    this.createBasicObstacle = function (box = false) {
+    this.createBasicObstacle = function (box = true) {
         var mesh;
         if (obstaclesType == "box") {
             var boxGeometry = new THREE.BoxGeometry(1, 1, 1);
@@ -23,7 +23,7 @@ function Obstacles(scene, ground, plane, walls) {
         } else if (obstaclesType == "sphere") {
             // consider making this octahedron later -- just need to figure out the
             // collisions with that
-            var sphereGeometry = new THREE.SphereGeometry(obstaclesRadius, 32, 32)
+            var sphereGeometry = new THREE.SphereGeometry(obstaclesRadius, 10, 10)
             var material = new THREE.MeshPhongMaterial({color: 0xffa500, side : THREE.DoubleSide})
             mesh = new THREE.Mesh(sphereGeometry, material);
             // mesh.castShadow = true

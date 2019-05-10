@@ -25,7 +25,7 @@ function Walls(scene) {
 
     this.handleWallMovements = function (delta) {
         for (var i = 0; i < this.designsOnWalls.length; i++) {
-            this.designsOnWalls[i].position.z += movementSpeed * delta
+            this.designsOnWalls[i].position.z += wallMovementSpeed * delta
             if (this.designsOnWalls[i].position.z > nearPlane) {
                 this.designsOnWalls[i].position.z = farPlane
             }

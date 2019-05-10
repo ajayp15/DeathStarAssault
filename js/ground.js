@@ -16,7 +16,7 @@ function Ground(scene) {
 
   this.handleGroundMovements = function (delta) {
     for (var i = 0; i < this.designsOnGround.length; i++) {
-        this.designsOnGround[i].position.z += movementSpeed * delta
+        this.designsOnGround[i].position.z += wallMovementSpeed * delta
         if (this.designsOnGround[i].position.z > nearPlane) {
             this.designsOnGround[i].position.z = farPlane
         }

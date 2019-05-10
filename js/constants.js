@@ -4,6 +4,7 @@ var floorWidth = 10 // arbitrarily chosen for now
 var floorHeight = 50
 var objectGenerationTime = 0.01;
 var movementSpeed = 0.1 * 60
+var wallMovementSpeed = 10
 var nearPlane = 6 // sort of arbitrary for detecting if gone out of view
 var farPlane = -60 // arbitrary, for generation of blocks
 // this causes weird behavior: used to be 1.8
