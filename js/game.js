@@ -52,7 +52,7 @@ function setup(){
 	walls = new Walls(scene)
 	environment = new Environment();
 	plane = new Plane(scene, walls, ground)
-	obstacles = new Obstacles(scene, ground, plane)
+	obstacles = new Obstacles(scene, ground, plane, walls)
 
 	scene.addMesh(ground.mesh)
 	scene.addMesh(plane.mesh, false)

@@ -3,10 +3,11 @@
     in the scene.
 */
 
-function Obstacles(scene, ground, plane) {
+function Obstacles(scene, ground, plane, walls) {
     this.scene = scene
     this.plane = plane
     this.ground = ground
+    this.walls = walls
     this.basicObstacles = []
 
     this.createBasicObstacle = function (box = false) {
@@ -51,8 +52,9 @@ function Obstacles(scene, ground, plane) {
         // x = left and right
         // y = up and down
         // z = into and out of screen
-        var x = (2 * Math.random() - 1) * xFar
-        var y = yFar + (2 * Math.random() - 1) * yFar
+        var xRange = Math.abs(this.walls.leftWallX - this.walls.rightWallX) - 2 * obstaclesRadius
+        var x = (2 * Math.random() - 1) * xRange / 2
+        var y = (Math.random()) * yFar + groundLeeway
         var z = 0
 
         if (startAtFarPlane) { // if they should start far away from the player (generated)
@@ -77,9 +79,9 @@ function Obstacles(scene, ground, plane) {
             var obstacle = this.createBasicObstacle();
             obstacle.visible = true
 
-            var x = (2 * Math.random() - 1) * xFar
-            var y = yFar + (2 * Math.random() - 1) * yFar
-
+            var xRange = Math.abs(this.walls.leftWallX - this.walls.rightWallX) - 2 * obstaclesRadius
+            var x = (2 * Math.random() - 1) * xRange / 2
+            var y = (Math.random()) * yFar + groundLeeway
             // range from [farPlane, farPlane * 2 - nearPlane] because we want a continuous
             // spread over such a range
             var z = farPlane + (Math.random()) * (farPlane - nearPlane);
