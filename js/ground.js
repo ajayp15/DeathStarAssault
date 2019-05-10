@@ -31,7 +31,7 @@ function createGround() {
   var groundDepth = 60
 
   var geometry = new THREE.BoxGeometry(groundWidth, groundHeight, groundDepth)
-  var material = new THREE.MeshLambertMaterial({ color: 0x606670 , side: THREE.DoubleSide});
+  var material = new THREE.MeshLambertMaterial({ color: 0x4b4b4f , side: THREE.DoubleSide});
   var mesh = new THREE.Mesh( geometry, material );
 
   mesh.position.y = -2
@@ -43,16 +43,17 @@ function createGround() {
 }
 
 function createDesignsOnGround() {
-  var numDesigns = 50
+  var numDesigns = 100
   var designsOnGround = []
   var width = 5
   var height = 1
   var depth = 5
+  var minPadding = 1
 
   for (var i = 0; i < numDesigns; i++) {
-      var compWidth = Math.random() * width
+      var compWidth = Math.random() * (width - 1) + minPadding
       var compHeight = Math.random() * height
-      var compDepth = Math.random() * depth
+      var compDepth = Math.random() * (depth - 1) + minPadding
 
       var geometry = new THREE.BoxGeometry(compWidth, compHeight, compDepth)
       var material = new THREE.MeshLambertMaterial({ color: 0x606670 , side: THREE.DoubleSide});
@@ -64,7 +65,7 @@ function createDesignsOnGround() {
 
       box.position.x = (2 * Math.random() - 1) * 5
       box.position.y = 0.5
-      box.position.z = (i / numDesigns) * farPlane + nearPlane
+      box.position.z = (i / numDesigns) * (farPlane - nearPlane)
       this.scene.addMesh(box)
       designsOnGround.push(box)
   }

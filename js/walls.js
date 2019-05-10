@@ -40,7 +40,7 @@ function createWall(side) {
     var wallShift = 5
 
     var geometry = new THREE.BoxGeometry(wallWidth, wallHeight, wallDepth)
-    var material = new THREE.MeshLambertMaterial({ color: 0x606670 , side: THREE.DoubleSide});
+    var material = new THREE.MeshLambertMaterial({ color: 0x4b4b4f , side: THREE.DoubleSide});
 
     var wall = new THREE.Mesh(geometry, material);
 
@@ -66,12 +66,13 @@ function createDesigns() {
     var height = 5
     var depth = 5
     var wallShift = 2.5
+    var minPadding = 1
 
     // left wall
     for (var i = 0; i < numDesigns; i++) {
         var compWidth = Math.random() * width
-        var compHeight = Math.random() * height
-        var compDepth = Math.random() * depth
+        var compHeight = Math.random() * (height - 1) + minPadding
+        var compDepth = Math.random() * (depth - 1) + minPadding
 
         var geometry = new THREE.BoxGeometry(compWidth, compHeight, compDepth)
         var material = new THREE.MeshLambertMaterial({ color: 0x606670 , side: THREE.DoubleSide});
@@ -83,15 +84,15 @@ function createDesigns() {
 
         box.position.x = -wallShift
         box.position.y = Math.random() * 7
-        box.position.z = (i / numDesigns) * farPlane
+        box.position.z = (i / numDesigns) * (farPlane - nearPlane)
         this.scene.addMesh(box)
         designsOnWalls.push(box)
     }
     // right wall
     for (var i = 0; i < numDesigns; i++) {
         var compWidth = Math.random() * width
-        var compHeight = Math.random() * height
-        var compDepth = Math.random() * depth
+        var compHeight = Math.random() * (height - 1) + minPadding
+        var compDepth = Math.random() * (depth - 1) + minPadding
 
         var geometry = new THREE.BoxGeometry(compWidth, compHeight, compDepth)
         var material = new THREE.MeshLambertMaterial({ color: 0x606670 , side: THREE.DoubleSide});
@@ -103,7 +104,7 @@ function createDesigns() {
 
         box.position.x = wallShift
         box.position.y = Math.random() * 7
-        box.position.z = (i / numDesigns) * farPlane
+        box.position.z = (i / numDesigns) * (farPlane - nearPlane)
         this.scene.addMesh(box)
         designsOnWalls.push(box)
     }
