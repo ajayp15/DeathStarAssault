@@ -116,11 +116,10 @@ function update() {
 	scene.handleCameraMovement(planeVelocityX, planeVelocityY, 0, plane, delta, walls, ground);
 
 	// add score if player still hasn't collided with anything
-	if(!hasCollided) {
-		score += Math.ceil(objectGenerationTime);
-		scoreText.innerHTML="Score: " + score.toString();
-	}
-
+	// if(!hasCollided) {
+	// 	score += Math.ceil(objectGenerationTime);
+	// 	scoreText.innerHTML="Score: " + score.toString();
+	// }
 }
 
 function render(){

@@ -8,7 +8,7 @@ function Scene() {
 	this.sceneHeight = window.innerHeight - windowOffset;
 
 	this.scene = new THREE.Scene(); // the 3d scene
-	this.scene.fog = new THREE.FogExp2( 0x000000, 0.05);
+	this.scene.fog = new THREE.FogExp2( 0x000000, 0.03);
 
 	// create camera
 	this.camera = new THREE.PerspectiveCamera( 55, window.innerWidth / window.innerHeight, 0.1, 20000 );//perspective camera

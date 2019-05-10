@@ -203,7 +203,7 @@ function Enemies(scene, plane) {
 
     this.handleEnemyMovements = function (delta) {
         for (var i = 0; i < this.enemies.length; i++) {
-            this.enemies[i].mesh.position.z += wallMovementSpeed * 1 * delta
+            this.enemies[i].mesh.position.z += wallMovementSpeed * 1.5 * delta
 
             this.enemies[i].mesh.rotation.z += delta * 0.1 * Math.PI
 
@@ -249,6 +249,10 @@ function Enemies(scene, plane) {
                     this.enemies[j].mesh.position.z = farPlane
                     this.enemies[j].mesh.position.x = (Math.random() * 2 - 1) * 1.5
                     this.enemies[j].mesh.position.y = Math.random() * (4 - 1) + 2
+
+                    // add to player score if they have destroyed a tie fighter
+                    // console.log(score)
+                    this.plane.updatePlayerScore()
                 }
             }
 

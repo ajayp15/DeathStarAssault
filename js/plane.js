@@ -84,6 +84,11 @@ function Plane(scene, walls, ground) {
 
       this.shots = shotsToKeep
     }
+
+    this.updatePlayerScore = function() {
+      score += Math.ceil(objectGenerationTime);
+		  scoreText.innerHTML="Score: " + score.toString();
+    }
 }
 
 function promisifyLoader ( loader, onProgress ) {
