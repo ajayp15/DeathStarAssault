@@ -84,7 +84,39 @@ function Plane(scene, walls, ground) {
     }
 }
 
-function createPlaneMesh() {
+function promisifyLoader ( loader, onProgress ) {
+  function promiseLoader ( url ) {
+    return new Promise( ( resolve, reject ) => {
+      loader.load( url, resolve, onProgress, reject );
+    } );
+  }
+
+  return {
+    originalLoader: loader,
+    load: promiseLoader,
+  };
+
+}
+
+// Finally, here is simplest possible example of using the promise loader
+// Refer to www.blackthreaddesign.com/blog/promisifying-threejs-loaders/
+// for more detailed examples
+function load() {
+  
+  GLTFPromiseLoader.load( 'models/x-wing/scene.gltf')
+    .then( ( loadedObject) => {
+      
+      // Note that the returned object differs between three.js loader - log
+      // to console to see what is returned. In the GLTF case, this is how 
+      // we add the loaded object to our scene
+      scene.add( loadedObject.scene );
+
+    } )
+    .catch( ( err) => { console.error( err ) } );
+  
+}
+
+function createPlaneMesh() { // async
     var bodyGeometry = new THREE.BoxGeometry(0.4, 0.1, 0.5)
     var bodyMaterial = new THREE.MeshPhongMaterial({ color: 0xe5f2f2 , side: THREE.DoubleSide})
     var body = new THREE.Mesh(bodyGeometry, bodyMaterial)
@@ -100,6 +132,27 @@ function createPlaneMesh() {
     plane.position.set(0, center, planeInitZ)
 
     return plane
+    // var plane;
+    // const GLTFPromiseLoader = promisifyLoader( new THREE.GLTFLoader() );
+    // await GLTFPromiseLoader.load( 'models/x-wing/scene.gltf')
+    // .then( ( loadedObject) => {
+    //   var obj = new THREE.Object3D()
+    //   obj.add(loadedObject.scene)
+    //   plane = obj
+    //   this.mesh = obj;
+    //   this.mesh.position.set(0, center, planeInitZ)
+    //   this.mesh.scale.x = 0.004
+    //   this.mesh.scale.y = 0.004
+    //   this.mesh.scale.z = 0.004
+    //   this.scene.addMesh(this.mesh);
+    //   loaded = true
+    // } )
+    // .catch( ( err) => { console.error( err ) } );
+
+    // console.log("hi")
+    // console.log(plane)
+    // console.log(plane.resolve())
+    // return plane;
 }
 
 

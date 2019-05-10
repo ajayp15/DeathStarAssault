@@ -114,7 +114,6 @@ function Enemy(scene) {
         var seconds = 4
         if (this.explosionParticles != undefined && 
             this.explosionIterations >= 60 * seconds) { // assume called every 1/60th second
-            console.log("removing explosion")
             this.scene.removeMesh(this.explosionParticles);
             this.explosionParticles = undefined;
             this.dirs = undefined
