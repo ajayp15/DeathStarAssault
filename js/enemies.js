@@ -204,7 +204,7 @@ function Enemies(scene, plane) {
 
     this.handleEnemyMovements = function (delta) {
         for (var i = 0; i < this.enemies.length; i++) {
-            this.enemies[i].mesh.position.z += wallMovementSpeed * 2 * delta
+            this.enemies[i].mesh.position.z += wallMovementSpeed * 1 * delta
 
             this.enemies[i].mesh.rotation.z += delta * 0.1 * Math.PI
 
