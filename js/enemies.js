@@ -11,6 +11,8 @@ var numLasers = 15
 function Enemy(scene) {
     this.scene = scene
     this.mesh = createEnemy()
+    this.boundingBox = getEnemyBoundingBox()
+    this.mesh.add(this.boundingBox)
     this.shots = []
     this.shotDirs = []
 
@@ -23,9 +25,10 @@ function Enemy(scene) {
         var boundingShape = new THREE.Box3().setFromObject(shape)
 
         // first check if it hit the cockpit
-        var boundingSphere = new THREE.Sphere(this.mesh.position, fighterRadius)
+        // var boundingSphere = new THREE.Sphere(this.mesh.position, fighterRadius)
+        var boundingBox = new THREE.Box3().setFromObject(this.boundingBox)
 
-        if (boundingShape.intersectsSphere(boundingSphere)) {
+        if (boundingShape.intersectsBox(boundingBox)) {
             return true
         }
 
@@ -82,7 +85,7 @@ function Enemy(scene) {
         }
     }
 
-    this.resetExplosions = function() {
+    this.resetExplosions = function () {
         if (this.explosionParticles != undefined) {
             this.scene.removeMesh(this.explosionParticles);
             this.explosionParticles = undefined;
@@ -165,6 +168,19 @@ function createEnemy() {
     return obj
 }
 
+function getEnemyBoundingBox() {
+    /*
+        Compute bounding box
+    */
+    var boundingBox = new THREE.Mesh(
+        new THREE.BoxGeometry(0.8, 1, 0.8),
+        bbMat
+    );
+    boundingBox.visible = displayBoundingBoxes
+   
+    return boundingBox
+}
+
 // all enemies that are in-scene
 function Enemies(scene, plane) {
     this.scene = scene
@@ -204,7 +220,7 @@ function Enemies(scene, plane) {
     }
 
     // this just creates lasers that pop out 
-    this.handleGenericLaserMovements = function(delta) {
+    this.handleGenericLaserMovements = function (delta) {
         var laserSpeed = 25
         for (var i = 0; i < this.lasers.length; i++) {
             this.lasers[i].translateY(laserSpeed * delta) // y because rotated around x
@@ -265,7 +281,7 @@ function Enemies(scene, plane) {
     }
 
     // reset everything for new game
-    this.reset = function() {
+    this.reset = function () {
         // place all enemies at the far plane again
         for (var i = 0; i < this.enemies.length; i++) {
             this.enemies[i].mesh.position.z = farPlane + ((i + 1) / numEnemies) * (farPlane - nearPlane)

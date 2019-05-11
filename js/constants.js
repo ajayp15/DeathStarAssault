@@ -23,7 +23,7 @@ var bbMat = new THREE.MeshBasicMaterial({
     color: 0xff0000,
     wireframe: true
   });
-var displayBoundingBoxes = false
+var displayBoundingBoxes = true
 
 // obstacles constants
 var obstaclesType = "sphere"

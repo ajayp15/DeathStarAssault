@@ -239,7 +239,7 @@ function createPlaneMesh() {
 
 function loadPlaneFromObj() {
   var loader = new THREE.GLTFLoader();
-  var shipScale = 1
+  var shipScale = 0.6
 
   // Load a glTF resource
   loader.load(
@@ -254,7 +254,7 @@ function loadPlaneFromObj() {
       plane.mesh.visible = true
 
       plane.boundingBox = new THREE.Mesh(
-        new THREE.BoxGeometry(1, 0.3, 1),
+        new THREE.BoxGeometry(0.7, 0.3, 1),
         bbMat
       );
       plane.boundingBox.visible = displayBoundingBoxes
