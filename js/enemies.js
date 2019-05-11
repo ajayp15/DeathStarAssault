@@ -237,13 +237,15 @@ function createEnemy() {
     return obj
 }
 
+var numLasers = 15
 // all enemies that are in-scene
 function Enemies(scene, plane) {
     this.scene = scene
     this.plane = plane
     this.enemies = createEnemies()
-    this.clock = new THREE.Clock()
-    this.clock.start()
+    this.lasers = createInitialLasers()
+    // this.clock = new THREE.Clock()
+    // this.clock.start()
 
     this.handleEnemyMovements = function (delta) {
         for (var i = 0; i < this.enemies.length; i++) {
@@ -280,6 +282,22 @@ function Enemies(scene, plane) {
 
         for (var i = 0; i < this.enemies.length; i++) {
             this.enemies[i].handleLaserMovements(delta)
+        }
+    }
+
+    // this just creates lasers that pop out 
+    this.handleGenericLaserMovements = function(delta) {
+        var laserSpeed = 25
+        for (var i = 0; i < this.lasers.length; i++) {
+            this.lasers[i].translateY(laserSpeed * delta) // y because rotated around x
+
+            // check if it has gone out of scene, send it back to far plane ("remove it")
+            if (this.lasers[i].position.z > nearPlane) {  // arbitrary distance to stop them at
+                // send it back to the far plane
+                this.lasers[i].position.x = (Math.random() * 2 - 1) * 2
+                this.lasers[i].position.y = Math.random() * (4 - 1) + 2
+                this.lasers[i].position.z = farPlane + (i / numLasers) * (farPlane - nearPlane)
+            }
         }
     }
 
@@ -337,4 +355,32 @@ function createEnemies() {
     }
 
     return enemies
+}
+
+function createGenericLaser() {
+    var laserGeometry = new THREE.CylinderGeometry(0.01, 0.01, 1, 4)
+    var laserMaterial = new THREE.MeshLambertMaterial({
+        color: 0xff0000,
+    })
+    var laser = new THREE.Mesh(laserGeometry, laserMaterial);
+    laser.rotation.x = Math.PI / 2
+    return laser
+}
+
+// this creates a few initial laser shots that travel through scene
+function createInitialLasers() {
+    var shots = []
+
+    for (var i = 1; i <= numLasers; i++) {
+        var shot = createGenericLaser()
+        shots.push(shot)
+
+        shot.position.x = (Math.random() * 2 - 1) * 2
+        shot.position.y = Math.random() * (4 - 1) + 2
+        shot.position.z = farPlane + (i / numLasers) * (farPlane - nearPlane)
+
+        this.scene.addMesh(shot)
+    }
+
+    return shots
 }
