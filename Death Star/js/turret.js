@@ -60,6 +60,12 @@ function Turret(px, pz) {
   this.mesh.add(this.tower)
   this.mesh.add(this.gun)
 
+  this.boundingBox = new THREE.Mesh(
+    new THREE.BoxGeometry(25, 70, 25),
+    bbMat
+  );
+  this.mesh.add( this.boundingBox )
+
   this.mesh.castShadow = true
   this.mesh.position.set(px, 60 / 2, pz);
 

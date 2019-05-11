@@ -14,6 +14,11 @@ var cameraLook = new THREE.Vector3();
 */
 var keyboard = {}
 
+/*
+	Game state
+*/
+var gameOver = false
+
 init();
 
 function init() {
@@ -49,7 +54,6 @@ function setup(){
 	var directional = new THREE.DirectionalLight( 0xffffff, 1);
 	directional.position.set(3000, 3000, 3000);
 	directional.castShadow = true;
-	console.log(directional)
 	scene.addObj( directional );
 
 	document.body.appendChild(scene.renderer.domElement)
@@ -72,15 +76,19 @@ function animate(){
 	if (showStats) {
 		stats.update()
 	}
-	update();
+	if (!gameOver) {
+		update();
+	}
 	render();
 	requestAnimationFrame(animate);
 }
 
 function update() {
-	var dt = clock.getDelta()
+	if (ship.shipLoaded == false) { return }
+	var dt = clock.getDelta();
 	ship.update(dt, scene.camera);
 	deathstar.update(dt);
+	checkSceneForCollisions(ship, deathstar);
 }
 
 function render(){

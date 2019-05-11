@@ -4,9 +4,11 @@
     animate it, etc.
 */
 
-function Deathstar(size, turret_count, small_structure_count = 1000) {
+function Deathstar(size, turret_count, smallStructureCount = 1000) {
   this.turrets = []
+  this.smallStructures = []
 
+  // add deathstar plane
   var planeGeometry =  new THREE.PlaneGeometry( size, size, 200, 200 );
   var planeTexture = THREE.ImageUtils.loadTexture( 'images/deathstar_diffuse.jpg' );
   planeTexture.wrapS = planeTexture.wrapT = THREE.RepeatWrapping;
@@ -15,6 +17,7 @@ function Deathstar(size, turret_count, small_structure_count = 1000) {
   this.mesh = new THREE.Mesh( planeGeometry, planeMaterial );
   this.mesh.rotation.x = - Math.PI / 2;
 
+  // add turrets to surface
   for (var i = 0; i < turret_count; ++i) {
     var turret = new Turret(
                       Math.random() * shipMaximumPlaneCoord * 2 - shipMaximumPlaneCoord,
@@ -24,39 +27,43 @@ function Deathstar(size, turret_count, small_structure_count = 1000) {
     this.turrets.push(turret);
   }
 
+  // add small structures
   var structureTexture = THREE.ImageUtils.loadTexture( 'images/structures_diffuse.jpg' );
   structureTexture.wrapS = structureTexture.wrapT = THREE.RepeatWrapping;
 	structureTexture.repeat.set( 1, 1 );
   var structureMaterial = new THREE.MeshPhongMaterial( { map: structureTexture } );
-  for (var i = 0; i < small_structure_count; ++i) {
+
+  for (var i = 0; i < smallStructureCount; ++i) {
     var structX = Math.random() * 50 + 25
     var structY = Math.random() * 50 + 25
     var structZ = Math.random() * 5 + 5
-    var small_struct =
+    var smallStruct =
       new THREE.Mesh(
-        new THREE.BoxGeometry(structX, structY, structZ),
+        new THREE.BoxGeometry(structX, structZ, structY),
         structureMaterial
       );
-    small_struct.castShadow=true;
-    small_struct.position.copy(
+    smallStruct.castShadow=true;
+    smallStruct.position.copy(
       new THREE.Vector3(
         Math.random() * shipMaximumPlaneCoord * 2 - shipMaximumPlaneCoord,
-        Math.random() * shipMaximumPlaneCoord * 2 - shipMaximumPlaneCoord,
-        structZ / 2
+        structZ / 2,
+        Math.random() * shipMaximumPlaneCoord * 2 - shipMaximumPlaneCoord
       )
     );
 
-    if (Math.random() < 0.5) {
-      var inner_struct =
+    if (Math.random() < 0.5) { // half the time, add inner structure
+      var innerStruct =
         new THREE.Mesh(
-          new THREE.BoxGeometry(structX / 2, structY / 2, structZ * 2),
+          new THREE.BoxGeometry(structX / 2, structZ * 2, structY / 2),
           structureMaterial
         );
-      inner_struct.castShadow=true;
-      inner_struct.position.set(small_struct.position.x, small_struct.position.y, structZ);
-      this.mesh.add(inner_struct);
+      innerStruct.castShadow=true;
+      innerStruct.position.set(smallStruct.position.x, structZ, smallStruct.position.z);
+      scene.addObj(innerStruct);
+      this.smallStructures.push(innerStruct)
     }
-    this.mesh.add(small_struct);
+    scene.addObj(smallStruct);
+    this.smallStructures.push(smallStruct)
   }
 
 	this.mesh.receiveShadow = true;
@@ -71,7 +78,7 @@ function Deathstar(size, turret_count, small_structure_count = 1000) {
 
   this.handleTurretHit = function(turretIndex) {
     this.turrets[turretIndex].hitCount += 1
-    
+
   }
 
 }

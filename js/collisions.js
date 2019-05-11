@@ -1,7 +1,0 @@
-/*
-  collisions.js
-*/
-
-function checkForCollisions() {
-  
-}

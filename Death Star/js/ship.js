@@ -29,13 +29,18 @@ function Ship(scene, position) {
         ship.mesh.scale.x = shipScale
         ship.mesh.scale.y = shipScale
         ship.mesh.scale.z = shipScale
-
         ship.animator = gltf.animations[0];
 
         var light = new THREE.PointLight( 0xffaaaa, 1, 200 );
         light.position.set( 0, 0, 0);
         light.castShadow = true
         ship.mesh.add( light );
+
+        ship.boundingBox = new THREE.Mesh(
+          new THREE.BoxGeometry(1, 0.3, 1),
+          bbMat
+        );
+        ship.mesh.add( ship.boundingBox )
 
         scene.addObj(ship.mesh);
         ship.shipLoaded = true;

@@ -43,3 +43,9 @@ var UP = 38
 var RIGHT = 39
 var DOWN = 40
 var FRONT = 70
+
+// bounding box material
+var bbMat = new THREE.MeshBasicMaterial({
+    color: 0xff0000,
+    wireframe: true
+});
