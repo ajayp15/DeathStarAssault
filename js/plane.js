@@ -11,6 +11,7 @@ function Plane(scene, walls, ground) {
   this.ground = ground
   this.shots = []
   this.HP = initialHP
+  this.score = 0
 
   this.handlePlaneMovement = function (planeVelocityX, planeVelocityY, delta) {
     this.mesh.position.x += planeVelocityX * delta
@@ -87,8 +88,8 @@ function Plane(scene, walls, ground) {
   }
 
   this.updatePlayerScore = function () {
-    score += Math.ceil(objectGenerationTime);
-    scoreText.innerHTML = "Score: " + score.toString();
+    this.score += 1
+    scoreText.innerHTML = "TIEs Destroyed: " + this.score.toString();
   }
 
   this.checkIfCollided = function (shape) {
@@ -106,8 +107,12 @@ function Plane(scene, walls, ground) {
   this.gotHit = function() {
     // TODO: as a small animation, shake the plane around a little (rotate it back and forth
     // and get dazed(?))
-    this.HP -= 1
-    HPText.innerHTML = "HP: " + this.HP.toString();
+    var deduction = 10
+    this.HP -= deduction
+    HPText.innerHTML = "Ship Status: " + this.HP + "%"
+    HPBar.value -= deduction
+    // this.scene.ambient.intensity = 0.1 // playing around with dimming screen when you get hit
+    // setTimeout(function(){this.scene.ambient.intensity = 0.5}, 500)
   }
 }
 

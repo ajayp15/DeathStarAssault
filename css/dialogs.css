@@ -1,0 +1,7 @@
+#statusDisplay {
+    font-family: 'Roboto Mono', monospace;
+    background-color: #f79000;
+    opacity: 0.5;
+    font-size: 12px;
+    font-weight: bold;
+}

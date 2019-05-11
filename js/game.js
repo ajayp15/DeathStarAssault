@@ -21,8 +21,10 @@ var floorHeight = 50
 */
 var clock;
 var stats;
-var scoreText;
+var statusDisplay;
 var HPText;
+var HPBar;
+var scoreText;
 var score;
 
 /*
@@ -73,29 +75,10 @@ function setup(){
 	document.onkeydown = handleKeyDown;
 	document.onkeyup = handleKeyUp;
 
-	// create score board
-	scoreText = document.createElement('div');
-	scoreText.style.position = 'absolute';
-	//text2.style.zIndex = 1;    // if you still don't see the label, try uncommenting this
-	scoreText.style.width = 100;
-	scoreText.style.height = 100;
-	//scoreText.style.backgroundColor = "blue";
-	scoreText.innerHTML = "Score: 0";
-	scoreText.style.top = 50 + 'px';
-	scoreText.style.left = 10 + 'px';
-	document.body.appendChild(scoreText);
-
-	// create HP bar
-	HPText = document.createElement('div');
-	HPText.style.position = 'absolute';
-	//text2.style.zIndex = 1;    // if you still don't see the label, try uncommenting this
-	HPText.style.width = 100;
-	HPText.style.height = 100;
-	//scoreText.style.backgroundColor = "blue";
-	HPText.innerHTML = "HP: " + initialHP;
-	HPText.style.top = 150 + 'px';
-	HPText.style.left = 10 + 'px';
-	document.body.appendChild(HPText);
+	statusDisplay = createStatusDisplay(scene)
+	scoreText = statusDisplay.score
+	HPText = statusDisplay.hpText
+	HPBar = statusDisplay.hpBar
 }
 
 function animate(){
