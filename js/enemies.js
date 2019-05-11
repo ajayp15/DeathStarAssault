@@ -84,6 +84,8 @@ function Enemy(scene) {
 
         // also, when you shoot, shoot at a somewhat un-even angle so that the shots 
         // are more randomized
+        var randomDir = new THREE.Vector3((2 * Math.random() - 1), 1, (2 * Math.random() - 1))
+        this.shotDirs.push(randomDir)
     }
 
     this.handleLaserMovements = function (delta) {
@@ -92,7 +94,12 @@ function Enemy(scene) {
         //     // this.shots[i][0].translateOnAxis(dir.clone(), 5 * delta)
         // }
         var shotsToKeep = []
+        var shotDirsToKeep = []
         for (var i = 0; i < this.shots.length; i++) {
+            var direction = this.shotDirs[i]
+            this.shots[i].position.x += direction.x * delta * 10
+            this.shots[i].position.z += direction.z * delta * 10
+
             this.shots[i].translateY(50 * delta) // y because rotated around x
 
             // check if it has gone out of scene, remove it then
@@ -100,10 +107,12 @@ function Enemy(scene) {
                 this.scene.removeMesh(this.shots[i])
             } else {
                 shotsToKeep.push(this.shots[i])
+                shotDirsToKeep.push(this.shotDirs[i])
             }
         }
 
         this.shots = shotsToKeep
+        this.shotDirs = shotDirsToKeep
     }
 
     this.explode = function () {
