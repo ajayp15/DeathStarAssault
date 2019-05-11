@@ -255,20 +255,14 @@ function Enemies(scene, plane) {
     this.handleLaserCollisions = function () {
         var shotsFromPlane = this.plane.shots
         var shotsMissed = [] // return the shots that didn't hit anything, set plane shots buffer to that
+        var enemiesHit = {}
         for (var i = 0; i < shotsFromPlane.length; i++) {
             var hitShip = false
             for (var j = 0; j < this.enemies.length; j++) {
                 if (this.enemies[j].checkIfCollided(shotsFromPlane[i])) {
                     hitShip = true
 
-                    // explode the enemy and remove it from the scene
-                    // (but don't actually remove it from the scene, just "explode" it
-                    // and move it back to the far plane --> is this going to cause
-                    // inefficiencies with things being generated in bulks sometimes?)
-                    this.enemies[j].explode()
-                    this.enemies[j].mesh.position.z = farPlane
-                    this.enemies[j].mesh.position.x = (Math.random() * 2 - 1) * 1.5
-                    this.enemies[j].mesh.position.y = Math.random() * (4 - 1) + 2
+                    enemiesHit[j] = true
 
                     // add to player score if they have destroyed a tie fighter
                     // console.log(score)
@@ -281,6 +275,18 @@ function Enemies(scene, plane) {
             } else {
                 this.scene.removeMesh(shotsFromPlane[i])
             }
+        }
+
+        
+        for (var enemyHit in enemiesHit) {
+            // explode the enemy and remove it from the scene
+            // (but don't actually remove it from the scene, just "explode" it
+            // and move it back to the far plane --> is this going to cause
+            // inefficiencies with things being generated in bulks sometimes?)
+            this.enemies[enemyHit].explode()
+            this.enemies[enemyHit].mesh.position.z = farPlane
+            this.enemies[enemyHit].mesh.position.x = (Math.random() * 2 - 1) * 1.5
+            this.enemies[enemyHit].mesh.position.y = Math.random() * (4 - 1) + 2
         }
 
         this.plane.shots = shotsMissed

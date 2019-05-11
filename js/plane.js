@@ -83,17 +83,29 @@ function Plane(scene, walls, ground) {
 
   this.shootLaser = function () {
     if (this.shots.length >= maxLasers) return
-    var laserGeometry = new THREE.CylinderGeometry(0.01, 0.01, 1, 4)
-    var laserMaterial = new THREE.MeshLambertMaterial({
-      color: 0x1bd127,
-    })
-    let laser = new THREE.Mesh(laserGeometry, laserMaterial);
-    laser.rotation.x = Math.PI / 2
+    for (var i = 0; i < 4; i++) {
+      var laser = new THREE.Mesh(laserGeometry, shipLaserMaterial);
+      laser.rotation.x = Math.PI / 2
 
-    var wpVector = this.mesh.position.clone()
-    laser.position.copy(wpVector); // start position - the tip of the weapon
-    this.scene.addMesh(laser);
-    this.shots.push(laser);
+      var wpVector = this.mesh.position.clone()
+      var shiftVertical = 0.05
+      if (i == 0) {
+        wpVector.x -= shipScale * shipScale
+        wpVector.y -= shipScale * shiftVertical
+      } else if (i == 1) {
+        wpVector.x -= shipScale * shipScale
+        wpVector.y += shipScale * shiftVertical
+      } else if (i == 2) {
+        wpVector.x += shipScale * shipScale
+        wpVector.y += shipScale * shiftVertical
+      } else if (i == 3) {
+        wpVector.x += shipScale * shipScale
+        wpVector.y -= shipScale * shiftVertical
+      }
+      laser.position.copy(wpVector); // start position - the tip of the weapon
+      this.scene.addMesh(laser);
+      this.shots.push(laser);
+    }
   }
 
   this.handleLaserMovements = function (delta) {
@@ -244,7 +256,6 @@ function createPlaneMesh() {
 
 function loadPlaneFromObj() {
   var loader = new THREE.GLTFLoader();
-  var shipScale = 0.6
 
   // Load a glTF resource
   loader.load(

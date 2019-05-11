@@ -25,6 +25,13 @@ var bbMat = new THREE.MeshBasicMaterial({
   });
 var displayBoundingBoxes = true
 
+var laserGeometry = new THREE.CylinderGeometry(0.01, 0.01, 1, 4)
+var shipLaserMaterial = new THREE.MeshLambertMaterial({
+  color: 0x1bd127,
+})
+
+
+var shipScale = 0.6
 // obstacles constants
 var obstaclesType = "sphere"
 var obstaclesRadius = 0.5
