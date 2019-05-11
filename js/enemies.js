@@ -186,7 +186,7 @@ function Enemies(scene, plane) {
             }
 
             // also check if the player has hit any of them
-            var shape = this.plane.mesh
+            var shape = this.plane.boundingBox
             if (this.enemies[i].checkIfCollided(shape)) {
                 // explode this ship and send it to the back
                 this.enemies[i].explode()

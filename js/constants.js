@@ -18,6 +18,13 @@ var planeVelocityConst = 0.05 * 60
 var windowOffset = 10; // to make it not have scroll bars
 var initialHP = 100
 
+var loadModel = true // load plane model
+var bbMat = new THREE.MeshBasicMaterial({
+    color: 0xff0000,
+    wireframe: true
+  });
+var displayBoundingBoxes = false
+
 // obstacles constants
 var obstaclesType = "sphere"
 var obstaclesRadius = 0.5

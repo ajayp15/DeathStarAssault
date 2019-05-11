@@ -12,6 +12,9 @@ function Plane(scene, walls, ground) {
   this.shots = []
   this.HP = initialHP
   this.score = 0
+  this.loaded = false
+  this.boundingBox = undefined
+  this.flipZ = false
 
   // explosion stuff
   this.dirs = undefined
@@ -38,14 +41,26 @@ function Plane(scene, walls, ground) {
     }
 
     // handle x movement
-    if (planeVelocityX < 0) {
-      this.mesh.rotation.z += turnSpeed * delta;
-      this.mesh.rotation.z = Math.min(this.mesh.rotation.z, Math.PI / 4);
-    } else if (planeVelocityX > 0) {
-      this.mesh.rotation.z -= turnSpeed * delta;
-      this.mesh.rotation.z = Math.max(this.mesh.rotation.z, - Math.PI / 4);
+    if (this.flipZ)  {
+      if (planeVelocityX > 0) {
+        this.mesh.rotation.z += turnSpeed * delta;
+        this.mesh.rotation.z = Math.min(this.mesh.rotation.z, Math.PI / 4);
+      } else if (planeVelocityX < 0) {
+        this.mesh.rotation.z -= turnSpeed * delta;
+        this.mesh.rotation.z = Math.max(this.mesh.rotation.z, - Math.PI / 4);
+      } else {
+        this.mesh.rotation.z /= 1.3;
+      }
     } else {
-      this.mesh.rotation.z /= 1.3;
+      if (planeVelocityX < 0) {
+        this.mesh.rotation.z += turnSpeed * delta;
+        this.mesh.rotation.z = Math.min(this.mesh.rotation.z, Math.PI / 4);
+      } else if (planeVelocityX > 0) {
+        this.mesh.rotation.z -= turnSpeed * delta;
+        this.mesh.rotation.z = Math.max(this.mesh.rotation.z, - Math.PI / 4);
+      } else {
+        this.mesh.rotation.z /= 1.3;
+      }
     }
 
     // handle y movement (flip the directions, seems to work this way, axis flipped)
@@ -99,7 +114,7 @@ function Plane(scene, walls, ground) {
 
   this.checkIfCollided = function (shape) {
     var boundingShape = new THREE.Box3().setFromObject(shape)
-    var myShape = new THREE.Box3().setFromObject(this.mesh)
+    var myShape = new THREE.Box3().setFromObject(this.boundingBox)
 
     if (boundingShape.intersectsBox(myShape)) {
       return true
@@ -198,129 +213,69 @@ function Plane(scene, walls, ground) {
   }
 }
 
-function promisifyLoader(loader, onProgress) {
-  function promiseLoader(url) {
-    return new Promise((resolve, reject) => {
-      loader.load(url, resolve, onProgress, reject);
-    });
-  }
-
-  return {
-    originalLoader: loader,
-    load: promiseLoader,
-  };
-
-}
-
-// Finally, here is simplest possible example of using the promise loader
-// Refer to www.blackthreaddesign.com/blog/promisifying-threejs-loaders/
-// for more detailed examples
-function load() {
-
-  GLTFPromiseLoader.load('models/x-wing/scene.gltf')
-    .then((loadedObject) => {
-
-      // Note that the returned object differs between three.js loader - log
-      // to console to see what is returned. In the GLTF case, this is how 
-      // we add the loaded object to our scene
-      scene.add(loadedObject.scene);
-
-    })
-    .catch((err) => { console.error(err) });
-
-}
-
 function createPlaneMesh() {
-  var bodyGeometry = new THREE.BoxGeometry(0.4, 0.1, 0.5)
-  var bodyMaterial = new THREE.MeshPhongMaterial({ color: 0xe5f2f2, side: THREE.DoubleSide })
-  var body = new THREE.Mesh(bodyGeometry, bodyMaterial)
+  if (!loadModel) {
+    var bodyGeometry = new THREE.BoxGeometry(0.4, 0.1, 0.5)
+    var bodyMaterial = new THREE.MeshPhongMaterial({ color: 0xe5f2f2, side: THREE.DoubleSide })
+    var body = new THREE.Mesh(bodyGeometry, bodyMaterial)
 
-  body.geometry.computeBoundingBox()
+    body.geometry.computeBoundingBox()
 
-  var plane = new THREE.Object3D()
-  plane.add(body)
+    var plane = new THREE.Object3D()
+    plane.add(body)
 
-  plane.receiveShadow = false;
-  plane.castShadow = true;
+    plane.receiveShadow = false;
+    plane.castShadow = true;
 
-  plane.position.set(0, center, planeInitZ)
+    plane.position.set(0, center, planeInitZ)
 
-  return plane
-  // var scale = 5
-  // var radiusTop = 0.5 / scale
-  // var radiusBottom = 1 / scale
-  // var height = 3 / scale
-  // var bodyGeometry = new THREE.CylinderBufferGeometry(radiusTop, radiusBottom, height, 5)
-  // var bodyMaterial = new THREE.MeshLambertMaterial({color: 0xe5f2f2, side: THREE.DoubleSide})
-  // var body = new THREE.Mesh(bodyGeometry, bodyMaterial)
-  // body.rotation.x = -Math.PI / 2
+    this.scene.addMesh(plane)
 
-  // var plane = new THREE.Object3D()
-  // plane.add(body)
-
-  // plane.receiveShadow = false;
-  // plane.castShadow = true;
-
-  // plane.position.set(0, center, planeInitZ)
-  // return plane
+    return plane
+  } else {
+    loadPlaneFromObj()
+  }
 }
 
-async function createGLTFPlane() {
-  var plane;
-  const GLTFPromiseLoader = promisifyLoader(new THREE.GLTFLoader());
-  await GLTFPromiseLoader.load('models/x-wing/scene.gltf')
-    .then((loadedObject) => {
+function loadPlaneFromObj() {
+  var loader = new THREE.GLTFLoader();
+  var shipScale = 1
+
+  // Load a glTF resource
+  loader.load(
+    'models/star_wars_x-wing/scene.gltf',
+    function ( gltf ) {
       var obj = new THREE.Object3D()
-      obj.add(loadedObject.scene)
-      plane = obj
-      this.mesh = obj;
-      this.mesh.position.set(0, center, planeInitZ)
-      this.mesh.scale.x = 0.004
-      this.mesh.scale.y = 0.004
-      this.mesh.scale.z = 0.004
-      this.scene.addMesh(this.mesh);
-      loaded = true
-    })
-    .catch((err) => { console.error(err) });
+      obj.add(gltf.scene)
+      plane.mesh = obj;
+      plane.mesh.scale.x = shipScale
+      plane.mesh.scale.y = shipScale
+      plane.mesh.scale.z = shipScale
+      plane.mesh.visible = true
 
-  console.log("hi")
-  console.log(plane)
-  console.log(plane.resolve())
-  return plane;
+      plane.boundingBox = new THREE.Mesh(
+        new THREE.BoxGeometry(1, 0.3, 1),
+        bbMat
+      );
+      plane.boundingBox.visible = displayBoundingBoxes
+
+      plane.mesh.add( plane.boundingBox )
+      plane.mesh.position.y = center
+      plane.mesh.position.z = planeInitZ
+
+      plane.mesh.rotation.y = Math.PI
+      plane.flipZ = true
+
+      scene.addMesh(plane.mesh);
+      plane.loaded = true;
+      console.log("here")
+    },
+    function ( xhr ) {
+      console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+    },
+    function ( error ) {
+      console.log(error);
+      console.log( 'An error happened' );
+    }
+  );
 }
-
-
-/*
-function addPlane(){
-	// arbitrary size
-	var boxGeometry = new THREE.BoxGeometry(0.4, 0.1, 0.5)
-	var boxMaterial = new THREE.MeshStandardMaterial({color: 0xe5f2f2}) // shading: THREE.FlatShading
-	var body = new THREE.Mesh(boxGeometry, boxMaterial)
-
-	plane = new THREE.Object3D()
-	plane.add(body)
-
-	// TODO: add wing meshes onto this object
-
-	// TODO: look into why shadows are not being cast onto the main floor
-	plane.receiveShadow = true;
-	plane.castShadow = true;
-
-	var texture = new THREE.TextureLoader().load( 'models/ju-87_obj/diff.jpg' );
-	var material = new THREE.MeshPhongMaterial( { map: texture } );
-	console.log(material);
-	var loader = new THREE.OBJLoader();
-  loader.load( 'models/ju-87_obj/ju-87.obj', function ( object ) {
-		object.traverse( function ( node ) {
-    	if ( node.isMesh ) node.material = boxMaterial;
-	  } );
-    object.rotation.z = Math.PI;
-		object.rotation.y = 0 //Math.PI;
-		object.scale.set(0.0015, 0.0015, 0.0015);
-    scene.add( object );
-		plane = object;
-		plane.position.set(0, planeInitY, planeInitZ)
-    //document.querySelector('h1').style.display = 'none';
-  } );
-}
-*/

@@ -71,7 +71,7 @@ function setup(){
 	enemies = new Enemies(scene, plane)
 
 	scene.addMesh(ground.mesh)
-	scene.addMesh(plane.mesh, false)
+	// scene.addMesh(plane.mesh, false)
 	scene.addMesh(environment.mesh)
 
 	// add the renderer to the actual html
@@ -140,7 +140,7 @@ function animate(){
 		handleGameOver()
 		showingGameOverScreen = true
 	}
-	if (!finishedShowingObjectivePhase1 && objectiveClock.getElapsedTime() > 5) {
+	if (!finishedShowingObjectivePhase1 && objectiveClock.getElapsedTime() > 5 && (!loadModel || plane.loaded)) {
 		document.body.removeChild(objectiveDialog)
 		finishedShowingObjectivePhase1 = true
 	}
@@ -166,11 +166,15 @@ function update() {
 		enemies.handleGenericLaserMovements(delta)
 	}
 	
+	// do this always, looks cool as movement in the background
 	walls.handleWallMovements(delta)
 	ground.handleGroundMovements(delta)
-	plane.handlePlaneMovement(planeVelocityX, planeVelocityY, delta);
-	plane.handleLaserMovements(delta);
-	scene.handleCameraMovement(planeVelocityX, planeVelocityY, 0, plane, delta, walls, ground);
+
+	if (finishedShowingObjectivePhase1 && !gameOver) {
+		plane.handlePlaneMovement(planeVelocityX, planeVelocityY, delta);
+		plane.handleLaserMovements(delta);
+		scene.handleCameraMovement(planeVelocityX, planeVelocityY, 0, plane, delta, walls, ground);
+	}
 
 	if (gameOver) {
 		plane.updateExplosion(delta)
