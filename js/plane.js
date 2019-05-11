@@ -112,7 +112,7 @@ function Plane(scene, walls, ground) {
   this.gotHit = function () {
     // TODO: as a small animation, shake the plane around a little (rotate it back and forth
     // and get dazed(?))
-    var deduction = 100
+    var deduction = 10
     this.HP -= deduction
     HPText.innerHTML = "Ship Status: " + this.HP + "%"
     HPBar.value -= deduction
