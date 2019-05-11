@@ -29,6 +29,8 @@ var scoreText;
 var score;
 var finishedShowingObjectivePhase1 = false
 var objectiveDialog;
+var gameOver = false
+var showingGameOverScreen = false
 
 /*
 	Game user inputs
@@ -88,17 +90,19 @@ function setup(){
 	objectiveDialog = createInitialObjectiveDialog(scene)
 }
 
-function gameOver() {
-
+function handleGameOver() {
+	plane.blowUp()
+	gameOver = true
+	showGameOverDialog(scene)
 }
 
 function animate(){
 	if (showStats) {
 		stats.update()
 	}
-	if (plane.HP <= 0) {
-		gameOver()
-		return
+	if (plane.HP <= 0 && !showingGameOverScreen) {
+		handleGameOver()
+		showingGameOverScreen = true
 	}
 	if (!finishedShowingObjectivePhase1 && objectiveClock.getElapsedTime() > 5) {
 		document.body.removeChild(objectiveDialog)
@@ -123,6 +127,10 @@ function update() {
 	plane.handlePlaneMovement(planeVelocityX, planeVelocityY, delta);
 	plane.handleLaserMovements(delta);
 	scene.handleCameraMovement(planeVelocityX, planeVelocityY, 0, plane, delta, walls, ground);
+
+	if (gameOver) {
+		plane.updateExplosion(delta)
+	}
 }
 
 function render(){

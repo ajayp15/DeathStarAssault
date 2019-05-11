@@ -15,3 +15,13 @@
     left: 50%;
     transform: translate(-50%, -50%);
 }
+
+#gameOverDisplay {
+    font-family: 'Roboto Mono', monospace;
+    background-color: #f79000;
+    opacity: 0.8;
+    font-weight: bold;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}

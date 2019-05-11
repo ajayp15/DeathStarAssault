@@ -82,3 +82,31 @@ function createInitialObjectiveDialog(scene) {
 
     return dialog
 }
+
+function showGameOverDialog(scene) {
+    var dialog = document.createElement('div');
+    var sceneWidth = scene.sceneWidth
+    var sceneHeight = scene.sceneHeight
+
+    var dialogWidth = sceneWidth / 1.5
+    var dialogHeight = sceneHeight / 1.5
+
+    dialog.id = "gameOverDisplay"
+
+    dialog.style.fontSize = dialogHeight / 10 + "px"
+
+    // position it
+    dialog.style.position = 'fixed';
+	dialog.style.width = dialogWidth + "px"; // sceneWidth / 5 
+    dialog.style.height = dialogHeight + "px";
+    
+    // shape it
+    dialog.style.borderRadius = 25 + "px"
+    dialog.style.paddingTop = 10 + "px"
+    dialog.style.paddingLeft = 10 + "px"
+    dialog.style.paddingRight = 10 + "px"
+
+    dialog.innerHTML = "You were blasted to bits. You'll get 'em on the next run pilot!"
+
+    document.body.appendChild(dialog)
+}
