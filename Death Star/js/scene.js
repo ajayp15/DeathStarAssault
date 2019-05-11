@@ -27,6 +27,7 @@ function Scene() {
 	this.renderer.shadowMapWidth = 1024;
 	this.renderer.shadowMapHeight = 1024;
 	this.renderer.setSize( this.sceneWidth, this.sceneHeight );
+	this.renderer.localClippingEnabled = true;
 
   this.addObj = function(obj, lookAt = false) {
     this.scene.add(obj);

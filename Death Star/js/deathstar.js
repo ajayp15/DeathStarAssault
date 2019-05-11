@@ -6,7 +6,6 @@
 
 function Deathstar(size, turret_count, small_structure_count = 1000) {
   this.turrets = []
-  this.shots = []
 
   var planeGeometry =  new THREE.PlaneGeometry( size, size, 200, 200 );
   var planeTexture = THREE.ImageUtils.loadTexture( 'images/deathstar_diffuse.jpg' );
@@ -16,25 +15,18 @@ function Deathstar(size, turret_count, small_structure_count = 1000) {
   this.mesh = new THREE.Mesh( planeGeometry, planeMaterial );
   this.mesh.rotation.x = - Math.PI / 2;
 
-  var towerTexture = THREE.ImageUtils.loadTexture( 'images/towers_diffuse.jpg' );
-	towerTexture.wrapS = towerTexture.wrapT = THREE.RepeatWrapping;
-	towerTexture.repeat.set( 2, 2 );
-	var towerMaterial = new THREE.MeshPhongMaterial( { map: towerTexture } );
   for (var i = 0; i < turret_count; ++i) {
-    var turret =
-      new THREE.Mesh(
-        new THREE.BoxGeometry(10, 10, 60),
-        towerMaterial
-      );
-    turret.castShadow=true;
-    turret.position.copy(new THREE.Vector3(Math.random() * size - size / 2, Math.random() * size - size / 2, 30));
-    this.mesh.add(turret);
+    var turret = new Turret(
+                      Math.random() * shipMaximumPlaneCoord * 2 - shipMaximumPlaneCoord,
+                      Math.random() * shipMaximumPlaneCoord * 2 - shipMaximumPlaneCoord
+                    )
+    this.mesh.add(turret.mesh);
     this.turrets.push(turret);
   }
 
   var structureTexture = THREE.ImageUtils.loadTexture( 'images/structures_diffuse.jpg' );
   structureTexture.wrapS = structureTexture.wrapT = THREE.RepeatWrapping;
-	structureTexture.repeat.set( 2, 2 );
+	structureTexture.repeat.set( 1, 1 );
   var structureMaterial = new THREE.MeshPhongMaterial( { map: structureTexture } );
   for (var i = 0; i < small_structure_count; ++i) {
     var structX = Math.random() * 50 + 25
@@ -46,7 +38,13 @@ function Deathstar(size, turret_count, small_structure_count = 1000) {
         structureMaterial
       );
     small_struct.castShadow=true;
-    small_struct.position.copy(new THREE.Vector3(Math.random() * size - size / 2, Math.random() * size - size / 2, structZ / 2));
+    small_struct.position.copy(
+      new THREE.Vector3(
+        Math.random() * shipMaximumPlaneCoord * 2 - shipMaximumPlaneCoord,
+        Math.random() * shipMaximumPlaneCoord * 2 - shipMaximumPlaneCoord,
+        structZ / 2
+      )
+    );
 
     if (Math.random() < 0.5) {
       var inner_struct =
@@ -64,8 +62,10 @@ function Deathstar(size, turret_count, small_structure_count = 1000) {
 	this.mesh.receiveShadow = true;
 	this.mesh.castShadow=false;
 
-  this.update = function() {
-
+  this.update = function(theShip, dt) {
+    for (var i = 0; i < this.turrets.length; ++i) {
+      var turret = this.turrets[i]
+      this.turrets[i].update(dt)
+    }
   }
-
 }

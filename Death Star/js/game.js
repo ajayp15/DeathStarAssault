@@ -95,17 +95,6 @@ function handleKeyUp(keyEvent){
 }
 
 function handleKeyEvent(keyEvent, val) {
-	/*if ( keyEvent.keyCode === LEFT) { // left
-		keyboard[LEFT] = val
-	} else if ( keyEvent.keyCode === UP) { // up
-		keyboard[UP] = val
-	} else if ( keyEvent.keyCode === RIGHT) { // right
-		keyboard[RIGHT] = val
-	} else if ( keyEvent.keyCode === DOWN) { // down
-		keyboard[DOWN] = val
-	} else if ( keyEvent.keyCode == SPACE) { // space
-		keyboard[SPACE] = val
-	} else if ( key)*/
 	keyboard[keyEvent.keyCode] = val
 }
 
