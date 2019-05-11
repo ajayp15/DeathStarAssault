@@ -68,4 +68,10 @@ function Deathstar(size, turret_count, small_structure_count = 1000) {
       this.turrets[i].update(dt)
     }
   }
+
+  this.handleTurretHit = function(turretIndex) {
+    this.turrets[turretIndex].hitCount += 1
+    
+  }
+
 }

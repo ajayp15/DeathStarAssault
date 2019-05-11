@@ -37,14 +37,14 @@ function setup(){
 	var ship_position = new THREE.Vector3(0, altitude, 0);
 	ship = new Ship(scene, ship_position);
 
-	var ambient = new THREE.AmbientLight( 0xffffff, 0.35 );
-	scene.addObj( ambient );
-
 	var sunGeo = new THREE.SphereGeometry( 200, 100, 100 );
 	var sunMat = new THREE.MeshBasicMaterial( {color: 0xf4b342} );
 	var sun = new THREE.Mesh( sunGeo, sunMat );
 	sun.position.set(3000, 3000, 3000);
 	scene.addObj( sun );
+
+	var ambient = new THREE.AmbientLight( 0xffffff, 0.5 );
+	scene.addObj( ambient );
 
 	var directional = new THREE.DirectionalLight( 0xffffff, 1);
 	directional.position.set(3000, 3000, 3000);

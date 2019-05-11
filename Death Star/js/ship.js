@@ -22,7 +22,7 @@ function Ship(scene, position) {
 
     // Load a glTF resource
     loader.load(
-    	'models/x-wing/scene.gltf',
+    	'models/star_wars_x-wing/scene.gltf',
     	function ( gltf ) {
     		ship.mesh = gltf.scene;
         ship.mesh.position.copy(position);
@@ -30,8 +30,10 @@ function Ship(scene, position) {
         ship.mesh.scale.y = shipScale
         ship.mesh.scale.z = shipScale
 
+        ship.animator = gltf.animations[0];
+
         var light = new THREE.PointLight( 0xffaaaa, 1, 200 );
-        light.position.set( 0, 0, 10);
+        light.position.set( 0, 0, 0);
         light.castShadow = true
         ship.mesh.add( light );
 
@@ -107,7 +109,7 @@ function Ship(scene, position) {
       this.mesh.rotation.y = 0
       this.mesh.rotation.z = 0
 
-      this.mesh.rotation.y = this.yawAngle + Math.PI;
+      this.mesh.rotation.y = this.yawAngle; //+ Math.PI;
       this.mesh.rotateOnWorldAxis(new THREE.Vector3(-vz, 0, vx).normalize(), this.pitchAngle);
       this.mesh.rotateOnWorldAxis(new THREE.Vector3(vx, vy, vz).normalize(), -this.rollAngle);
 
@@ -116,19 +118,22 @@ function Ship(scene, position) {
       this.mesh.position.z = Math.max(Math.min(this.mesh.position.z + vz * dt, shipMaximumPlaneCoord), -shipMaximumPlaneCoord);
 
       trackingCamera.position.copy(p);
-      var vector = new THREE.Vector3(vx, vy, vz).multiplyScalar(1 / shipVelocity);
+      var vector = new THREE.Vector3(vx, vy, vz).normalize().multiplyScalar(1 / shipVelocity);
 
       var cameraConst = undefined
       if (keyboard[FRONT] == true) {
-        cameraConst = 15
+        cameraConst = 800
       } else {
-        cameraConst = -15
+        cameraConst = -800
       }
       trackingCamera.position.add(vector.multiplyScalar(cameraConst));
       trackingCamera.position.y = Math.max(1, trackingCamera.position.y);
       trackingCamera.rotation.copy(this.mesh.rotation);
-      trackingCamera.position.add(trackingCamera.up.clone().multiplyScalar(3));
+      trackingCamera.position.add(trackingCamera.up.clone().multiplyScalar(5));
       trackingCamera.lookAt(this.mesh.position);
+    }
 
+    this.handleShipHit = function() {
+      
     }
 }

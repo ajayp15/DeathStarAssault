@@ -5,8 +5,8 @@
 function Turret(px, pz) {
   var clip_height = 50
   var top_size = 15
-  px = 0
-  pz = 500
+  //px = 0
+  //pz = 500
   this.lasers = []
   this.laserClock = new THREE.Clock()
   this.laserClock.start()
@@ -34,27 +34,27 @@ function Turret(px, pz) {
   this.tower.rotation.y = Math.PI / 4 + Math.floor(Math.random() * 5) * Math.PI / 2
 
   this.gun = new THREE.Object3D();
-  var gunBase = new THREE.Mesh(
+  this.gunBase = new THREE.Mesh(
     new THREE.BoxGeometry(top_size, top_size, top_size),
     new THREE.MeshPhongMaterial( { color: 0x111111 } )
   )
-  var gunBarrelLeft = new THREE.Mesh(
+  this.gunBarrelLeft = new THREE.Mesh(
     new THREE.CylinderGeometry( 0.5, 0.5, top_size * 2, 32),
     new THREE.MeshPhongMaterial( { color: 0x222222 } )
   )
-  var gunBarrelRight = new THREE.Mesh(
+  this.gunBarrelRight = new THREE.Mesh(
     new THREE.CylinderGeometry( 0.5, 0.5, top_size * 2, 32),
     new THREE.MeshPhongMaterial( { color: 0x222222 } )
   )
-  gunBarrelLeft.position.z = -top_size;
-  gunBarrelRight.position.z = -top_size;
-  gunBarrelLeft.position.x = - top_size / 8;
-  gunBarrelRight.position.x = top_size / 8;
-  gunBarrelLeft.rotation.x = Math.PI / 2;
-  gunBarrelRight.rotation.x = Math.PI / 2;
-  this.gun.add(gunBase);
-  this.gun.add(gunBarrelLeft);
-  this.gun.add(gunBarrelRight);
+  this.gunBarrelLeft.position.z = -top_size;
+  this.gunBarrelRight.position.z = -top_size;
+  this.gunBarrelLeft.position.x = - top_size / 8;
+  this.gunBarrelRight.position.x = top_size / 8;
+  this.gunBarrelLeft.rotation.x = Math.PI / 2;
+  this.gunBarrelRight.rotation.x = Math.PI / 2;
+  this.gun.add(this.gunBase);
+  this.gun.add(this.gunBarrelLeft);
+  this.gun.add(this.gunBarrelRight);
   this.gun.position.set(0, (clip_height + top_size) / 2 - 5, 0)
 
   this.mesh.add(this.tower)
@@ -62,6 +62,40 @@ function Turret(px, pz) {
 
   this.mesh.castShadow = true
   this.mesh.position.set(px, 60 / 2, pz);
+
+  this.fireLasers = function(direction) {
+    if (this.laserClock.getElapsedTime() < turretMinimumTimeDelay) {
+      return
+    }
+    this.laserClock.start();
+
+    var leftLaserPosition = this.gunBarrelLeft.position.clone()
+    this.gunBarrelLeft.localToWorld(leftLaserPosition)
+    leftLaserPosition.y -= 15
+    leftLaserPosition.add(direction.clone().multiplyScalar(14))
+
+    var rightLaserPosition = this.gunBarrelRight.position.clone()
+    this.gunBarrelRight.localToWorld(rightLaserPosition)
+    rightLaserPosition.y -= 15
+    rightLaserPosition.add(direction.clone().multiplyScalar(14))
+
+    var leftLaser = new Laser(
+                  leftLaserPosition,
+                  direction.multiplyScalar(turretLaserVelocity),
+                  turretLaserColor,
+                  turretLaserCutoffDistance,
+                  turretLaserSize);
+    var rightLaser = new Laser(
+                  rightLaserPosition,
+                  direction.multiplyScalar(turretLaserVelocity),
+                  turretLaserColor,
+                  turretLaserCutoffDistance,
+                  turretLaserSize);
+    scene.addObj(leftLaser.mesh);
+    scene.addObj(rightLaser.mesh);
+    this.lasers.push(leftLaser);
+    this.lasers.push(rightLaser);
+  }
 
   this.update = function(dt) {
     // update lasers fired
@@ -78,12 +112,14 @@ function Turret(px, pz) {
     // can we fire on the ship?
     if (ship.mesh == undefined) { return }
 
-    var turretPosition = this.mesh.position.clone()
-    var shipPosition = ship.position.clone()
-    var turrentDistanceToShip = turretPosition.distanceTo(shipPosition)
-    //var targetShipPosition = ship.mesh.position.clone().add(ship.velocity.clone().multiplyScalar())
+    var turretPosition = this.gunBarrelLeft.position.clone()
+    this.gunBarrelLeft.localToWorld(turretPosition)
+    turretPosition.y -= 15
 
-    if (turrentDistanceToShip < deathstar_turret_fire_radius) {
+    var shipPosition = ship.mesh.position.clone()
+    var turretDistanceToShip = turretPosition.distanceTo(shipPosition)
+
+    if (turretDistanceToShip < deathstar_turret_fire_radius) {
       var firingVector = new THREE.Vector3(
                               Math.sin(this.gun.rotation.y),
                               0,
@@ -97,8 +133,13 @@ function Turret(px, pz) {
       var firingAngle = Math.atan2(firingVector.z, firingVector.x)
       var targetAngle = Math.atan2(targetVector.z, targetVector.x)
 
+      // can we fire on target?
       if (Math.abs(firingAngle - targetAngle) % Math.PI < 0.05) {
-
+        var trueTargetVector = new THREE.Vector3().subVectors(shipPosition, turretPosition).normalize();
+        firingVector.y = (turretPosition.y - shipPosition.y) / turretDistanceToShip
+        if (firingVector.y < turretDistanceToShip) { // only allow guns to fire at max 45 degrees to the plane
+          this.fireLasers(firingVector.multiplyScalar(-1).normalize());
+        }
       }
       else if (
         (firingAngle < targetAngle && Math.abs(firingAngle - targetAngle) < Math.PI) ||

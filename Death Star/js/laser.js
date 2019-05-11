@@ -2,8 +2,8 @@
   laser.js
 */
 
-function Laser(position, velocity, color, maximumDistance = 300) {
-  var laserGeo = new THREE.SphereGeometry(0.2, 5, 5)
+function Laser(position, velocity, color, maximumDistance = 300, size = 0.5) {
+  var laserGeo = new THREE.SphereGeometry(size, 5, 5)
   var laserMat = new THREE.MeshLambertMaterial({
     color: color,
   })
