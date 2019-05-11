@@ -4,7 +4,7 @@
     animate it, etc.
 */
 
-function Deathstar(size, turret_count, smallStructureCount = 1000) {
+function Deathstar(size, turretCount = 10, smallStructureCount = 1000) {
   this.turrets = []
   this.smallStructures = []
 
@@ -18,7 +18,7 @@ function Deathstar(size, turret_count, smallStructureCount = 1000) {
   this.mesh.rotation.x = - Math.PI / 2;
 
   // add turrets to surface
-  for (var i = 0; i < turret_count; ++i) {
+  for (var i = 0; i < turretCount; ++i) {
     var turret = new Turret(
                       Math.random() * shipMaximumPlaneCoord * 2 - shipMaximumPlaneCoord,
                       Math.random() * shipMaximumPlaneCoord * 2 - shipMaximumPlaneCoord
@@ -27,43 +27,21 @@ function Deathstar(size, turret_count, smallStructureCount = 1000) {
     this.turrets.push(turret);
   }
 
-  // add small structures
-  var structureTexture = THREE.ImageUtils.loadTexture( 'images/structures_diffuse.jpg' );
-  structureTexture.wrapS = structureTexture.wrapT = THREE.RepeatWrapping;
-	structureTexture.repeat.set( 1, 1 );
-  var structureMaterial = new THREE.MeshPhongMaterial( { map: structureTexture } );
-
   for (var i = 0; i < smallStructureCount; ++i) {
-    var structX = Math.random() * 50 + 25
-    var structY = Math.random() * 50 + 25
-    var structZ = Math.random() * 5 + 5
-    var smallStruct =
-      new THREE.Mesh(
-        new THREE.BoxGeometry(structX, structZ, structY),
-        structureMaterial
-      );
-    smallStruct.castShadow=true;
-    smallStruct.position.copy(
-      new THREE.Vector3(
-        Math.random() * shipMaximumPlaneCoord * 2 - shipMaximumPlaneCoord,
-        structZ / 2,
-        Math.random() * shipMaximumPlaneCoord * 2 - shipMaximumPlaneCoord
-      )
-    );
+    var sx = Math.random() * 50 + 25
+    var sy = Math.random() * 5 + 5
+    var sz = Math.random() * 50 + 25
 
-    if (Math.random() < 0.5) { // half the time, add inner structure
-      var innerStruct =
-        new THREE.Mesh(
-          new THREE.BoxGeometry(structX / 2, structZ * 2, structY / 2),
-          structureMaterial
-        );
-      innerStruct.castShadow=true;
-      innerStruct.position.set(smallStruct.position.x, structZ, smallStruct.position.z);
-      scene.addObj(innerStruct);
-      this.smallStructures.push(innerStruct)
+    var px = Math.random() * shipMaximumPlaneCoord * 2 - shipMaximumPlaneCoord
+    var py = sy / 2
+    var pz = Math.random() * shipMaximumPlaneCoord * 2 - shipMaximumPlaneCoord
+
+    var smallStructure = new Structure(px, py, pz, sx, sy, sz)
+    scene.addObj(smallStructure.outerStruct)
+    if (smallStructure.innerStruct != undefined) {
+      scene.addObj(smallStructure.innerStruct)
     }
-    scene.addObj(smallStruct);
-    this.smallStructures.push(smallStruct)
+    this.smallStructures.push(smallStructure)
   }
 
 	this.mesh.receiveShadow = true;

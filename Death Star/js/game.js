@@ -1,5 +1,6 @@
-
-var altitude = 5;
+/*
+	game.js
+*/
 
 var scene;
 var ship;
@@ -39,8 +40,7 @@ function setup(){
 									deathstarSmallStructureCount);
 	scene.addObj(deathstar.mesh, true);
 
-	var ship_position = new THREE.Vector3(0, altitude, 0);
-	ship = new Ship(scene, ship_position);
+	ship = new Ship(scene);
 
 	var sunGeo = new THREE.SphereGeometry( 200, 100, 100 );
 	var sunMat = new THREE.MeshBasicMaterial( {color: 0xf4b342} );

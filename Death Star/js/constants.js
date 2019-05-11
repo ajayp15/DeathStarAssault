@@ -13,6 +13,8 @@ var deathstarSmallStructureCount = 2000
 var cameraTrailing = 0.5
 var shipScale = 15
 
+var displayBoundingBoxes = false
+
 /*
   Gameplay constants
 */
@@ -28,11 +30,12 @@ var shipMaximumPlaneCoord = 2500
 var shipWeaponMinimumTimeDelay = 0.3
 var shipLaserColor = 0xff2222
 var shipLaserCutoffDistance = 400
+var shipStartingAltitude = 2
 
 var turretGunTurnSpeed = 40 * 3.14 / 180
 var turretFireRadius = 600
 var turretMinimumTimeDelay = 5
-var turretLaserVelocity = 20
+var turretLaserVelocity = 15
 var turretLaserSize = 1
 var turretLaserCutoffDistance = 500
 var turretLaserColor = 0x22ff22

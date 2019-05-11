@@ -4,7 +4,9 @@
     animate it, etc.
 */
 
-function Ship(scene, position) {
+
+
+function Ship(scene) {
     this.lasers = []
 
     this.velocity = new THREE.Vector3()
@@ -25,7 +27,6 @@ function Ship(scene, position) {
     	'models/star_wars_x-wing/scene.gltf',
     	function ( gltf ) {
     		ship.mesh = gltf.scene;
-        ship.mesh.position.copy(position);
         ship.mesh.scale.x = shipScale
         ship.mesh.scale.y = shipScale
         ship.mesh.scale.z = shipScale
@@ -40,7 +41,10 @@ function Ship(scene, position) {
           new THREE.BoxGeometry(1, 0.3, 1),
           bbMat
         );
+        ship.boundingBox.visible = displayBoundingBoxes
+
         ship.mesh.add( ship.boundingBox )
+        ship.mesh.position.z = shipStartingAltitude
 
         scene.addObj(ship.mesh);
         ship.shipLoaded = true;

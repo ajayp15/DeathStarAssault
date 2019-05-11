@@ -2,27 +2,27 @@
   turret.js
 */
 
+var turretClipHeight = 50
+
+var turretTexture = THREE.ImageUtils.loadTexture( 'images/towers_diffuse.jpg' );
+turretTexture.wrapS = turretTexture.wrapT = THREE.RepeatWrapping;
+turretTexture.repeat.set( 2, 2 );
+
+var turretClippingPlane = new THREE.Plane( new THREE.Vector3( 0, -turretClipHeight, 0 ), 1 );
+var turretMaterial = new THREE.MeshPhongMaterial(
+  {
+    map: turretTexture,
+    side: THREE.DoubleSide,
+    clippingPlanes: [ turretClippingPlane ],
+    clipShadows: true
+  } );
+
 function Turret(px, pz) {
-  var clip_height = 50
   var top_size = 15
-  //px = 0
-  //pz = 500
+
   this.lasers = []
   this.laserClock = new THREE.Clock()
   this.laserClock.start()
-
-  var turretTexture = THREE.ImageUtils.loadTexture( 'images/towers_diffuse.jpg' );
-  turretTexture.wrapS = turretTexture.wrapT = THREE.RepeatWrapping;
-  turretTexture.repeat.set( 2, 2 );
-
-  var clippingPlane = new THREE.Plane( new THREE.Vector3( 0, -clip_height, 0 ), 1 );
-  var turretMaterial = new THREE.MeshPhongMaterial(
-    {
-      map: turretTexture,
-      side: THREE.DoubleSide,
-      clippingPlanes: [ clippingPlane ],
-      clipShadows: true
-    } );
 
   this.hitCount = 0
 
@@ -55,7 +55,7 @@ function Turret(px, pz) {
   this.gun.add(this.gunBase);
   this.gun.add(this.gunBarrelLeft);
   this.gun.add(this.gunBarrelRight);
-  this.gun.position.set(0, (clip_height + top_size) / 2 - 5, 0)
+  this.gun.position.set(0, (turretClipHeight + top_size) / 2 - 5, 0)
 
   this.mesh.add(this.tower)
   this.mesh.add(this.gun)
@@ -64,6 +64,7 @@ function Turret(px, pz) {
     new THREE.BoxGeometry(25, 70, 25),
     bbMat
   );
+  this.boundingBox.visible = displayBoundingBoxes
   this.mesh.add( this.boundingBox )
 
   this.mesh.castShadow = true

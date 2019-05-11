@@ -13,7 +13,10 @@ function checkSceneForCollisions(ship, deathstar) {
   }
   for (var i = 0; i < deathstar.smallStructures.length; ++i) {
     var struct = deathstar.smallStructures[i]
-    var collidedWithStructure = checkIfCollidedCheap(struct, ship.boundingBox)
+    var collidedWithStructure = checkIfCollidedCheap(struct.outerStruct, ship.boundingBox)
+    if (struct.innerStruct != undefined) {
+      collidedWithStructure = collidedWithStructure || checkIfCollidedCheap(struct.innerStruct, ship.boundingBox)
+    }
     if (collidedWithStructure) {
       gameOver = true
     }
@@ -29,10 +32,10 @@ function checkSceneForCollisions(ship, deathstar) {
       }
     }
     for (var j = 0; j < deathstar.smallStructures.length; ++j) {
-      var struct = deathstar.smallStructures[j]
-      var collidedWithStructure = checkIfCollidedCheap(struct, laser.mesh)
-      if (collidedWithStructure) {
-        gameOver = true
+      var struct = deathstar.smallStructures[i]
+      var collidedWithStructure = checkIfCollidedCheap(struct.outerStruct, ship.boundingBox)
+      if (struct.innerStruct != undefined) {
+        collidedWithStructure = collidedWithStructure || checkIfCollidedCheap(struct.innerStruct, ship.boundingBox)
       }
     }
   }
