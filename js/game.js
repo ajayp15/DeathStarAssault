@@ -27,11 +27,16 @@ var HPText;
 var HPBar;
 var scoreText;
 var score;
-var finishedShowingObjectivePhase1 = false
 var objectiveDialog;
+var gameOverDialog;
+
+/*
+	Game state variables
+*/
+var finishedShowingObjectivePhase1 = false
 var gameOver = false
 var showingGameOverScreen = false
-var gameOverDialog;
+var finishedPhase1 = false
 
 /*
 	Game user inputs
@@ -96,6 +101,7 @@ function restartGame() {
 	finishedShowingObjectivePhase1 = false
 	gameOver = false
 	showingGameOverScreen = false
+	finishedPhase1 = false
 
 	// call individual functions from each of the enemies, etc. to restart them at
 	// their initial locations
@@ -137,6 +143,14 @@ function animate(){
 	if (!finishedShowingObjectivePhase1 && objectiveClock.getElapsedTime() > 5) {
 		document.body.removeChild(objectiveDialog)
 		finishedShowingObjectivePhase1 = true
+	}
+	if (plane.score >= 30) {
+		// move onto phase 2 (shooting the proton torpedos)
+		finishedPhase1 = true
+		
+		// start displaying something
+
+		// start displaying the objective screen
 	}
 
 	update();
