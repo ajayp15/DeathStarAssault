@@ -54,7 +54,11 @@ function Ship(scene, position) {
         return
       }
       this.laserClock.start();
-      var laser = new Laser(this.mesh.position, this.velocity.clone().multiplyScalar(5), 0xff2222);
+      var laser = new Laser(
+                    this.mesh.position,
+                    this.velocity.clone().multiplyScalar(5),
+                    shipLaserColor,
+                    shipLaserCutoffDistance);
       scene.addObj(laser.mesh);
       this.lasers.push(laser);
     }
@@ -134,6 +138,6 @@ function Ship(scene, position) {
     }
 
     this.handleShipHit = function() {
-      
+
     }
 }

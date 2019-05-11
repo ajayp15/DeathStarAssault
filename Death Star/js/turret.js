@@ -119,7 +119,7 @@ function Turret(px, pz) {
     var shipPosition = ship.mesh.position.clone()
     var turretDistanceToShip = turretPosition.distanceTo(shipPosition)
 
-    if (turretDistanceToShip < deathstar_turret_fire_radius) {
+    if (turretDistanceToShip < turretFireRadius) {
       var firingVector = new THREE.Vector3(
                               Math.sin(this.gun.rotation.y),
                               0,
@@ -137,7 +137,7 @@ function Turret(px, pz) {
       if (Math.abs(firingAngle - targetAngle) % Math.PI < 0.05) {
         var trueTargetVector = new THREE.Vector3().subVectors(shipPosition, turretPosition).normalize();
         firingVector.y = (turretPosition.y - shipPosition.y) / turretDistanceToShip
-        if (firingVector.y < turretDistanceToShip) { // only allow guns to fire at max 45 degrees to the plane
+        if (Math.abs(turretPosition.y - shipPosition.y) < turretDistanceToShip) { // only allow guns to fire at max 45 degrees to the plane
           this.fireLasers(firingVector.multiplyScalar(-1).normalize());
         }
       }
@@ -145,9 +145,9 @@ function Turret(px, pz) {
         (firingAngle < targetAngle && Math.abs(firingAngle - targetAngle) < Math.PI) ||
         (firingAngle > targetAngle && Math.abs(firingAngle - targetAngle) > Math.PI)
         ) {
-        this.gun.rotation.y += deathstar_turret_gun_turn_speed * dt
+        this.gun.rotation.y += turretGunTurnSpeed * dt
       } else {
-        this.gun.rotation.y -= deathstar_turret_gun_turn_speed * dt
+        this.gun.rotation.y -= turretGunTurnSpeed * dt
       }
     }
   }

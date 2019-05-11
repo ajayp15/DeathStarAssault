@@ -7,12 +7,11 @@ var windowOffset = 0
 /*
   Scene constants
 */
-var deathstar_plane_size = 10000
-var deathstar_turret_count = 30
-var deathstar_small_structure_count = 2000
+var deathstarPlaneSize = 10000
+var deathstarTurretCount = 30
+var deathstarSmallStructureCount = 2000
 var cameraTrailing = 0.5
 var shipScale = 15
-
 
 /*
   Gameplay constants
@@ -27,10 +26,11 @@ var shipMinimumAltitude = 4.5
 var shipMaximumAltitude = 200
 var shipMaximumPlaneCoord = 2500
 var shipWeaponMinimumTimeDelay = 0.3
+var shipLaserColor = 0xff2222
+var shipLaserCutoffDistance = 400
 
-var deathstar_turret_gun_turn_speed = 40 * 3.14 / 180
-var deathstar_turret_fire_radius = 600
-
+var turretGunTurnSpeed = 40 * 3.14 / 180
+var turretFireRadius = 600
 var turretMinimumTimeDelay = 5
 var turretLaserVelocity = 20
 var turretLaserSize = 1

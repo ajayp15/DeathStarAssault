@@ -29,9 +29,9 @@ function setup(){
 
 	var deathstar_position = new THREE.Vector3(0, 0, 0);
 	deathstar = new Deathstar(
-									deathstar_plane_size,
-									deathstar_turret_count,
-									deathstar_small_structure_count);
+									deathstarPlaneSize,
+									deathstarTurretCount,
+									deathstarSmallStructureCount);
 	scene.addObj(deathstar.mesh, true);
 
 	var ship_position = new THREE.Vector3(0, altitude, 0);
