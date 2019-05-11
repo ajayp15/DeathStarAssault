@@ -31,6 +31,7 @@ var finishedShowingObjectivePhase1 = false
 var objectiveDialog;
 var gameOver = false
 var showingGameOverScreen = false
+var gameOverDialog;
 
 /*
 	Game user inputs
@@ -90,10 +91,39 @@ function setup(){
 	objectiveDialog = createInitialObjectiveDialog(scene)
 }
 
+function restartGame() {
+	console.log("Restarting Game.")
+	finishedShowingObjectivePhase1 = false
+	gameOver = false
+	showingGameOverScreen = false
+
+	// call individual functions from each of the enemies, etc. to restart them at
+	// their initial locations
+	plane.reset()
+	enemies.reset()
+
+	// get rid of game over dialog now
+	document.body.removeChild(gameOverDialog)
+
+	// reset the status bar with num destroyed and health
+	scoreText.innerHTML = "TIEs Destroyed: " + 0
+	HPText.innerHTML = "Ship Status: " + initialHP + "%"
+	HPBar.value = 100
+
+	// restart the clocks
+	clock=new THREE.Clock()
+	clock.start()
+	objectiveClock = new THREE.Clock()
+	objectiveClock.start()
+
+	// display the objective screen again
+	objectiveDialog = createInitialObjectiveDialog(scene)
+}
+
 function handleGameOver() {
 	plane.blowUp()
 	gameOver = true
-	showGameOverDialog(scene)
+	gameOverDialog = showGameOverDialog(scene)
 }
 
 function animate(){

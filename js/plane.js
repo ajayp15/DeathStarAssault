@@ -112,7 +112,7 @@ function Plane(scene, walls, ground) {
   this.gotHit = function () {
     // TODO: as a small animation, shake the plane around a little (rotate it back and forth
     // and get dazed(?))
-    var deduction = 10
+    var deduction = 100
     this.HP -= deduction
     HPText.innerHTML = "Ship Status: " + this.HP + "%"
     HPBar.value -= deduction
@@ -170,7 +170,31 @@ function Plane(scene, walls, ground) {
   // run when the plane is destroyed @ game over
   this.blowUp = function () {
     this.explode()
-    this.scene.removeMesh(this.mesh)
+    // this.scene.removeMesh(this.mesh)
+    this.mesh.visible = false
+  }
+
+  // reset for new game run
+  this.reset = function() {
+    // reset variables
+    this.mesh.visible = true
+    this.HP = initialHP
+    this.score = 0
+
+    // cancel pending explosion
+    if (this.explosionParticles != undefined) {
+      this.scene.removeMesh(this.explosionParticles);
+      this.explosionParticles = undefined;
+      this.dirs = undefined
+      this.explosionIterations = 0
+    }
+
+    // remove the laser shots pending
+    for (var i = 0; i < this.shots.length; i++) {
+      this.scene.removeMesh(this.shots[i])
+    }
+
+    this.shots = []
   }
 }
 

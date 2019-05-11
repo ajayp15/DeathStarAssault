@@ -4,6 +4,8 @@
 
 var fighterRadius = obstaclesRadius / 1.3
 var wingRadius = obstaclesRadius * 1.5
+var numEnemies = 8
+var numLasers = 15
 
 // singular enemy
 function Enemy(scene) {
@@ -73,6 +75,15 @@ function Enemy(scene) {
         var seconds = 2
         if (this.explosionParticles != undefined &&
             this.explosionIterations >= 60 * seconds) { // assume called every 1/60th second
+            this.scene.removeMesh(this.explosionParticles);
+            this.explosionParticles = undefined;
+            this.dirs = undefined
+            this.explosionIterations = 0
+        }
+    }
+
+    this.resetExplosions = function() {
+        if (this.explosionParticles != undefined) {
             this.scene.removeMesh(this.explosionParticles);
             this.explosionParticles = undefined;
             this.dirs = undefined
@@ -154,7 +165,6 @@ function createEnemy() {
     return obj
 }
 
-var numLasers = 15
 // all enemies that are in-scene
 function Enemies(scene, plane) {
     this.scene = scene
@@ -204,7 +214,7 @@ function Enemies(scene, plane) {
                 // send it back to the far plane
                 this.lasers[i].position.x = (Math.random() * 2 - 1) * 2
                 this.lasers[i].position.y = Math.random() * (4 - 1) + 2
-                this.lasers[i].position.z = farPlane + (i / numLasers) * (farPlane - nearPlane)
+                this.lasers[i].position.z = farPlane + (i / numEnemies) * (farPlane - nearPlane)
             }
 
             // also check if it has hit the player, while we are at it
@@ -253,10 +263,31 @@ function Enemies(scene, plane) {
 
         this.plane.shots = shotsMissed
     }
+
+    // reset everything for new game
+    this.reset = function() {
+        // place all enemies at the far plane again
+        for (var i = 0; i < this.enemies.length; i++) {
+            this.enemies[i].mesh.position.z = farPlane + ((i + 1) / numEnemies) * (farPlane - nearPlane)
+            this.enemies[i].mesh.position.x = (Math.random() * 2 - 1) * 1.5
+            this.enemies[i].mesh.position.y = Math.random() * (4 - 1) + 2
+        }
+
+        // remove any of the pending explosions
+        for (var i = 0; i < this.enemies.length; i++) {
+            this.enemies[i].resetExplosions()
+        }
+
+        // make all of the lasers go back as well
+        for (var i = 0; i < this.lasers.length; i++) {
+            this.lasers[i].position.x = (Math.random() * 2 - 1) * 2
+            this.lasers[i].position.y = Math.random() * (4 - 1) + 2
+            this.lasers[i].position.z = farPlane + (i / numLasers) * (farPlane - nearPlane)
+        }
+    }
 }
 
 function createEnemies() {
-    var numEnemies = 8
     var enemies = []
 
     for (var i = 1; i <= numEnemies; i++) {

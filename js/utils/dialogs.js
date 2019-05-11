@@ -106,7 +106,22 @@ function showGameOverDialog(scene) {
     dialog.style.paddingLeft = 10 + "px"
     dialog.style.paddingRight = 10 + "px"
 
-    dialog.innerHTML = "You were blasted to bits. You'll get 'em on the next run pilot!"
+
+    var endingMessage = document.createElement('div')
+    dialog.appendChild(endingMessage)
+    endingMessage.innerHTML = "You were blasted to bits. You'll get 'em on the next run pilot!"
+
+    var replayButton = document.createElement('button')
+    replayButton.id = "replayButton"
+    replayButton.style.width = dialogWidth / 2 + "px"
+    replayButton.style.height = dialogHeight / 4 + "px"
+    replayButton.style.fontSize = dialogHeight / 10 + "px"
+    replayButton.innerHTML = "Replay!"
+
+    replayButton.addEventListener("click", restartGame) // add this listener
+    dialog.appendChild(replayButton)
 
     document.body.appendChild(dialog)
+
+    return dialog
 }
