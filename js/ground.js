@@ -17,7 +17,7 @@ function Ground(scene) {
   this.handleGroundMovements = function (delta) {
     for (var i = 0; i < this.designsOnGround.length; i++) {
         this.designsOnGround[i].position.z += wallMovementSpeed * delta
-        if (this.designsOnGround[i].position.z > nearPlane) {
+        if (this.designsOnGround[i].position.z > wallNearPlaneGeneration) {
             this.designsOnGround[i].position.z = farPlane
         }
     }
@@ -65,7 +65,7 @@ function createDesignsOnGround() {
 
       box.position.x = (2 * Math.random() - 1) * 5
       box.position.y = 0.5
-      box.position.z = (i / numDesigns) * (farPlane - nearPlane)
+      box.position.z = (i / numDesigns) * (farPlane - wallNearPlaneGeneration)
       this.scene.addMesh(box)
       designsOnGround.push(box)
   }

@@ -4,6 +4,12 @@
     animate it, etc.
 */
 
+var upAngle = Math.PI / 6
+var downAngle = -Math.PI / 6
+var rightAngle = Math.PI / 6
+var leftAngle = -Math.PI / 6
+var maxLasers = 20
+
 function Plane(scene, walls, ground) {
   this.mesh = createPlaneMesh()
   this.scene = scene
@@ -44,20 +50,20 @@ function Plane(scene, walls, ground) {
     if (this.flipZ)  {
       if (planeVelocityX > 0) {
         this.mesh.rotation.z += turnSpeed * delta;
-        this.mesh.rotation.z = Math.min(this.mesh.rotation.z, Math.PI / 4);
+        this.mesh.rotation.z = Math.min(this.mesh.rotation.z, rightAngle);
       } else if (planeVelocityX < 0) {
         this.mesh.rotation.z -= turnSpeed * delta;
-        this.mesh.rotation.z = Math.max(this.mesh.rotation.z, - Math.PI / 4);
+        this.mesh.rotation.z = Math.max(this.mesh.rotation.z, leftAngle);
       } else {
         this.mesh.rotation.z /= 1.3;
       }
     } else {
       if (planeVelocityX < 0) {
         this.mesh.rotation.z += turnSpeed * delta;
-        this.mesh.rotation.z = Math.min(this.mesh.rotation.z, Math.PI / 4);
+        this.mesh.rotation.z = Math.min(this.mesh.rotation.z, rightAngle);
       } else if (planeVelocityX > 0) {
         this.mesh.rotation.z -= turnSpeed * delta;
-        this.mesh.rotation.z = Math.max(this.mesh.rotation.z, - Math.PI / 4);
+        this.mesh.rotation.z = Math.max(this.mesh.rotation.z, leftAngle);
       } else {
         this.mesh.rotation.z /= 1.3;
       }
@@ -66,17 +72,16 @@ function Plane(scene, walls, ground) {
     // handle y movement (flip the directions, seems to work this way, axis flipped)
     if (planeVelocityY > 0) {
       this.mesh.rotation.x += turnSpeed * delta;
-      this.mesh.rotation.x = Math.min(this.mesh.rotation.x, Math.PI / 4);
+      this.mesh.rotation.x = Math.min(this.mesh.rotation.x, upAngle);
     } else if (planeVelocityY < 0) {
       this.mesh.rotation.x -= turnSpeed * delta;
-      this.mesh.rotation.x = Math.max(this.mesh.rotation.x, - Math.PI / 4);
+      this.mesh.rotation.x = Math.max(this.mesh.rotation.x, downAngle);
     } else {
       this.mesh.rotation.x /= 1.3;
     }
   }
 
   this.shootLaser = function () {
-    var maxLasers = 20
     if (this.shots.length >= maxLasers) return
     var laserGeometry = new THREE.CylinderGeometry(0.01, 0.01, 1, 4)
     var laserMaterial = new THREE.MeshLambertMaterial({

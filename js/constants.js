@@ -32,6 +32,7 @@ var obstaclesRadius = 0.5
 var groundLeeway = 1
 var ceilingLeeway = 50
 var wallsLeeway = 0.4 / 2 // (plane width / 2)
+var wallNearPlaneGeneration = nearPlane
 
 // this will be the center point of the game, where the scale is determined by how
 // large/where we want to place this center (where the fixed camera will stay/move around)

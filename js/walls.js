@@ -26,7 +26,7 @@ function Walls(scene) {
     this.handleWallMovements = function (delta) {
         for (var i = 0; i < this.designsOnWalls.length; i++) {
             this.designsOnWalls[i].position.z += wallMovementSpeed * delta
-            if (this.designsOnWalls[i].position.z > nearPlane) {
+            if (this.designsOnWalls[i].position.z > wallNearPlaneGeneration) {
                 this.designsOnWalls[i].position.z = farPlane
             }
         }
@@ -84,7 +84,7 @@ function createDesigns() {
 
         box.position.x = -wallShift
         box.position.y = Math.random() * 7
-        box.position.z = (i / numDesigns) * (farPlane - nearPlane)
+        box.position.z = (i / numDesigns) * (farPlane - wallNearPlaneGeneration)
         this.scene.addMesh(box)
         designsOnWalls.push(box)
     }
@@ -104,7 +104,7 @@ function createDesigns() {
 
         box.position.x = wallShift
         box.position.y = Math.random() * 7
-        box.position.z = (i / numDesigns) * (farPlane - nearPlane)
+        box.position.z = (i / numDesigns) * (farPlane - wallNearPlaneGeneration)
         this.scene.addMesh(box)
         designsOnWalls.push(box)
     }

@@ -47,7 +47,7 @@ function Scene() {
 
 	var spotLight = new THREE.SpotLight( 0xffffff, 0.7, 10, Math.PI / 2 );
 	spotLight.position.set( 0, 0, nearPlane );
-	this.scene.add(spotLight)
+	// this.scene.add(spotLight)
 	// spotLight.target.position.set( 0, center, planeInitZ);
 	// spotLight.castShadow = true;
 
