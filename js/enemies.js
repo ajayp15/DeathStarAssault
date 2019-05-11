@@ -32,13 +32,19 @@ function Enemy(scene) {
             return true
         }
 
-        // next check if it hit the wings
-        // TODO: fix this: seems like it is partially working
-
         return false
     }
 
     this.explode = function () {
+        // if you are exploding, check that you didn't already explode, and git rid of those
+        // particles pre-emptively so that they don't linger
+        if (this.explosionParticles != undefined) {
+            this.scene.removeMesh(this.explosionParticles);
+            this.explosionParticles = undefined;
+            this.dirs = undefined
+            this.explosionIterations = 0
+        }
+
         var geometry = new THREE.Geometry();
         var objectSize = 0.03
         var movementSpeed = 5
