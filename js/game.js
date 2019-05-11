@@ -116,7 +116,7 @@ function animate(){
 
 function update() {
 	var delta = clock.getDelta() // use this to adjust for variable frame rates
-	if (finishedShowingObjectivePhase1) {
+	if (finishedShowingObjectivePhase1 && !gameOver) {
 		enemies.handleEnemyMovements(delta)
 		enemies.handleLaserCollisions(plane.shots)
 		enemies.handleGenericLaserMovements(delta)
