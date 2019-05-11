@@ -20,9 +20,9 @@ var floorHeight = 50
 	Game variables
 */
 var clock;
-var hasCollided;
 var stats;
 var scoreText;
+var HPText;
 var score;
 
 /*
@@ -49,19 +49,15 @@ function setup(){
 	clock.start()
 
 	scene = new Scene()
-	ground = new Ground(scene) // TODO: change these arbitrary values?
+	ground = new Ground(scene)
 	walls = new Walls(scene)
 	environment = new Environment();
 	plane = new Plane(scene, walls, ground)
 	enemies = new Enemies(scene, plane)
-	// obstacles = new Obstacles(scene, ground, plane, walls)
 
 	scene.addMesh(ground.mesh)
 	scene.addMesh(plane.mesh, false)
 	scene.addMesh(environment.mesh)
-
-	// generate initial obstacles
-	// obstacles.generateInitialObstacles()
 
 	// add the renderer to the actual html
 	document.body.appendChild(scene.renderer.domElement)
@@ -77,23 +73,36 @@ function setup(){
 	document.onkeydown = handleKeyDown;
 	document.onkeyup = handleKeyUp;
 
+	// create score board
 	scoreText = document.createElement('div');
 	scoreText.style.position = 'absolute';
 	//text2.style.zIndex = 1;    // if you still don't see the label, try uncommenting this
 	scoreText.style.width = 100;
 	scoreText.style.height = 100;
 	//scoreText.style.backgroundColor = "blue";
-	scoreText.innerHTML = "0";
+	scoreText.innerHTML = "Score: 0";
 	scoreText.style.top = 50 + 'px';
 	scoreText.style.left = 10 + 'px';
 	document.body.appendChild(scoreText);
+
+	// create HP bar
+	HPText = document.createElement('div');
+	HPText.style.position = 'absolute';
+	//text2.style.zIndex = 1;    // if you still don't see the label, try uncommenting this
+	HPText.style.width = 100;
+	HPText.style.height = 100;
+	//scoreText.style.backgroundColor = "blue";
+	HPText.innerHTML = "HP: " + initialHP;
+	HPText.style.top = 150 + 'px';
+	HPText.style.left = 10 + 'px';
+	document.body.appendChild(HPText);
 }
 
 function animate(){
 	if (showStats) {
 		stats.update()
 	}
-	if (hasCollided) {
+	if (plane.HP <= 0) {
 		return;
 	}
 	update();
@@ -104,23 +113,14 @@ function animate(){
 function update() {
 	var delta = clock.getDelta() // use this to adjust for variable frame rates
 
-	// obstacles.handleObstacleMovement(delta);
-	// obstacles.doObjectLogic();
 	enemies.handleEnemyMovements(delta)
 	enemies.handleLaserCollisions(plane.shots)
 	enemies.handleGenericLaserMovements(delta)
-	// enemies.handleLaserMovements(delta)
 	walls.handleWallMovements(delta)
 	ground.handleGroundMovements(delta)
 	plane.handlePlaneMovement(planeVelocityX, planeVelocityY, delta);
 	plane.handleLaserMovements(delta);
 	scene.handleCameraMovement(planeVelocityX, planeVelocityY, 0, plane, delta, walls, ground);
-
-	// add score if player still hasn't collided with anything
-	// if(!hasCollided) {
-	// 	score += Math.ceil(objectGenerationTime);
-	// 	scoreText.innerHTML="Score: " + score.toString();
-	// }
 }
 
 function render(){

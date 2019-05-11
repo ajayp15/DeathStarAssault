@@ -29,90 +29,8 @@ function Enemy(scene) {
 
         // next check if it hit the wings
         // TODO: fix this: seems like it is partially working
-        // var boundingBox1 = new THREE.Box3()
-        // var boundingBox2 = new THREE.Box3()
-        // boundingBox1.min = new THREE.Vector3(-0.1, -wingRadius, -wingRadius)
-        // boundingBox1.max = new THREE.Vector3(0.1, wingRadius, wingRadius)
-        // boundingBox2.min = new THREE.Vector3(-0.1, -wingRadius, -wingRadius)
-        // boundingBox2.max = new THREE.Vector3(0.1, wingRadius, wingRadius)
-        // var offset1 = this.mesh.position.clone()
-        // offset1.x -= fighterRadius
-        // var offset2 = this.mesh.position.clone()
-        // offset2.x += fighterRadius
-        // boundingBox1 = boundingBox1.translate(offset1)
-        // boundingBox2 = boundingBox2.translate(offset2)
-        // var mat4 = new THREE.Matrix4()
-        // mat4.extractRotation (this.mesh.matrixWorld)
-        // boundingBox1.applyMatrix4(mat4)
-        // boundingBox2.applyMatrix4(mat4)
-
-
-        // if (boundingShape.intersectsBox(boundingBox1)) {
-        //     return true
-        // }
-        // if (boundingShape.intersectsBox(boundingBox2)) {
-        //     return true
-        // }
 
         return false
-    }
-
-    this.shootAtTarget = function (target) {
-        let plasmaBall = new THREE.Mesh(new THREE.SphereGeometry(0.1, 8, 4), new THREE.MeshBasicMaterial({
-            color: "aqua"
-        }));
-        plasmaBall.position = this.mesh.position.clone()
-        this.scene.addMesh(plasmaBall);
-        var direction = new THREE.Vector3().subVectors(target.mesh.position, this.mesh.position).normalize()
-        this.shots.push([plasmaBall, direction]);
-    }
-
-    this.shootForward = function () {
-        var maxLasers = 5
-        if (this.shots.length >= maxLasers) return
-        var laserGeometry = new THREE.CylinderGeometry(0.01, 0.01, 1, 4)
-        var laserMaterial = new THREE.MeshLambertMaterial({
-            color: 0xff0000,
-        })
-        let laser = new THREE.Mesh(laserGeometry, laserMaterial);
-        laser.rotation.x = Math.PI / 2
-
-        var wpVector = this.mesh.position.clone()
-        laser.position.copy(wpVector); // start position - the tip of the weapon
-        this.scene.addMesh(laser);
-        this.shots.push(laser);
-
-        // also, when you shoot, shoot at a somewhat un-even angle so that the shots 
-        // are more randomized
-        var randomDir = new THREE.Vector3((2 * Math.random() - 1), 1, (2 * Math.random() - 1))
-        this.shotDirs.push(randomDir)
-    }
-
-    this.handleLaserMovements = function (delta) {
-        // for (var i = 0; i < this.shots.length; i++) {
-        //     // var dir = this.shots[i][1]
-        //     // this.shots[i][0].translateOnAxis(dir.clone(), 5 * delta)
-        // }
-        var shotsToKeep = []
-        var shotDirsToKeep = []
-        for (var i = 0; i < this.shots.length; i++) {
-            var direction = this.shotDirs[i]
-            this.shots[i].position.x += direction.x * delta * 10
-            this.shots[i].position.z += direction.z * delta * 10
-
-            this.shots[i].translateY(50 * delta) // y because rotated around x
-
-            // check if it has gone out of scene, remove it then
-            if (this.shots[i].position.z > nearPlane) {  // arbitrary distance to stop them at
-                this.scene.removeMesh(this.shots[i])
-            } else {
-                shotsToKeep.push(this.shots[i])
-                shotDirsToKeep.push(this.shotDirs[i])
-            }
-        }
-
-        this.shots = shotsToKeep
-        this.shotDirs = shotDirsToKeep
     }
 
     this.explode = function () {
@@ -135,7 +53,6 @@ function Enemy(scene) {
         this.explosionParticles.geometry.verticesNeedUpdate = true;
 
         this.scene.addMesh(particles);
-        // this.currentExplosionParticles = particles
     }
 
     this.updateExplosion = function (delta) {
@@ -244,8 +161,6 @@ function Enemies(scene, plane) {
     this.plane = plane
     this.enemies = createEnemies()
     this.lasers = createInitialLasers()
-    // this.clock = new THREE.Clock()
-    // this.clock.start()
 
     this.handleEnemyMovements = function (delta) {
         for (var i = 0; i < this.enemies.length; i++) {
@@ -263,25 +178,18 @@ function Enemies(scene, plane) {
             // also check if the player has hit any of them
             var shape = this.plane.mesh
             if (this.enemies[i].checkIfCollided(shape)) {
-                hasCollided = true
+                // explode this ship and send it to the back
+                this.enemies[i].explode()
+                this.enemies[i].mesh.position.z = farPlane
+                this.enemies[i].mesh.position.x = (Math.random() * 2 - 1) * 1.5
+                this.enemies[i].mesh.position.y = Math.random() * (4 - 1) + 2
+
+                // record that plane was hit
+                this.plane.gotHit()
             }
 
             // update explosions while here
             this.enemies[i].updateExplosion(delta)
-        }
-    }
-
-    this.handleLaserMovements = function (delta) {
-        // get clock time --> if time since last shot is past a threshold, pick a random
-        // one of the enemies and make them shoot
-        if (clock.getElapsedTime() > 0.1) {
-            var enemyIndex = Math.floor(Math.random() * this.enemies.length)
-            this.enemies[enemyIndex].shootForward()
-            clock.start()
-        }
-
-        for (var i = 0; i < this.enemies.length; i++) {
-            this.enemies[i].handleLaserMovements(delta)
         }
     }
 
@@ -297,6 +205,16 @@ function Enemies(scene, plane) {
                 this.lasers[i].position.x = (Math.random() * 2 - 1) * 2
                 this.lasers[i].position.y = Math.random() * (4 - 1) + 2
                 this.lasers[i].position.z = farPlane + (i / numLasers) * (farPlane - nearPlane)
+            }
+
+            // also check if it has hit the player, while we are at it
+            if (this.plane.checkIfCollided(this.lasers[i])) {
+                // send it back to the far plane
+                this.lasers[i].position.x = (Math.random() * 2 - 1) * 2
+                this.lasers[i].position.y = Math.random() * (4 - 1) + 2
+                this.lasers[i].position.z = farPlane + (i / numLasers) * (farPlane - nearPlane)
+
+                this.plane.gotHit()
             }
         }
     }
