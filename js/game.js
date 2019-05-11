@@ -20,12 +20,15 @@ var floorHeight = 50
 	Game variables
 */
 var clock;
+var objectiveClock;
 var stats;
 var statusDisplay;
 var HPText;
 var HPBar;
 var scoreText;
 var score;
+var finishedShowingObjectivePhase1 = false
+var objectiveDialog;
 
 /*
 	Game user inputs
@@ -49,6 +52,8 @@ function setup(){
 	score=0
 	clock=new THREE.Clock()
 	clock.start()
+	objectiveClock = new THREE.Clock()
+	objectiveClock.start()
 
 	scene = new Scene()
 	ground = new Ground(scene)
@@ -79,6 +84,12 @@ function setup(){
 	scoreText = statusDisplay.score
 	HPText = statusDisplay.hpText
 	HPBar = statusDisplay.hpBar
+
+	objectiveDialog = createInitialObjectiveDialog(scene)
+}
+
+function gameOver() {
+
 }
 
 function animate(){
@@ -86,8 +97,14 @@ function animate(){
 		stats.update()
 	}
 	if (plane.HP <= 0) {
-		return;
+		gameOver()
+		return
 	}
+	if (!finishedShowingObjectivePhase1 && objectiveClock.getElapsedTime() > 5) {
+		document.body.removeChild(objectiveDialog)
+		finishedShowingObjectivePhase1 = true
+	}
+
 	update();
 	render();
 	requestAnimationFrame(animate);//request next update
@@ -95,10 +112,12 @@ function animate(){
 
 function update() {
 	var delta = clock.getDelta() // use this to adjust for variable frame rates
-
-	enemies.handleEnemyMovements(delta)
-	enemies.handleLaserCollisions(plane.shots)
-	enemies.handleGenericLaserMovements(delta)
+	if (finishedShowingObjectivePhase1) {
+		enemies.handleEnemyMovements(delta)
+		enemies.handleLaserCollisions(plane.shots)
+		enemies.handleGenericLaserMovements(delta)
+	}
+	
 	walls.handleWallMovements(delta)
 	ground.handleGroundMovements(delta)
 	plane.handlePlaneMovement(planeVelocityX, planeVelocityY, delta);
