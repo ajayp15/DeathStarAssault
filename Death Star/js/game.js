@@ -80,6 +80,7 @@ function animate(){
 function update() {
 	var dt = clock.getDelta()
 	ship.update(dt, scene.camera);
+	deathstar.update(dt);
 }
 
 function render(){

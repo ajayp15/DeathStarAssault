@@ -20,7 +20,7 @@ function Deathstar(size, turret_count, small_structure_count = 1000) {
                       Math.random() * shipMaximumPlaneCoord * 2 - shipMaximumPlaneCoord,
                       Math.random() * shipMaximumPlaneCoord * 2 - shipMaximumPlaneCoord
                     )
-    this.mesh.add(turret.mesh);
+    scene.addObj(turret.mesh);
     this.turrets.push(turret);
   }
 
@@ -62,7 +62,7 @@ function Deathstar(size, turret_count, small_structure_count = 1000) {
 	this.mesh.receiveShadow = true;
 	this.mesh.castShadow=false;
 
-  this.update = function(theShip, dt) {
+  this.update = function(dt) {
     for (var i = 0; i < this.turrets.length; ++i) {
       var turret = this.turrets[i]
       this.turrets[i].update(dt)
