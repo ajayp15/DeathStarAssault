@@ -46,6 +46,7 @@ var destroyedDeathStar = false
 var canShootLaser = false
 var inPhase2 = false
 var canShootTorpedos = true
+var handledEndOfGame = false
 
 /*
 	Game user inputs
@@ -75,7 +76,7 @@ function setup(){
 	scene = new Scene()
 	explosions = new Explosions(scene)
 	ground = new Ground(scene)
-	walls = new Walls(scene)
+	walls = new Walls(scene, explosions)
 	environment = new Environment();
 	plane = new Plane(scene, walls, ground, explosions)
 	enemies = new Enemies(scene, plane, explosions)
@@ -192,14 +193,29 @@ function animate(){
 		// also move the ship to be behind the screen (so that it is pseudo first person)
 		plane.mesh.position.z += delta * slowDownRate / 3
 	}
-	if (destroyedDeathStar) {
-		console.log("Game completed!")
+	if (destroyedDeathStar && !handledEndOfGame) {
+		// console.log("Game completed!")
 
 		// explode back wall
 		walls.backWallExplode()
+		plane.removeAim()
+		handledEndOfGame = true
 
 		// play final cutscene and end
-		
+		setTimeout(function() {
+			var video = document.createElement('img')
+			video.style.width = "100%"
+			video.style.height = "100%"
+			video.style.position = "fixed"
+			video.src = "images/giphy.gif" 
+			// video.style.zIndex = 100
+
+			// remove renderer and play the video
+			document.body.removeChild(scene.renderer.domElement)
+			document.body.appendChild(video)
+
+			// show restart button here
+		}, 1500)
 	}
 
 	update(delta);

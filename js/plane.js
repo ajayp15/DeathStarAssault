@@ -287,6 +287,15 @@ function Plane(scene, walls, ground, explosions) {
       this.protonTorpedos[i].position.add(offset)
     }
   }
+
+  this.removeAim = function() {
+    this.scene.removeMesh(this.target)
+
+    // also remove proton torpedos, if they exist
+    for (var i = 0; i < this.protonTorpedos.length; i++) {
+      this.scene.removeMesh(this.protonTorpedos[i])
+    }
+  }
 }
 
 function createPlaneMesh() {

@@ -7,8 +7,9 @@ var backWallWidth = 10
 var backWallHeight = 15
 var backWallDepth = 5
 
-function Walls(scene) {
+function Walls(scene, explosions) {
     this.scene = scene
+    this.explosions = explosions
     this.leftMesh = createWall("left")
     this.rightMesh = createWall("right")
     this.designsOnWalls = createDesigns()
@@ -101,7 +102,16 @@ function Walls(scene) {
     }
 
     this.backWallExplode = function() {
-        
+        this.scene.removeMesh(this.backWall)
+
+        var center = this.backWall.position.clone()
+        center.y += backWallHeight / 4
+        center.z += backWallDepth / 2
+        var objectSize = 0.03
+        var numParticles = 1000
+        var color = 0xf4bc42
+        var moveSpeed = 20
+        this.explosions.addExplosion(center, objectSize, numParticles, color, moveSpeed)
     }
 }
 

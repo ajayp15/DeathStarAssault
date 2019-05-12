@@ -3,8 +3,6 @@
     scene and also update their positions.
 */
 
-var explosionMovementSpeed = 5
-
 // one individual explosion
 function Explosion(scene) {
     this.scene = scene
@@ -13,7 +11,7 @@ function Explosion(scene) {
     this.explosionIterations = 0 // how many times this explosion has been updated
     this.numParticles = 0
 
-    this.explode = function(location, objectSize, numParticles, color) {
+    this.explode = function(location, objectSize, numParticles, color, explosionMovementSpeed) {
         this.numParticles = numParticles
         var geometry = new THREE.Geometry();
         this.dirs = []
@@ -77,11 +75,11 @@ function Explosions(scene) {
     this.scene = scene
     this.explosions = []
 
-    this.addExplosion = function (location, objectSize, numParticles, color = 0xf4bc42) {
+    this.addExplosion = function (location, objectSize, numParticles, color = 0xf4bc42, explosionMovementSpeed = 5) {
         var explosion = new Explosion(scene)
         this.explosions.push(explosion)
 
-        explosion.explode(location, objectSize, numParticles, color)
+        explosion.explode(location, objectSize, numParticles, color, explosionMovementSpeed)
     }
 
     this.updateExplosions = function (delta) {
