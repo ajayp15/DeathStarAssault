@@ -93,7 +93,7 @@ function createFinalObjectiveDialog(scene) {
 
     dialog.id = "objectiveDisplay"
 
-    dialog.style.fontSize = dialogHeight / 12 + "px"
+    dialog.style.fontSize = dialogHeight / 15 + "px"
 
     // position it
     dialog.style.position = 'fixed';
