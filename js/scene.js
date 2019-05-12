@@ -82,7 +82,6 @@ function Scene() {
 		var planePos = plane.mesh.position
 		var newPlanePos = new THREE.Vector3(planePos.x + dx * delta, planePos.y + dy * delta, planePos.z)
 		var newPlaneX = newPlanePos.x
-		var newPlaneY = newPlanePos.y
 
 		var screenCoords = newPlanePos.project(this.camera)
 		screenCoords.y = -(screenCoords.y * (this.sceneHeight / 2)) + this.sceneHeight/2
@@ -93,7 +92,7 @@ function Scene() {
 			this.camera.position.x -= dx * cameraDrift * delta // undo the movement
 		}
 		if (screenCoords.y <= ceilingLeeway
-			|| newPlaneY - groundLeeway <= ground.groundTop) { // arbitrary values
+			|| screenCoords.y >= (this.sceneHeight)) { // arbitrary values
 			this.camera.position.y -= dy * cameraDrift * delta
 		}
 	}

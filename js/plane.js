@@ -43,12 +43,12 @@ function Plane(scene, walls, ground, explosions) {
 
     if (this.mesh.position.x + wallsLeeway >= this.walls.rightWallX
       || this.mesh.position.x - wallsLeeway <= this.walls.leftWallX) {
-      this.mesh.position.x -= planeVelocityX * delta // undo the movement
+      this.mesh.position.x -= changeInX // undo the movement
       changeInX = 0
     }
     if (screenCoords.y <= ceilingLeeway // indexed from 0 at ceiling
-      || this.mesh.position.y - groundLeeway <= this.ground.groundTop) { // arbitrary values
-      this.mesh.position.y -= planeVelocityY * delta
+      || screenCoords.y >= (this.scene.sceneHeight)) { // arbitrary values
+      this.mesh.position.y -= changeInY
       changeInY = 0
     }
 

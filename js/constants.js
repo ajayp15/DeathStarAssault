@@ -22,7 +22,7 @@ var bbMat = new THREE.MeshBasicMaterial({
     color: 0xff0000,
     wireframe: true
   });
-var displayBoundingBoxes = true
+var displayBoundingBoxes = false
 
 var laserGeometry = new THREE.CylinderGeometry(0.01, 0.01, 1, 4)
 var shipLaserMaterial = new THREE.MeshLambertMaterial({
