@@ -163,9 +163,7 @@ function Plane(scene, walls, ground, explosions) {
   }
 
   // this gets called when this plane gets hit
-  this.gotHit = function () {
-    // TODO: as a small animation, shake the plane around a little (rotate it back and forth
-    // and get dazed(?))
+  this.gotHit = function (locationOfHit) {
     var deduction = 10
     this.HP -= deduction
     HPText.innerHTML = "Ship Status: " + this.HP + "%"
@@ -175,6 +173,12 @@ function Plane(scene, walls, ground, explosions) {
 
     // call explosion, with very small number of explosion particles and different color,
     // to signify that plane was hit (maybe white)
+    // define location of explosion as average between plane location and hitting object
+    var location = new THREE.Vector3().addVectors(locationOfHit, this.mesh.position).multiplyScalar(1/2)
+    var color = 0xffffff // white
+    var numParticles = 30 // small explosion
+    var objectSize = 0.02
+    explosions.addExplosion(location, objectSize, numParticles, color)
   }
 
   // run when the plane is destroyed @ game over

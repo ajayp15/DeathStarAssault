@@ -153,14 +153,14 @@ function Enemies(scene, plane, explosions) {
             // also check if the player has hit any of them
             var shape = this.plane.boundingBox
             if (this.enemies[i].checkIfCollided(shape)) {
+                // record that plane was hit
+                this.plane.gotHit(this.enemies[i].mesh.position.clone())
+
                 // explode this ship and send it to the back
                 this.enemies[i].explode()
                 this.enemies[i].mesh.position.z = farPlane
                 this.enemies[i].mesh.position.x = (Math.random() * 2 - 1) * 1.5
                 this.enemies[i].mesh.position.y = Math.random() * (4 - 1) + 2
-
-                // record that plane was hit
-                this.plane.gotHit()
             }
         }
     }
@@ -181,12 +181,12 @@ function Enemies(scene, plane, explosions) {
 
             // also check if it has hit the player, while we are at it
             if (this.plane.checkIfCollided(this.lasers[i])) {
+                this.plane.gotHit(this.lasers[i].position.clone())
+
                 // send it back to the far plane
                 this.lasers[i].position.x = (Math.random() * 2 - 1) * 2
                 this.lasers[i].position.y = Math.random() * (4 - 1) + 2
                 this.lasers[i].position.z = farPlane + (i / numLasers) * (farPlane - nearPlane)
-
-                this.plane.gotHit()
             }
         }
     }

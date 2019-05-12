@@ -13,7 +13,7 @@ function Explosion(scene) {
     this.explosionIterations = 0 // how many times this explosion has been updated
     this.numParticles = 0
 
-    this.explode = function(location, objectSize, numParticles) {
+    this.explode = function(location, objectSize, numParticles, color) {
         this.numParticles = numParticles
         var geometry = new THREE.Geometry();
         this.dirs = []
@@ -26,7 +26,7 @@ function Explosion(scene) {
                 z: (Math.random() * explosionMovementSpeed) - (explosionMovementSpeed / 2) });
         }
         // could also do random-ish colors here
-        var material = new THREE.PointsMaterial({ size: objectSize, color: 0xf4bc42 });
+        var material = new THREE.PointsMaterial({ size: objectSize, color: color });
         var particles = new THREE.Points(geometry, material);
 
         this.explosionParticles = particles
@@ -77,11 +77,11 @@ function Explosions(scene) {
     this.scene = scene
     this.explosions = []
 
-    this.addExplosion = function (location, objectSize, numParticles) {
+    this.addExplosion = function (location, objectSize, numParticles, color = 0xf4bc42) {
         var explosion = new Explosion(scene)
         this.explosions.push(explosion)
 
-        explosion.explode(location, objectSize, numParticles)
+        explosion.explode(location, objectSize, numParticles, color)
     }
 
     this.updateExplosions = function (delta) {
