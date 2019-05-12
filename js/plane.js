@@ -286,6 +286,14 @@ function Plane(scene, walls, ground, explosions) {
       var offset = this.protonDirs[i].clone().multiplyScalar(delta * 10)
       this.protonTorpedos[i].position.add(offset)
     }
+    var padding = 2
+    // check if they have passed the back wall yet --> failed task if this is true
+    if (this.protonTorpedos != undefined && this.protonTorpedos.length > 0 &&
+      !destroyedDeathStar &&
+      this.protonTorpedos[0].position.z <= this.walls.backWall.position.z - padding) {
+      gameOver = true
+      this.HP = 0
+    }
   }
 
   this.removeAim = function() {

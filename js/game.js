@@ -49,6 +49,22 @@ var inPhase2 = false
 var canShootTorpedos = true
 var handledEndOfGame = false
 
+function resetGameState() {
+	finishedShowingObjectivePhase1 = false
+	gameOver = false
+	showingGameOverScreen = false
+	finishedPhase1 = false
+	reducingWallSpeed = false
+	destroyedDeathStar = false
+	canShootLaser = false
+	inPhase2 = false
+	canShootTorpedos = true
+	handledEndOfGame = false
+	wallMovementSpeed = 20
+	slowDownRate = wallMovementSpeed / 5
+	initWallMovementSpeed = wallMovementSpeed
+}
+
 /*
 	Game user inputs
 */
@@ -109,39 +125,18 @@ function setup(){
 }
 
 function restartGame() {
-	console.log("Restarting Game.")
-	finishedShowingObjectivePhase1 = false
-	gameOver = false
-	showingGameOverScreen = false
-	finishedPhase1 = false
-
-	// call individual functions from each of the enemies, etc. to restart them at
-	// their initial locations
-	plane.reset()
-	enemies.reset()
-
-	// get rid of game over dialog now
+	console.log("Restarting game.")
+	document.body.removeChild(scene.renderer.domElement)
 	document.body.removeChild(gameOverDialog)
-
-	// reset the status bar with num destroyed and health
-	scoreText.innerHTML = "TIEs Destroyed: " + 0
-	HPText.innerHTML = "Ship Status: " + initialHP + "%"
-	HPBar.value = 100
-
-	// restart the clocks
-	clock=new THREE.Clock()
-	clock.start()
-	objectiveClock = new THREE.Clock()
-	objectiveClock.start()
-
-	// display the objective screen again
-	objectiveDialog = createInitialObjectiveDialog(scene)
+	document.body.removeChild(document.getElementById("statusDisplay"))
+	resetGameState()
+	init()
 }
 
 function handleGameOver() {
 	plane.blowUp()
 	gameOver = true
-	gameOverDialog = showGameOverDialog(scene)
+	gameOverDialog = showGameOverDialog(scene, inPhase2)
 }
 
 function animate(){
@@ -162,11 +157,7 @@ function animate(){
 		// move onto phase 2 (shooting the proton torpedos)
 		finishedPhase1 = true
 		canShootLaser = false // don't need it anymore, proton torpedos now
-		
-		// start displaying something
 		objectiveDialog = createFinalObjectiveDialog(scene)
-
-		// remove the enemies from screen
 		enemies.reset()
 		plane.reset()
 
@@ -177,8 +168,6 @@ function animate(){
 		// like slow motion
 		objectiveClock.start()
 		reducingWallSpeed = true
-
-		// add in your aiming target mesh (projected onto the backwall)
 		plane.addPlaneAim()
 	}
 	if (reducingWallSpeed) {
@@ -219,19 +208,7 @@ function animate(){
 
 			// show restart button here TODO, fix this
 			setTimeout(function() {
-				finishedShowingObjectivePhase1 = false
-				gameOver = false
-				showingGameOverScreen = false
-				finishedPhase1 = false
-				reducingWallSpeed = false
-				destroyedDeathStar = false
-				canShootLaser = false
-				inPhase2 = false
-				canShootTorpedos = true
-				handledEndOfGame = false
-				wallMovementSpeed = 20
-				slowDownRate = wallMovementSpeed / 5
-				initWallMovementSpeed = wallMovementSpeed
+				resetGameState()
 
 				var video = document.getElementById("video")
 				document.body.removeChild(video)

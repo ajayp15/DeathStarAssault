@@ -37,7 +37,7 @@ function Walls(scene, explosions) {
         }
 
         // move the back wall with the missile shot location if in phase2
-        if (finishedPhase1) {
+        if (finishedPhase1 && !gameOver) { // don't move it anymore if lost
             this.backWall.position.z += wallMovementSpeed * delta
         }
     }
@@ -112,6 +112,13 @@ function Walls(scene, explosions) {
         var color = 0xf4bc42
         var moveSpeed = 20
         this.explosions.addExplosion(center, objectSize, numParticles, color, moveSpeed)
+    }
+
+    this.reset = function() {
+        if (this.backWall != undefined) {
+            this.scene.removeMesh(this.backWall)
+            this.backWall = undefined
+        }
     }
 }
 

@@ -114,7 +114,7 @@ function createFinalObjectiveDialog(scene) {
     return dialog
 }
 
-function showGameOverDialog(scene) {
+function showGameOverDialog(scene, inPhase2) {
     var dialog = document.createElement('div');
     var sceneWidth = scene.sceneWidth
     var sceneHeight = scene.sceneHeight
@@ -141,6 +141,10 @@ function showGameOverDialog(scene) {
     var endingMessage = document.createElement('div')
     dialog.appendChild(endingMessage)
     endingMessage.innerHTML = "You were blasted to bits. You'll get 'em on the next run pilot!"
+    if (inPhase2) {
+        endingMessage.innerHTML = "You were unsuccessful in destroying the death star. Aim for the cavity in the wall next time pilot!"
+        dialog.style.fontSize = dialogHeight / 15 + "px"
+    }
 
     var replayButton = document.createElement('button')
     replayButton.id = "replayButton"
