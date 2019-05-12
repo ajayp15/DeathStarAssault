@@ -43,6 +43,8 @@ var finishedPhase1 = false
 var reducingWallSpeed = false
 var destroyedDeathStar = false
 var canShootLaser = false
+var inPhase2 = false
+var canShootTorpedos = true
 
 /*
 	Game user inputs
@@ -178,6 +180,7 @@ function animate(){
 	if (reducingWallSpeed) {
 		if (objectiveClock.getElapsedTime() > 5 || wallMovementSpeed < initWallMovementSpeed / 5) {
 			reducingWallSpeed = false
+			inPhase2 = true
 
 			document.body.removeChild(objectiveDialog)
 		}
@@ -188,8 +191,13 @@ function animate(){
 		plane.mesh.position.z += delta * slowDownRate / 3
 	}
 	if (destroyedDeathStar) {
-		// play final cutscene and end
 		console.log("Game completed!")
+
+		// explode back wall
+		walls.backWallExplode()
+
+		// play final cutscene and end
+		
 	}
 
 	update(delta);
@@ -219,6 +227,12 @@ function update(delta) {
 	if (finishedShowingObjectivePhase1 && !gameOver && !finishedPhase1) {
 		plane.handleLaserMovements(delta);
 	}
+	if (inPhase2) {
+		plane.updateProtonTorpedoLocations(delta)
+		if (walls.checkIfBlewUpBackWall(plane.protonTorpedos)) {
+			destroyedDeathStar = true
+		}
+	}
 
 	if (gameOver) {
 		plane.updateExplosion(delta)
@@ -247,6 +261,10 @@ function handleKeyDown(keyEvent){
 		keyboard[32] = true
 		if (canShootLaser) {
 			plane.shootLaser();
+		}
+		if (inPhase2 && canShootTorpedos) {
+			plane.shootProtonTorpedos()
+			canShootTorpedos = false // only allow one shot
 		}
 	}
 }

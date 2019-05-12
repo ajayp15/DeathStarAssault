@@ -31,6 +31,7 @@ var shipLaserMaterial = new THREE.MeshLambertMaterial({
 })
 
 var aimRadius = 0.5
+var torpedoRadius = 0.4
 
 
 var shipScale = 0.6

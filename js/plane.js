@@ -57,7 +57,7 @@ function Plane(scene, walls, ground) {
       this.target.position.y += changeInY
       
       // also clamp it to the back wall
-      this.target.position.z = this.walls.backWall.position.z + 2.505
+      this.target.position.z = this.walls.backWall.position.z + 2.51
     }
 
     // handle x movement
@@ -249,7 +249,7 @@ function Plane(scene, walls, ground) {
   
   this.addPlaneAim = function() {
     var largeCircleGeometry = new THREE.CircleGeometry(aimRadius, 20)
-    var greenMaterial = new THREE.MeshLambertMaterial({ color: 0x245923 , side: THREE.DoubleSide, opacity: 0.7});
+    var greenMaterial = new THREE.MeshLambertMaterial({ color: 0x245923, side: THREE.DoubleSide});
     var mainCircle = new THREE.Mesh(largeCircleGeometry, greenMaterial)
     mainCircle.wireframe = true
 
@@ -269,10 +269,57 @@ function Plane(scene, walls, ground) {
     // project it to the position of the back wall
     target.position = this.mesh.position.clone()
     target.position.y = center // this seems to be necessary?
-    target.position.z = this.walls.backWall.position.z + 2.505 // adjust for thickness of wall
+    target.position.z = this.walls.backWall.position.z + 2.51 // adjust for thickness of wall
 
     this.scene.addMesh(target)
     this.target = target
+  }
+
+  this.protonDirs = [] // two direction vectors for the two torpedos to be moving in
+  this.protonTorpedos = []
+  this.shootProtonTorpedos= function() {
+    // shoot them at the position of the target right now
+    var pos = this.target.position.clone()
+    
+    var leftPos = new THREE.Vector3(this.scene.camera.position.x - 1.5, this.scene.camera.position.y, this.scene.camera.position.z)
+    var rightPos = new THREE.Vector3(this.scene.camera.position.x + 1.5, this.scene.camera.position.y, this.scene.camera.position.z)
+    var dir1 = new THREE.Vector3().subVectors(pos, leftPos).normalize()
+    var dir2 = new THREE.Vector3().subVectors(pos, rightPos).normalize()
+
+    this.protonDirs.push(dir1)
+    this.protonDirs.push(dir2)
+
+    // now create the proton torpedos
+    var torpedoGeo = new THREE.SphereGeometry(torpedoRadius, 5, 5)
+    var torpedoMaterial = new THREE.MeshLambertMaterial({
+      color: 0xf23763,
+      transparent:true,
+      opacity: 0.7
+    })
+    var torpedo1 = new THREE.Mesh(torpedoGeo, torpedoMaterial)
+    var torpedo2 = new THREE.Mesh(torpedoGeo, torpedoMaterial)
+    
+    this.protonTorpedos.push(torpedo1)
+    this.protonTorpedos.push(torpedo2)
+
+    torpedo1.position.copy(leftPos)
+    torpedo2.position.copy(rightPos)
+
+    // also add a small point light within them
+    var light1 = new THREE.PointLight(0xffffff, 0.5, 10)
+    var light2 = new THREE.PointLight(0xffffff, 0.5, 10)
+    torpedo1.add(light1)
+    torpedo2.add(light2)
+
+    this.scene.addMesh(torpedo1)
+    this.scene.addMesh(torpedo2)
+  }
+
+  this.updateProtonTorpedoLocations = function(delta) {
+    for (var i = 0; i < this.protonTorpedos.length; i++) {
+      var offset = this.protonDirs[i].clone().multiplyScalar(delta * 10)
+      this.protonTorpedos[i].position.add(offset)
+    }
   }
 }
 

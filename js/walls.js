@@ -3,6 +3,10 @@
     part of the game.
 */
 
+var backWallWidth = 10
+var backWallHeight = 15
+var backWallDepth = 5
+
 function Walls(scene) {
     this.scene = scene
     this.leftMesh = createWall("left")
@@ -38,9 +42,9 @@ function Walls(scene) {
     }
 
     this.createBackWall = function() {
-        var wallWidth = 10
-        var wallHeight = 15
-        var wallDepth = 5
+        var wallWidth = backWallWidth
+        var wallHeight = backWallHeight
+        var wallDepth = backWallDepth
     
         var geometry = new THREE.BoxGeometry(wallWidth, wallHeight, wallDepth)
         var material = new THREE.MeshLambertMaterial({ color: 0x606670 , side: THREE.DoubleSide});
@@ -62,10 +66,42 @@ function Walls(scene) {
         hole.position.z = wallDepth / 2
 
         wall.add(hole)
-    
+
+        // add a very dark circle inside the torus
+        var circleGeometry = new THREE.CircleGeometry(aimRadius)
+        var circleMaterial = new THREE.MeshLambertMaterial({color: 0x232426, side: THREE.DoubleSide})
+        var circle = new THREE.Mesh(circleGeometry, circleMaterial)
+
+        circle.position.x = 0
+        circle.position.y = wallHeight / 4
+        circle.position.z = wallDepth / 2 + 0.001
+
+        wall.add(circle)
+
         this.scene.addMesh(wall)
         
         this.backWall = wall
+    }
+
+    this.checkIfBlewUpBackWall = function(shots) {
+        var center = this.backWall.position.clone()
+        center.y += backWallHeight / 4
+        center.z += backWallDepth / 2
+        var wallHitBox = new THREE.Sphere(center, aimRadius)
+        for (var i = 0; i < shots.length; i++) {
+            var shot = shots[i]
+            
+            var bounding = new THREE.Sphere(shot.position, torpedoRadius)
+            if (wallHitBox.intersectsSphere(bounding)) {
+                return true
+            }
+        }
+
+        return false
+    }
+
+    this.backWallExplode = function() {
+        
     }
 }
 

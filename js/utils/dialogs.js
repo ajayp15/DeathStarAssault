@@ -106,7 +106,7 @@ function createFinalObjectiveDialog(scene) {
     dialog.style.paddingLeft = 10 + "px"
     dialog.style.paddingRight = 10 + "px"
 
-    dialog.innerHTML = "Objective: Shoot your proton torpedos into the death star by aligning the aim!"
+    dialog.innerHTML = "Objective: Shoot your proton torpedos into the death star by aligning the aim! You only get one shot kid!"
     dialog.innerHTML += "<br><br> Controls: Arrow keys to move, Spacebar to shoot"
 
     document.body.appendChild(dialog)
