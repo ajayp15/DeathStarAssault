@@ -4,55 +4,65 @@
 */
 
 
-function createStatusDisplay(scene) {
-    var dialog = document.createElement('div');
+function StatusDisplay() {
+    this.dialog = document.createElement('div');
     var sceneWidth = scene.sceneWidth
     var sceneHeight = scene.sceneHeight
 
     var dialogWidth = 150
+    var dialogHeight = 90
+    var healthBarHeight = 15
 
-    dialog.id = "statusDisplay"
+    this.dialog.id = "statusDisplay"
 
     // position it
-    dialog.style.position = 'absolute';
-	dialog.style.width = dialogWidth + "px"; // sceneWidth / 5 
-    dialog.style.height = dialogWidth / 2 + "px";
-    dialog.style.top = 10 + 'px';
-    dialog.style.right = 10 + 'px';
-    
+    this.dialog.style.position = 'absolute';
+	  this.dialog.style.width = dialogWidth + "px"; // sceneWidth / 5
+    this.dialog.style.height = dialogHeight + "px";
+    this.dialog.style.top = 10 + 'px';
+    this.dialog.style.right = 10 + 'px';
+
     // shape it
-    dialog.style.borderRadius = 25 + "px"
-    dialog.style.paddingTop = 10 + "px"
-    dialog.style.paddingLeft = 10 + "px"
-    dialog.style.paddingRight = 10 + "px"
+    this.dialog.style.borderRadius = 25 + "px"
+    this.dialog.style.paddingTop = 10 + "px"
+    this.dialog.style.paddingLeft = 10 + "px"
+    this.dialog.style.paddingRight = 10 + "px"
 
     // add enemies destroyed text
-    var scoreText = document.createElement('div')
-    dialog.appendChild(scoreText)
-    scoreText.innerHTML = "TIEs Destroyed: " + 0
+    this.scoreText = document.createElement('div')
+    this.dialog.appendChild(this.scoreText)
+    this.scoreText.innerHTML = "Turrets Destroyed: " + 0
 
     // add health text
-    var healthText = document.createElement('div')
-    dialog.appendChild(healthText)
-    healthText.style.paddingTop = 10 + "px"
-    healthText.innerHTML = "Ship Status: " + initialHP + "%"
+    this.healthText = document.createElement('div')
+    this.dialog.appendChild(this.healthText)
+    this.healthText.style.paddingTop = 10 + "px"
+    this.healthText.innerHTML = "Ship Status: 100%"
 
     // add health bar
-    var healthBar = document.createElement('progress')
-    dialog.appendChild(healthBar)
-    healthBar.value = 100
-    healthBar.max = 100
-    healthBar.style.width = dialogWidth + "px"
-    healthBar.style.height = dialogWidth / 10 + "px"
+    this.healthBar = document.createElement('progress')
+    this.dialog.appendChild(this.healthBar)
+    this.healthBar.value = 100
+    this.healthBar.max = 100
+    this.healthBar.style.width = dialogWidth + "px"
+    this.healthBar.style.height = healthBarHeight + "px"
     // healthBar.style.paddingTop = 5 + "px"
-    healthBar.style.backgroundColor = "#42f442"
+    this.healthBar.style.backgroundColor = "#42f442"
 
-    document.body.appendChild(dialog);
-    
-    return {score: scoreText, hpText: healthText, hpBar: healthBar}
+    document.body.appendChild(this.dialog);
+
+    this.setScore = function(score) {
+      this.scoreText.innerHTML = "Turrets Destroyed: " + score + "/" + turretDestroyCount
+    }
+
+    this.setHealthPct = function(health) {
+      health = Math.floor(health)
+      this.healthText.innerHTML = "Ship Status: " + health + "%"
+      this.healthBar.value = health
+    }
 }
 
-function createInitialObjectiveDialog(scene) {
+function createObjectiveDialog() {
     var dialog = document.createElement('div');
     var sceneWidth = scene.sceneWidth
     var sceneHeight = scene.sceneHeight
@@ -66,16 +76,19 @@ function createInitialObjectiveDialog(scene) {
 
     // position it
     dialog.style.position = 'fixed';
-	dialog.style.width = dialogWidth + "px"; // sceneWidth / 5 
+	  dialog.style.width = dialogWidth + "px"; // sceneWidth / 5
     dialog.style.height = dialogHeight + "px";
-    
+
     // shape it
     dialog.style.borderRadius = 25 + "px"
     dialog.style.paddingTop = 10 + "px"
     dialog.style.paddingLeft = 10 + "px"
     dialog.style.paddingRight = 10 + "px"
 
-    dialog.innerHTML = "Objective: Destroy " + phase1RequiredScore + " TIE Fighters while dodging them and their lasers!"
+    dialog.innerHTML =
+            "Objective: Destroy " +
+            turretDestroyCount +
+            " turrets while dodging their lasers and other obstacles in order to clear a path for alliance ships to the trench"
     dialog.innerHTML += "<br><br> Controls: Arrow keys to move, Spacebar to shoot"
 
     document.body.appendChild(dialog)
@@ -83,7 +96,7 @@ function createInitialObjectiveDialog(scene) {
     return dialog
 }
 
-function createFinalObjectiveDialog(scene) {
+function createSFoilActionDialog() {
     var dialog = document.createElement('div');
     var sceneWidth = scene.sceneWidth
     var sceneHeight = scene.sceneHeight
@@ -93,28 +106,28 @@ function createFinalObjectiveDialog(scene) {
 
     dialog.id = "objectiveDisplay"
 
-    dialog.style.fontSize = dialogHeight / 15 + "px"
+    dialog.style.fontSize = dialogHeight / 12 + "px"
 
     // position it
     dialog.style.position = 'fixed';
-	dialog.style.width = dialogWidth + "px"; // sceneWidth / 5 
+	  dialog.style.width = dialogWidth + "px"; // sceneWidth / 5
     dialog.style.height = dialogHeight + "px";
-    
+
     // shape it
     dialog.style.borderRadius = 25 + "px"
     dialog.style.paddingTop = 10 + "px"
     dialog.style.paddingLeft = 10 + "px"
     dialog.style.paddingRight = 10 + "px"
 
-    dialog.innerHTML = "Objective: Shoot your proton torpedos into the death star by aligning the aim! You only get one shot kid!"
-    dialog.innerHTML += "<br><br> Controls: Arrow keys to move, Spacebar to shoot"
+    dialog.innerHTML =
+            "Red Leader to Red 5: OK Red 5, this is it. Lock S-foils in Attack Position. Press 'S' now and may the force be with you"
 
     document.body.appendChild(dialog)
 
     return dialog
 }
 
-function showGameOverDialog(scene, state = "default") {
+function createLosingDialog() {
     var dialog = document.createElement('div');
     var sceneWidth = scene.sceneWidth
     var sceneHeight = scene.sceneHeight
@@ -128,9 +141,9 @@ function showGameOverDialog(scene, state = "default") {
 
     // position it
     dialog.style.position = 'fixed';
-	dialog.style.width = dialogWidth + "px"; // sceneWidth / 5 
+	  dialog.style.width = dialogWidth + "px"; // sceneWidth / 5
     dialog.style.height = dialogHeight + "px";
-    
+
     // shape it
     dialog.style.borderRadius = 25 + "px"
     dialog.style.paddingTop = 10 + "px"
@@ -140,14 +153,7 @@ function showGameOverDialog(scene, state = "default") {
 
     var endingMessage = document.createElement('div')
     dialog.appendChild(endingMessage)
-    endingMessage.innerHTML = "You were blasted to bits. You'll get 'em on the next run pilot!"
-    if (state == "phase2") {
-        endingMessage.innerHTML = "You were unsuccessful in destroying the death star. Aim for the cavity in the wall next time, pilot!"
-        dialog.style.fontSize = dialogHeight / 15 + "px"
-    } else if (state == "deathStarDestroyed") {
-        endingMessage.innerHTML = "Great work pilot! You've destroyed the empire's prized possession, the death star. Hope they don't rebuild it..."
-        dialog.style.fontSize = dialogHeight / 15 + "px"
-    }
+    endingMessage.innerHTML = "Your ship is too damaged to continue. You'll get 'em on the next run pilot!"
 
     var replayButton = document.createElement('button')
     replayButton.id = "replayButton"

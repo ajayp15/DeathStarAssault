@@ -4,28 +4,37 @@
 */
 
 function checkSceneForCollisions(ship, deathstar) {
+
   if (ship.mesh.position.y == 0) { return }
+
   for (var i = 0; i < deathstar.turrets.length; ++i) {
     var turret = deathstar.turrets[i]
     var collidedWithTurret = checkIfCollidedCheap(turret.boundingBox, ship.boundingBox)
     if (collidedWithTurret) {
-      gameOver = true
+      ship.handleShipCollidedWithTurret(turret)
     }
     for (var j = 0; j < turret.lasers.length; ++j) {
       var laser = turret.lasers[j];
-      if (laser.active == false) {
+      if (laser.alive == false) {
         continue
       }
       var collidedWithShip = checkIfCollidedCheap(laser.mesh, ship.boundingBox)
       if (collidedWithShip) {
-        var pos = ship.mesh.position.clone().add(new THREE.Vector3(Math.random(), Math.random(), Math.random()))
-        var explosion = new Explosion(scene, pos, 0.3, 0xf4bc42, ship.velocity)
-        explosion.explode()
-        laser.active = false
-        ship.hitCount += 1
+        ship.handleShipHitByLaser(laser)
+      }
+    }
+    for (var j = 0; j < deathstar.orphanedLasers.length; ++j) {
+      var laser = deathstar.orphanedLasers[j];
+      if (laser.alive == false) {
+        continue
+      }
+      var collidedWithShip = checkIfCollidedCheap(laser.mesh, ship.boundingBox)
+      if (collidedWithShip) {
+        ship.handleShipHitByLaser(laser)
       }
     }
   }
+
   for (var i = 0; i < deathstar.smallStructures.length; ++i) {
     var struct = deathstar.smallStructures[i]
     var collidedWithStructure = checkIfCollidedCheap(struct.outerStruct, ship.boundingBox)
@@ -33,7 +42,7 @@ function checkSceneForCollisions(ship, deathstar) {
       collidedWithStructure = collidedWithStructure || checkIfCollidedCheap(struct.innerStruct, ship.boundingBox)
     }
     if (collidedWithStructure) {
-      gameOver = true
+      ship.handleShipCollidedWithStructure(struct)
     }
   }
   for (var i = 0; i < ship.lasers.length; ++i) {
@@ -43,12 +52,7 @@ function checkSceneForCollisions(ship, deathstar) {
       var turret = deathstar.turrets[j]
       var collidedWithTurret = checkIfCollidedCheap(turret.boundingBox, laser.mesh)
       if (collidedWithTurret) {
-        var explosion = new Explosion(scene, turret.mesh.position, 1, 0xff2222)
-        explosion.explode()
-        laser.active = false
-
-        laser.alive = false
-        turret.hitCount += 1
+        turret.handleTurretHitByLaser(laser)
       }
     }
   }

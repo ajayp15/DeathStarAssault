@@ -5,6 +5,11 @@ var showStats = true
 var windowOffset = 0
 
 /*
+  Tutorial constants
+*/
+var timeToShowObjectiveScreen = 8
+
+/*
   Scene constants
 */
 var deathstarPlaneSize = 10000
@@ -32,17 +37,20 @@ var shipMaximumPlaneCoord = 2500
 var shipWeaponMinimumTimeDelay = 0.2
 var shipLaserColor = 0xff2222
 var shipLaserCutoffDistance = 800
-var shipHitCountHealth = 100
+var shipHitCountHealth = 25
 var shipLaserVelocity = 800
+var shipHitDisruptionTime = 1.5
 
 var turretGunTurnSpeed = 40 * 3.14 / 180
 var turretFireRadius = 1200
 var turretMinimumTimeDelay = 2
-var turretLaserVelocity = 20
+var turretLaserVelocity = 15
 var turretLaserSize = 0.2
 var turretLaserCutoffDistance = 1200
 var turretLaserColor = 0x22ff22
 var turretHitHealth = 10
+
+var turretDestroyCount = 15
 
 var SPACE = 32
 var LEFT = 37

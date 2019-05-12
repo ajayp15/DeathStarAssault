@@ -7,6 +7,7 @@
 function Deathstar(size, turretCount = 10, smallStructureCount = 1000) {
   this.turrets = []
   this.smallStructures = []
+  this.orphanedLasers = []
 
   // add deathstar plane
   var planeGeometry =  new THREE.PlaneGeometry( size, size, 200, 200 );
@@ -29,7 +30,7 @@ function Deathstar(size, turretCount = 10, smallStructureCount = 1000) {
 
   for (var i = 0; i < smallStructureCount; ++i) {
     var sx = Math.random() * 50 + 25
-    var sy = Math.random() * 5 + 5
+    var sy = Math.random() * 10 + 5
     var sz = Math.random() * 50 + 25
 
     var px = Math.random() * shipMaximumPlaneCoord * 2 - shipMaximumPlaneCoord
@@ -52,42 +53,27 @@ function Deathstar(size, turretCount = 10, smallStructureCount = 1000) {
       var turret = this.turrets[i]
       turret.update(dt)
       if (turret.hitCount >= turretHitHealth) {
-        var randomOffset = 10
-        var explosion1 = new Explosion(scene,
-                            turret.mesh.position.clone().add(new THREE.Vector3(
-                              Math.random() * randomOffset,
-                              Math.random() * randomOffset,
-                              Math.random() * randomOffset)),
-                            1, 0xffffff)
-        var explosion2 = new Explosion(scene,
-                            turret.mesh.position.clone().add(new THREE.Vector3(
-                              Math.random() * randomOffset,
-                              Math.random() * randomOffset,
-                              Math.random() * randomOffset)),
-                            1, 0xf4a742)
-        var explosion3 = new Explosion(scene,
-                            turret.mesh.position.clone().add(new THREE.Vector3(
-                              Math.random() * randomOffset,
-                              Math.random() * randomOffset,
-                              Math.random() * randomOffset)),
-                            1, 0xf4e841)
-        var explosion4 = new Explosion(scene,
-                            turret.mesh.position.clone().add(new THREE.Vector3(
-                              Math.random() * randomOffset,
-                              Math.random() * randomOffset,
-                              Math.random() * randomOffset)),
-                            2, 0xaaaaaa)
-        explosion1.explode()
-        explosion2.explode()
-        explosion3.explode()
-        explosion4.explode()
+        statusDisplay.setScore(++turretsDestroyed)
+        turret.handleTurretDestroyed()
         scene.removeObj(turret.mesh)
         for (var j = 0; j < turret.lasers.length; ++j) {
-          turret.lasers[j].active = false
-          scene.removeObj(turret.lasers[j].mesh)
+          this.orphanedLasers.push(turret.lasers[j])
         }
         this.turrets.splice(i, 1)
       }
+    }
+    for (var i = 0; i < this.orphanedLasers.length; ++i) {
+      this.orphanedLasers[i].update(dt);
+    }
+    for (var i = this.orphanedLasers.length - 1; i >= 0; --i) {
+      if (this.orphanedLasers[i].alive == false) {
+        scene.removeObj(this.orphanedLasers[i].mesh)
+        this.orphanedLasers.splice(i, 1)
+      }
+    }
+    if (turretsDestroyed >= turretDestroyCount) {
+      gameOver = true
+      didWin = true
     }
   }
 }

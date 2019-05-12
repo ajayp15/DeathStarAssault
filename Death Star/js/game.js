@@ -2,25 +2,27 @@
 	game.js
 */
 
-var scene;
-var ship;
-var deathstar;
+var gameClock
 
-var clock;
+var objectiveClock
+var objectiveDialog
+var objectiveDialogFinished
+var sFoilDialog
+var losingDialog
+var losingDialogDisplayed
+var beganPlayingEnding
 
-var cameraLook = new THREE.Vector3();
+init()
 
-/*
-	Game user inputs
-*/
-var keyboard = {}
-
-/*
-	Game state
-*/
-var gameOver = false
-
-init();
+function restartGame() {
+	document.body.removeChild(losingDialog)
+	document.body.removeChild(scene.renderer.domElement)
+	document.body.removeChild(statusDisplay.dialog)
+	if (showStats) {
+		document.body.removeChild(stats.dom);
+	}
+	init()
+}
 
 function init() {
 	setup();
@@ -28,6 +30,16 @@ function init() {
 }
 
 function setup(){
+	gameOver = false
+	didWin = false
+	introComplete = false
+	objectiveDialogFinished = false
+	losingDialogDisplayed = false
+	beganPlayingEnding = false
+
+	turretsDestroyed = 0
+	keyboard = {}
+
 	scene = new Scene()
 
 	var environment = new Environment();
@@ -42,24 +54,12 @@ function setup(){
 
 	ship = new Ship(scene);
 
-	var sunGeo = new THREE.SphereGeometry( 200, 100, 100 );
-	var sunMat = new THREE.MeshBasicMaterial( {color: 0xf4b342} );
-	var sun = new THREE.Mesh( sunGeo, sunMat );
-	sun.position.set(3000, 3000, 3000);
-	scene.addObj( sun );
-
-	var ambient = new THREE.AmbientLight( 0xffffff, 0.5 );
-	scene.addObj( ambient );
-
-	var directional = new THREE.DirectionalLight( 0xffffff, 1);
-	directional.position.set(3000, 3000, 3000);
-	directional.castShadow = true;
-	scene.addObj( directional );
+	statusDisplay = new StatusDisplay()
 
 	document.body.appendChild(scene.renderer.domElement)
 
-	clock = new THREE.Clock();
-	clock.start();
+	gameClock = new THREE.Clock();
+	gameClock.start();
 
 	// Add statistics module (shows FPS, etc.)
 	if (showStats) {
@@ -70,6 +70,10 @@ function setup(){
 	document.onkeydown = handleKeyDown;
 	document.onkeyup = handleKeyUp;
 	window.addEventListener('resize', onWindowResize, false);
+
+	objectiveClock = new THREE.Clock();
+	objectiveDialog = createObjectiveDialog()
+	objectiveClock.start();
 }
 
 function animate(){
@@ -78,18 +82,49 @@ function animate(){
 	}
 	if (!gameOver) {
 		update();
+	} else {
+		if (didWin == true) {
+			if (beganPlayingEnding == false) {
+				beganPlayingEnding = true
+				playEndingClip()
+			}
+		} else {
+			if (losingDialogDisplayed == false) {
+				losingDialog = createLosingDialog()
+				losingDialogDisplayed = true
+			}
+		}
 	}
+
 	render();
 	requestAnimationFrame(animate);
 }
 
 function update() {
 	if (ship.shipLoaded == false) { return }
-	var dt = clock.getDelta();
+	if (!introComplete) {
+		handleIntro()
+	}
+	var dt = gameClock.getDelta();
 	ship.update(dt, scene.camera);
-	deathstar.update(dt);
-	updateExplosions(dt);
-	checkSceneForCollisions(ship, deathstar);
+	if (introComplete) {
+		deathstar.update(dt);
+		updateExplosions(dt);
+		checkSceneForCollisions(ship, deathstar);
+	}
+}
+
+function handleIntro() {
+	if (objectiveClock.getElapsedTime() >= timeToShowObjectiveScreen && objectiveDialogFinished == false) {
+		document.body.removeChild(objectiveDialog)
+		objectiveDialogFinished = true
+		sFoilDialog = createSFoilActionDialog()
+	}
+	if (keyboard[SKEY] == true && objectiveDialogFinished == true) {
+		document.body.removeChild(sFoilDialog)
+		introComplete = true
+		ship.toggleSFoils();
+	}
 }
 
 function render(){
@@ -114,4 +149,26 @@ function onWindowResize() {
 	scene.renderer.setSize(scene.sceneWidth, scene.sceneHeight);
 	scene.camera.aspect = scene.sceneWidth/scene.sceneHeight;
 	scene.camera.updateProjectionMatrix();
+}
+
+function playEndingClip() {
+	setTimeout(function() {
+		var video = document.createElement('img')
+		video.id = "video"
+		video.style.width = "100%"
+		video.style.height = "100%"
+		video.style.position = "fixed"
+		video.src = "images/trench.gif"
+
+		// remove renderer and play the video
+		//document.body.removeChild(scene.renderer.domElement)
+		//document.body.removeChild(statusDisplay.dialog)
+		document.body.prepend(video)
+
+		setTimeout(function() {
+			var video = document.getElementById("video")
+			document.body.removeChild(video)
+			gameOverDialog = showGameOverDialog(scene, "deathStarDestroyed")
+		}, 11000)
+	}, 1500)
 }

@@ -20,10 +20,7 @@ function Ship(scene) {
     this.shipLoaded = false;
 
     this.laserClock = new THREE.Clock();
-    this.laserClock.start();
-
-    this.sFoilAnimationDuration = 0
-    this.animationClock = new THREE.Clock();
+    this.laserClock.start(); 
 
     var loader = new THREE.GLTFLoader();
 
@@ -38,7 +35,8 @@ function Ship(scene) {
 
         ship.animationMixer = new THREE.AnimationMixer( ship.mesh );
         ship.sFoilAction = ship.animationMixer.clipAction( gltf.animations[0] );
-        sFoilAnimationDuration = gltf.animations[0].duration
+        ship.sFoilAction.repetitions = 1
+        ship.sFoilAnimationCutoffTime = gltf.animations[0].duration / 2
 
         var light = new THREE.PointLight( 0xffaaaa, 1, 200 );
         light.position.set( 0, 0, 0);
@@ -46,11 +44,11 @@ function Ship(scene) {
         ship.mesh.add( light );
 
         ship.boundingBox = new THREE.Mesh(
-          new THREE.BoxGeometry(1, 0.3, 0.7),
+          new THREE.BoxGeometry(1, 0.2, 0.7),
           bbMat
         );
         ship.boundingBox.position.z -= 0.25
-        ship.boundingBox.visible = displayBoundingBoxes
+        ship.boundingBox.visible = false
 
 
         ship.mesh.add( ship.boundingBox )
@@ -88,14 +86,15 @@ function Ship(scene) {
       this.sFoilAction.play();
     }
 
+
     this.update = function(dt, trackingCamera) {
       if (this.shipLoaded == false) {
         return;
       }
 
       this.animationMixer.update(dt)
-      if (keyboard[SKEY] == true) {
-        this.toggleSFoils();
+      if (this.sFoilAction.time >= this.sFoilAnimationCutoffTime) {
+        this.sFoilAction.paused = true
       }
 
       if (this.hitCount >= shipHitCountHealth) {
@@ -114,24 +113,25 @@ function Ship(scene) {
       }
 
       // update angles & rotation from user inputs
-      if (keyboard[LEFT] == true) {
-    		this.rollAngle = Math.min(shipRollVelocity * dt + this.rollAngle, shipRollMaximumAngle)
-        this.yawAngle += shipYawVelocity * dt
-    	}
-    	else if (keyboard[RIGHT] == true) {
-    		this.rollAngle = Math.max(-shipRollVelocity * dt + this.rollAngle, -shipRollMaximumAngle)
-        this.yawAngle -= shipYawVelocity * dt
-    	} else {
-        this.rollAngle /= 1.3 ;
-      }
-      if ((keyboard[DOWN] == true && this.mesh.position.y < shipMaximumAltitude) || this.mesh.position.y <= shipMinimumAltitude) {
-    		this.pitchAngle = Math.min(shipPitchVelocity * dt + this.pitchAngle, shipPitchMaximumAngle);
-    	} else if (keyboard[UP] == true || this.mesh.position.y >= shipMaximumAltitude) {
-        this.pitchAngle = Math.max(-shipPitchVelocity * dt + this.pitchAngle, -shipPitchMaximumAngle)
-      }
-
-      if (keyboard[SPACE] == true) {
-        this.fireLasers();
+      if (introComplete) { // only enable controls when intro is complete
+        if (keyboard[LEFT] == true) {
+      		this.rollAngle = Math.min(shipRollVelocity * dt + this.rollAngle, shipRollMaximumAngle)
+          this.yawAngle += shipYawVelocity * dt
+      	}
+      	else if (keyboard[RIGHT] == true) {
+      		this.rollAngle = Math.max(-shipRollVelocity * dt + this.rollAngle, -shipRollMaximumAngle)
+          this.yawAngle -= shipYawVelocity * dt
+      	} else {
+          this.rollAngle /= 1.3 ;
+        }
+        if ((keyboard[DOWN] == true && this.mesh.position.y < shipMaximumAltitude) || this.mesh.position.y <= shipMinimumAltitude) {
+      		this.pitchAngle = Math.min(shipPitchVelocity * dt + this.pitchAngle, shipPitchMaximumAngle);
+      	} else if (keyboard[UP] == true || this.mesh.position.y >= shipMaximumAltitude) {
+          this.pitchAngle = Math.max(-shipPitchVelocity * dt + this.pitchAngle, -shipPitchMaximumAngle)
+        }
+        if (keyboard[SPACE] == true) {
+          this.fireLasers();
+        }
       }
 
       var p = this.mesh.position.clone();
@@ -169,5 +169,20 @@ function Ship(scene) {
       trackingCamera.rotation.copy(this.mesh.rotation);
       trackingCamera.position.add(trackingCamera.up.clone().multiplyScalar(5));
       trackingCamera.lookAt(this.mesh.position);
+    }
+    this.handleShipHitByLaser = function(laser) {
+      var pos = this.mesh.position.clone().add(new THREE.Vector3(Math.random(), Math.random(), Math.random()))
+      var explosion = new Explosion(scene, pos, 0.3, 0xf4bc42, this.velocity)
+      explosion.explode()
+      laser.alive = false
+      this.hitCount += 1
+      var health = (1 - this.hitCount / shipHitCountHealth) * 100
+      statusDisplay.setHealthPct(health)
+    }
+    this.handleShipCollidedWithTurret = function(turret) {
+      gameOver = true
+    }
+    this.handleShipCollidedWithStructure = function(structure) {
+      gameOver = true
     }
 }

@@ -16,6 +16,11 @@ var turretMaterial = new THREE.MeshPhongMaterial(
     clippingPlanes: [ turretClippingPlane ],
     clipShadows: true
   } );
+var gunBoxMaterial = new THREE.MeshPhongMaterial(
+  {
+    map: turretTexture,
+    side: THREE.DoubleSide,
+  } );
 
 function Turret(px, pz) {
   var top_size = 15
@@ -36,7 +41,7 @@ function Turret(px, pz) {
   this.gun = new THREE.Object3D();
   this.gunBase = new THREE.Mesh(
     new THREE.BoxGeometry(top_size, top_size, top_size),
-    new THREE.MeshPhongMaterial( { color: 0x111111 } )
+    gunBoxMaterial //new THREE.MeshPhongMaterial( { color: 0x111111 } )
   )
   this.gunBarrelLeft = new THREE.Mesh(
     new THREE.CylinderGeometry( 0.5, 0.5, top_size * 2, 32),
@@ -142,7 +147,6 @@ function Turret(px, pz) {
 
       // can we fire on target?
       if (Math.abs(firingAngle - targetAngle) % Math.PI < 0.02) {
-        var trueTargetVector = new THREE.Vector3().subVectors(shipPosition, turretPosition).normalize();
         firingVector.y = (turretPosition.y - shipPosition.y) / turretDistanceToShip
         if (Math.abs(turretPosition.y - shipPosition.y) < turretDistanceToShip) { // only allow guns to fire at max 45 degrees to the plane
           this.fireLasers(firingVector.multiplyScalar(-1).normalize());
@@ -157,5 +161,44 @@ function Turret(px, pz) {
         this.gun.rotation.y -= turretGunTurnSpeed * dt
       }
     }
+  }
+
+  this.handleTurretHitByLaser = function(laser) {
+    var explosion = new Explosion(scene, this.mesh.position, 1, 0xff2222)
+    explosion.explode()
+    laser.alive = false
+    this.hitCount += 1
+  }
+
+  this.handleTurretDestroyed = function() {
+    var randomOffset = 10
+    var explosion1 = new Explosion(scene,
+                        this.mesh.position.clone().add(new THREE.Vector3(
+                          Math.random() * randomOffset,
+                          Math.random() * randomOffset,
+                          Math.random() * randomOffset)),
+                        1, 0xffffff)
+    var explosion2 = new Explosion(scene,
+                        this.mesh.position.clone().add(new THREE.Vector3(
+                          Math.random() * randomOffset,
+                          Math.random() * randomOffset,
+                          Math.random() * randomOffset)),
+                        1, 0xf4a742)
+    var explosion3 = new Explosion(scene,
+                        this.mesh.position.clone().add(new THREE.Vector3(
+                          Math.random() * randomOffset,
+                          Math.random() * randomOffset,
+                          Math.random() * randomOffset)),
+                        1, 0xf4e841)
+    var explosion4 = new Explosion(scene,
+                        this.mesh.position.clone().add(new THREE.Vector3(
+                          Math.random() * randomOffset,
+                          Math.random() * randomOffset,
+                          Math.random() * randomOffset)),
+                        2, 0xaaaaaa)
+    explosion1.explode()
+    explosion2.explode()
+    explosion3.explode()
+    explosion4.explode()
   }
 }
