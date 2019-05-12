@@ -8,6 +8,7 @@ var obstacles
 var environment
 var walls
 var enemies
+var explosions
 
 /*
 	Game Constants
@@ -72,11 +73,12 @@ function setup(){
 	objectiveClock.start()
 
 	scene = new Scene()
+	explosions = new Explosions(scene)
 	ground = new Ground(scene)
 	walls = new Walls(scene)
 	environment = new Environment();
-	plane = new Plane(scene, walls, ground)
-	enemies = new Enemies(scene, plane)
+	plane = new Plane(scene, walls, ground, explosions)
+	enemies = new Enemies(scene, plane, explosions)
 
 	scene.addMesh(ground.mesh)
 	// scene.addMesh(plane.mesh, false)
@@ -213,7 +215,8 @@ function update(delta) {
 	}
 
 	// always do this, so that we don't have frozen explosions
-	enemies.updateEnemyExplosions(delta)
+	// enemies.updateEnemyExplosions(delta)
+	explosions.updateExplosions(delta)
 	
 	// do this always, looks cool as movement in the background
 	walls.handleWallMovements(delta, finishedPhase1)
@@ -232,10 +235,6 @@ function update(delta) {
 		if (walls.checkIfBlewUpBackWall(plane.protonTorpedos)) {
 			destroyedDeathStar = true
 		}
-	}
-
-	if (gameOver) {
-		plane.updateExplosion(delta)
 	}
 }
 

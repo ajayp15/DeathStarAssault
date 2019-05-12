@@ -10,11 +10,12 @@ var rightAngle = Math.PI / 6
 var leftAngle = -Math.PI / 6
 var maxLasers = 20
 
-function Plane(scene, walls, ground) {
+function Plane(scene, walls, ground, explosions) {
   this.mesh = createPlaneMesh()
   this.scene = scene
   this.walls = walls
   this.ground = ground
+  this.explosions = explosions
   this.shots = []
   this.HP = initialHP
   this.score = 0
@@ -155,50 +156,10 @@ function Plane(scene, walls, ground) {
   }
 
   this.explode = function () {
-    var geometry = new THREE.Geometry();
     var objectSize = 0.03
-    var movementSpeed = 5
-    this.dirs = []
     var numParticles = 1000
-    for (i = 0; i < numParticles; i++) {
-      var vertex = this.mesh.position.clone()
 
-      geometry.vertices.push(vertex);
-      this.dirs.push({ x: (Math.random() * movementSpeed) - (movementSpeed / 2), y: (Math.random() * movementSpeed) - (movementSpeed / 2), z: (Math.random() * movementSpeed) - (movementSpeed / 2) });
-    }
-    // could also do random-ish colors here
-    var material = new THREE.PointsMaterial({ size: objectSize, color: 0xf4bc42 });
-    var particles = new THREE.Points(geometry, material);
-
-    this.explosionParticles = particles
-    this.explosionParticles.geometry.verticesNeedUpdate = true;
-
-    this.scene.addMesh(particles);
-  }
-
-  this.updateExplosion = function (delta) {
-    var numParticles = 1000
-    if (this.explosionParticles != undefined) {
-      for (var i = 0; i < numParticles; i++) {
-        var particle = this.explosionParticles.geometry.vertices[i]
-        particle.y += this.dirs[i].y * delta;
-        particle.x += this.dirs[i].x * delta;
-        particle.z += this.dirs[i].z * delta;
-        this.explosionParticles.geometry.vertices[i] = particle
-      }
-      this.explosionParticles.geometry.verticesNeedUpdate = true;
-      this.explosionIterations += 1
-    }
-    // stop it after some arbitrary time, don't want to render those particles
-    // forever
-    var seconds = 5
-    if (this.explosionParticles != undefined &&
-      this.explosionIterations >= 60 * seconds) { // assume called every 1/60th second
-      this.scene.removeMesh(this.explosionParticles);
-      this.explosionParticles = undefined;
-      this.dirs = undefined
-      this.explosionIterations = 0
-    }
+    this.explosions.addExplosion(this.mesh.position, objectSize, numParticles)
   }
 
   // this gets called when this plane gets hit

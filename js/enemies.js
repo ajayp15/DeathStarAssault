@@ -8,8 +8,9 @@ var numEnemies = 8
 var numLasers = 15
 
 // singular enemy
-function Enemy(scene) {
+function Enemy(scene, explosions) {
     this.scene = scene
+    this.explosions = explosions
     this.mesh = createEnemy()
     this.boundingBox = getEnemyBoundingBox()
     this.mesh.add(this.boundingBox)
@@ -36,68 +37,9 @@ function Enemy(scene) {
     }
 
     this.explode = function () {
-        // if you are exploding, check that you didn't already explode, and git rid of those
-        // particles pre-emptively so that they don't linger
-        if (this.explosionParticles != undefined) {
-            this.scene.removeMesh(this.explosionParticles);
-            this.explosionParticles = undefined;
-            this.dirs = undefined
-            this.explosionIterations = 0
-        }
-
-        var geometry = new THREE.Geometry();
         var objectSize = 0.03
-        var movementSpeed = 5
-        this.dirs = []
-        var numParticles = 100
-        for (i = 0; i < numParticles; i++) {
-            var vertex = this.mesh.position.clone()
-
-            geometry.vertices.push(vertex);
-            this.dirs.push({ x: (Math.random() * movementSpeed) - (movementSpeed / 2), y: (Math.random() * movementSpeed) - (movementSpeed / 2), z: (Math.random() * movementSpeed) - (movementSpeed / 2) });
-        }
-        // could also do random-ish colors here
-        var material = new THREE.PointsMaterial({ size: objectSize, color: 0xf4bc42 });
-        var particles = new THREE.Points(geometry, material);
-
-        this.explosionParticles = particles
-        this.explosionParticles.geometry.verticesNeedUpdate = true;
-
-        this.scene.addMesh(particles);
-    }
-
-    this.updateExplosion = function (delta) {
-        var numParticles = 100
-        if (this.explosionParticles != undefined) {
-            for (var i = 0; i < numParticles; i++) {
-                var particle = this.explosionParticles.geometry.vertices[i]
-                particle.y += this.dirs[i].y * delta;
-                particle.x += this.dirs[i].x * delta;
-                particle.z += this.dirs[i].z * delta;
-                this.explosionParticles.geometry.vertices[i] = particle
-            }
-            this.explosionParticles.geometry.verticesNeedUpdate = true;
-            this.explosionIterations += 1
-        }
-        // stop it after some arbitrary time, don't want to render those particles
-        // forever
-        var seconds = 2
-        if (this.explosionParticles != undefined &&
-            this.explosionIterations >= 60 * seconds) { // assume called every 1/60th second
-            this.scene.removeMesh(this.explosionParticles);
-            this.explosionParticles = undefined;
-            this.dirs = undefined
-            this.explosionIterations = 0
-        }
-    }
-
-    this.resetExplosions = function () {
-        if (this.explosionParticles != undefined) {
-            this.scene.removeMesh(this.explosionParticles);
-            this.explosionParticles = undefined;
-            this.dirs = undefined
-            this.explosionIterations = 0
-        }
+        var numParticles = 50
+        this.explosions.addExplosion(this.mesh.position, objectSize, numParticles)
     }
 }
 
@@ -188,9 +130,10 @@ function getEnemyBoundingBox() {
 }
 
 // all enemies that are in-scene
-function Enemies(scene, plane) {
+function Enemies(scene, plane, explosions) {
     this.scene = scene
     this.plane = plane
+    this.explosions = explosions
     this.enemies = createEnemies()
     this.lasers = createInitialLasers()
 
@@ -219,13 +162,6 @@ function Enemies(scene, plane) {
                 // record that plane was hit
                 this.plane.gotHit()
             }
-        }
-    }
-
-    this.updateEnemyExplosions = function(delta) {
-        for (var i = 0; i< this.enemies.length; i++) {
-            // update explosions while here
-            this.enemies[i].updateExplosion(delta)
         }
     }
 
@@ -304,11 +240,6 @@ function Enemies(scene, plane) {
             this.enemies[i].mesh.position.y = Math.random() * (4 - 1) + 2
         }
 
-        // remove any of the pending explosions
-        for (var i = 0; i < this.enemies.length; i++) {
-            this.enemies[i].resetExplosions()
-        }
-
         // make all of the lasers go back as well
         for (var i = 0; i < this.lasers.length; i++) {
             this.lasers[i].position.x = (Math.random() * 2 - 1) * 2
@@ -322,7 +253,7 @@ function createEnemies() {
     var enemies = []
 
     for (var i = 1; i <= numEnemies; i++) {
-        enemy = new Enemy(this.scene)
+        enemy = new Enemy(this.scene, this.explosions)
         enemies.push(enemy)
 
         enemy.mesh.position.x = (Math.random() * 2 - 1) * 2

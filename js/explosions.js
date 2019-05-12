@@ -3,32 +3,27 @@
     scene and also update their positions.
 */
 
+var explosionMovementSpeed = 5
+
 // one individual explosion
 function Explosion(scene) {
     this.scene = scene
     this.dirs = undefined
     this.explosionParticles = undefined
     this.explosionIterations = 0 // how many times this explosion has been updated
+    this.numParticles = 0
 
-    // if you are exploding, check that you didn't already explode, and git rid of those
-        // particles pre-emptively so that they don't linger
-        if (this.explosionParticles != undefined) {
-            this.scene.removeMesh(this.explosionParticles);
-            this.explosionParticles = undefined;
-            this.dirs = undefined
-            this.explosionIterations = 0
-        }
-
+    this.explode = function(location, objectSize, numParticles) {
+        this.numParticles = numParticles
         var geometry = new THREE.Geometry();
-        var objectSize = 0.03
-        var movementSpeed = 5
         this.dirs = []
-        var numParticles = 100
-        for (i = 0; i < numParticles; i++) {
-            var vertex = this.mesh.position.clone()
 
+        for (i = 0; i < numParticles; i++) {
+            var vertex = location.clone()
             geometry.vertices.push(vertex);
-            this.dirs.push({ x: (Math.random() * movementSpeed) - (movementSpeed / 2), y: (Math.random() * movementSpeed) - (movementSpeed / 2), z: (Math.random() * movementSpeed) - (movementSpeed / 2) });
+            this.dirs.push({ x: (Math.random() * explosionMovementSpeed) - (explosionMovementSpeed / 2), 
+                y: (Math.random() * explosionMovementSpeed) - (explosionMovementSpeed / 2), 
+                z: (Math.random() * explosionMovementSpeed) - (explosionMovementSpeed / 2) });
         }
         // could also do random-ish colors here
         var material = new THREE.PointsMaterial({ size: objectSize, color: 0xf4bc42 });
@@ -38,20 +33,11 @@ function Explosion(scene) {
         this.explosionParticles.geometry.verticesNeedUpdate = true;
 
         this.scene.addMesh(particles);
-}
-
-function Explosions(scene) {
-    this.scene = scene
-    this.explosions = []
-
-    this.addExplosion = function (location, size, ) {
-        
     }
 
-    this.updateExplosion = function (delta) {
-        var numParticles = 100
+    this.updateExplosion = function(delta) {
         if (this.explosionParticles != undefined) {
-            for (var i = 0; i < numParticles; i++) {
+            for (var i = 0; i < this.numParticles; i++) {
                 var particle = this.explosionParticles.geometry.vertices[i]
                 particle.y += this.dirs[i].y * delta;
                 particle.x += this.dirs[i].x * delta;
@@ -70,15 +56,48 @@ function Explosions(scene) {
             this.explosionParticles = undefined;
             this.dirs = undefined
             this.explosionIterations = 0
+
+            return false // return false, to signify that we can remove this explosion
         }
+
+        return true // return true default
     }
 
-    this.resetExplosions = function () {
+    this.reset = function() {
         if (this.explosionParticles != undefined) {
             this.scene.removeMesh(this.explosionParticles);
             this.explosionParticles = undefined;
             this.dirs = undefined
             this.explosionIterations = 0
+        }
+    }
+}
+
+function Explosions(scene) {
+    this.scene = scene
+    this.explosions = []
+
+    this.addExplosion = function (location, objectSize, numParticles) {
+        var explosion = new Explosion(scene)
+        this.explosions.push(explosion)
+
+        explosion.explode(location, objectSize, numParticles)
+    }
+
+    this.updateExplosions = function (delta) {
+        var explosionsToKeep = []
+        for (var i = 0; i < this.explosions.length; i++) {
+            var explosionStillValid = this.explosions[i].updateExplosion(delta)
+            if (explosionStillValid) {
+                explosionsToKeep.push(this.explosions[i])
+            }
+        }
+        this.explosions = explosionsToKeep
+    }
+
+    this.resetExplosions = function () {
+        for (var i = 0; i < this.explosions.length; i++) {
+            this.explosions[i].reset()
         }
     }
 }
