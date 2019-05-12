@@ -30,6 +30,8 @@ var shipLaserMaterial = new THREE.MeshLambertMaterial({
   color: 0x1bd127,
 })
 
+var aimRadius = 0.5
+
 
 var shipScale = 0.6
 // obstacles constants

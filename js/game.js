@@ -17,6 +17,7 @@ var floorWidth = 10
 var floorHeight = 50
 var slowDownRate = wallMovementSpeed / 5
 var initWallMovementSpeed = wallMovementSpeed
+var phase1RequiredScore = 5
 
 /*
 	Game variables
@@ -149,7 +150,7 @@ function animate(){
 		document.body.removeChild(objectiveDialog)
 		finishedShowingObjectivePhase1 = true
 	}
-	if (plane.score >= 30 && !finishedPhase1) {
+	if (plane.score >= phase1RequiredScore && !finishedPhase1) {
 		// move onto phase 2 (shooting the proton torpedos)
 		finishedPhase1 = true
 		
@@ -205,8 +206,11 @@ function update(delta) {
 
 	if (finishedShowingObjectivePhase1 && !gameOver) {
 		plane.handlePlaneMovement(planeVelocityX, planeVelocityY, delta);
-		plane.handleLaserMovements(delta);
 		scene.handleCameraMovement(planeVelocityX, planeVelocityY, 0, plane, delta, walls, ground);
+	}
+
+	if (finishedShowingObjectivePhase1 && !gameOver && !finishedPhase1) {
+		plane.handleLaserMovements(delta);
 	}
 
 	if (gameOver) {

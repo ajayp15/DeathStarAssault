@@ -29,8 +29,10 @@ function Plane(scene, walls, ground) {
   this.explosionIterations = 0 // how many times this explosion has been updated
 
   this.handlePlaneMovement = function (planeVelocityX, planeVelocityY, delta) {
-    this.mesh.position.x += planeVelocityX * delta
-    this.mesh.position.y += planeVelocityY * delta
+    var changeInX = planeVelocityX * delta
+    var changeInY = planeVelocityY * delta
+    this.mesh.position.x += changeInX
+    this.mesh.position.y += changeInY
 
     // clamp the motion, to prevent it from going too far out from the screen
     // for y coords, compute if the plane is about to go off the screen by projecting
@@ -41,10 +43,21 @@ function Plane(scene, walls, ground) {
     if (this.mesh.position.x + wallsLeeway >= this.walls.rightWallX
       || this.mesh.position.x - wallsLeeway <= this.walls.leftWallX) {
       this.mesh.position.x -= planeVelocityX * delta // undo the movement
+      changeInX = 0
     }
     if (screenCoords.y <= ceilingLeeway // indexed from 0 at ceiling
       || this.mesh.position.y - groundLeeway <= this.ground.groundTop) { // arbitrary values
       this.mesh.position.y -= planeVelocityY * delta
+      changeInY = 0
+    }
+
+    // move the target the same way
+    if (this.target != undefined) {
+      this.target.position.x += changeInX
+      this.target.position.y += changeInY
+      
+      // also clamp it to the back wall
+      this.target.position.z = this.walls.backWall.position.z + 5.05
     }
 
     // handle x movement
@@ -141,18 +154,6 @@ function Plane(scene, walls, ground) {
     return false
   }
 
-  // this gets called when this plane gets hit
-  this.gotHit = function () {
-    // TODO: as a small animation, shake the plane around a little (rotate it back and forth
-    // and get dazed(?))
-    var deduction = 10
-    this.HP -= deduction
-    HPText.innerHTML = "Ship Status: " + this.HP + "%"
-    HPBar.value -= deduction
-    // this.scene.ambient.intensity = 0.1 // playing around with dimming screen when you get hit
-    // setTimeout(function(){this.scene.ambient.intensity = 0.5}, 500)
-  }
-
   this.explode = function () {
     var geometry = new THREE.Geometry();
     var objectSize = 0.03
@@ -200,6 +201,21 @@ function Plane(scene, walls, ground) {
     }
   }
 
+  // this gets called when this plane gets hit
+  this.gotHit = function () {
+    // TODO: as a small animation, shake the plane around a little (rotate it back and forth
+    // and get dazed(?))
+    var deduction = 10
+    this.HP -= deduction
+    HPText.innerHTML = "Ship Status: " + this.HP + "%"
+    HPBar.value -= deduction
+    // this.scene.ambient.intensity = 0.1 // playing around with dimming screen when you get hit
+    // setTimeout(function(){this.scene.ambient.intensity = 0.5}, 500)
+
+    // call explosion, with very small number of explosion particles and different color,
+    // to signify that plane was hit (maybe white)
+  }
+
   // run when the plane is destroyed @ game over
   this.blowUp = function () {
     this.explode()
@@ -232,14 +248,28 @@ function Plane(scene, walls, ground) {
 
   
   this.addPlaneAim = function() {
-    var targetGeometry = new THREE.CircleGeometry(0.5, 20)
-    var material = new THREE.MeshLambertMaterial({ color: 0x24d114 , side: THREE.DoubleSide});
+    var largeCircleGeometry = new THREE.CircleGeometry(aimRadius, 20)
+    var greenMaterial = new THREE.MeshLambertMaterial({ color: 0x245923 , side: THREE.DoubleSide, opacity: 0.7});
+    var mainCircle = new THREE.Mesh(largeCircleGeometry, greenMaterial)
+    mainCircle.wireframe = true
 
-    var target = new THREE.Mesh(targetGeometry, material)
+    var largeRingGeometry = new THREE.RingGeometry(aimRadius / 1.5, aimRadius / 1.5 - 0.05, 10, 1)
+    var whiteMaterial = new THREE.MeshLambertMaterial({ color: 0xffffff , side: THREE.DoubleSide});
+    var outerAim = new THREE.Mesh(largeRingGeometry, whiteMaterial)
+
+    var smallRingGeometry = new THREE.RingGeometry(aimRadius / 4, aimRadius / 4 - 0.05, 10, 1)
+    var whiteMaterial = new THREE.MeshLambertMaterial({ color: 0xffffff , side: THREE.DoubleSide});
+    var innerAim = new THREE.Mesh(smallRingGeometry, whiteMaterial)
+
+    var target = new THREE.Object3D()
+    target.add(mainCircle)
+    target.add(outerAim)
+    target.add(innerAim)
 
     // project it to the position of the back wall
     target.position = this.mesh.position.clone()
-    target.position.z = this.walls.backWall.position.z
+    target.position.y = center // this seems to be necessary?
+    target.position.z = this.walls.backWall.position.z + 5.05 // adjust for thickness of wall
 
     this.scene.addMesh(target)
     this.target = target

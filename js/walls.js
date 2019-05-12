@@ -51,6 +51,17 @@ function Walls(scene) {
     
         wall.receiveShadow = true;
         wall.castShadow = true;
+
+        // add a little cylindrical hole in the center to signify where to shoot
+        var holeGeometry = new THREE.TorusGeometry(aimRadius * 2, aimRadius, 4, 8)
+        var holeMaterial = new THREE.MeshLambertMaterial({color: 0x4b4b4f, side: THREE.DoubleSide})
+        var hole = new THREE.Mesh(holeGeometry, holeMaterial)
+
+        hole.position.x = 0
+        hole.position.y = wallHeight / 4
+        hole.position.z = wallDepth / 2
+
+        wall.add(hole)
     
         this.scene.addMesh(wall)
         
