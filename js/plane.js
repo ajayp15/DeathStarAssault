@@ -185,7 +185,6 @@ function Plane(scene, walls, ground, explosions) {
   // run when the plane is destroyed @ game over
   this.blowUp = function () {
     this.explode()
-    // this.scene.removeMesh(this.mesh)
     this.mesh.visible = false
   }
 
@@ -294,6 +293,13 @@ function Plane(scene, walls, ground, explosions) {
       gameOver = true
       this.HP = 0
     }
+
+    // check also while here if the plane has passed the back wall
+    padding = 5
+    if (!destroyedDeathStar && this.scene.camera.position.z - padding < this.walls.backWall.position.z) {
+      gameOver = true
+      this.HP = 0
+    }
   }
 
   this.removeAim = function() {
@@ -360,7 +366,7 @@ function loadPlaneFromObj() {
 
       var light = new THREE.PointLight(0xffffff,1, 1)
       light.position.z = 1
-      plane.mesh.add(light)
+      // plane.mesh.add(light)
 
       scene.addMesh(plane.mesh);
       plane.loaded = true;
