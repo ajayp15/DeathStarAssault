@@ -10,7 +10,7 @@ function Scene() {
 	this.scene = new THREE.Scene();
 
 	// camera
-	this.camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 20000 );//perspective camera
+	this.camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.5, 20000 );//perspective camera
 
 	// renderer
 	this.renderer = new THREE.WebGLRenderer({alpha:true});

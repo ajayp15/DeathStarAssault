@@ -48,15 +48,42 @@ function Deathstar(size, turretCount = 10, smallStructureCount = 1000) {
 	this.mesh.castShadow=false;
 
   this.update = function(dt) {
-    for (var i = 0; i < this.turrets.length; ++i) {
+    for (var i = this.turrets.length - 1; i >= 0; --i) {
       var turret = this.turrets[i]
-      this.turrets[i].update(dt)
+      turret.update(dt)
+      if (turret.hitCount >= turretHitHealth) {
+        var randomOffset = 10
+        var explosion1 = new Explosion(scene,
+                            turret.mesh.position.clone().add(new THREE.Vector3(
+                              Math.random() * randomOffset,
+                              Math.random() * randomOffset,
+                              Math.random() * randomOffset)),
+                            1, 0xffffff)
+        var explosion2 = new Explosion(scene,
+                            turret.mesh.position.clone().add(new THREE.Vector3(
+                              Math.random() * randomOffset,
+                              Math.random() * randomOffset,
+                              Math.random() * randomOffset)),
+                            1, 0xf4a742)
+        var explosion3 = new Explosion(scene,
+                            turret.mesh.position.clone().add(new THREE.Vector3(
+                              Math.random() * randomOffset,
+                              Math.random() * randomOffset,
+                              Math.random() * randomOffset)),
+                            1, 0xf4e841)
+        var explosion4 = new Explosion(scene,
+                            turret.mesh.position.clone().add(new THREE.Vector3(
+                              Math.random() * randomOffset,
+                              Math.random() * randomOffset,
+                              Math.random() * randomOffset)),
+                            2, 0xaaaaaa)
+        explosion1.explode()
+        explosion2.explode()
+        explosion3.explode()
+        explosion4.explode()
+        scene.removeObj(turret.mesh)
+        this.turrets.splice(i, 1)
+      }
     }
   }
-
-  this.handleTurretHit = function(turretIndex) {
-    this.turrets[turretIndex].hitCount += 1
-
-  }
-
 }

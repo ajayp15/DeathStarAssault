@@ -10,6 +10,20 @@ function checkSceneForCollisions(ship, deathstar) {
     if (collidedWithTurret) {
       gameOver = true
     }
+    for (var j = 0; j < turret.lasers.length; ++j) {
+      var laser = turret.lasers[j];
+      if (laser.active == false) {
+        continue
+      }
+      var collidedWithShip = checkIfCollidedCheap(laser.mesh, ship.boundingBox)
+      if (collidedWithShip) {
+        var pos = ship.mesh.position.clone().add(new THREE.Vector3(Math.random(), Math.random(), Math.random()))
+        var explosion = new Explosion(scene, pos, 0.3, 0xf4bc42, ship.velocity)
+        explosion.explode()
+        laser.active = false
+        ship.hitCount += 1
+      }
+    }
   }
   for (var i = 0; i < deathstar.smallStructures.length; ++i) {
     var struct = deathstar.smallStructures[i]
@@ -28,14 +42,12 @@ function checkSceneForCollisions(ship, deathstar) {
       var turret = deathstar.turrets[j]
       var collidedWithTurret = checkIfCollidedCheap(turret.boundingBox, laser.mesh)
       if (collidedWithTurret) {
+        var explosion = new Explosion(scene, turret.mesh.position, 1, 0xff2222)
+        explosion.explode()
+        laser.active = false
+
+        laser.alive = false
         turret.hitCount += 1
-      }
-    }
-    for (var j = 0; j < deathstar.smallStructures.length; ++j) {
-      var struct = deathstar.smallStructures[i]
-      var collidedWithStructure = checkIfCollidedCheap(struct.outerStruct, ship.boundingBox)
-      if (struct.innerStruct != undefined) {
-        collidedWithStructure = collidedWithStructure || checkIfCollidedCheap(struct.innerStruct, ship.boundingBox)
       }
     }
   }

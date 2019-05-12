@@ -9,6 +9,8 @@
 function Ship(scene) {
     this.lasers = []
 
+    this.hitCount = 0
+
     this.velocity = new THREE.Vector3()
 
     this.rollAngle = 0;
@@ -38,10 +40,12 @@ function Ship(scene) {
         ship.mesh.add( light );
 
         ship.boundingBox = new THREE.Mesh(
-          new THREE.BoxGeometry(1, 0.3, 1),
+          new THREE.BoxGeometry(1, 0.3, 0.7),
           bbMat
         );
+        ship.boundingBox.position.z -= 0.25
         ship.boundingBox.visible = displayBoundingBoxes
+
 
         ship.mesh.add( ship.boundingBox )
         ship.mesh.position.z = shipStartingAltitude
@@ -65,7 +69,7 @@ function Ship(scene) {
       this.laserClock.start();
       var laser = new Laser(
                     this.mesh.position,
-                    this.velocity.clone().multiplyScalar(5),
+                    this.velocity.clone().normalize().multiplyScalar(shipLaserVelocity),
                     shipLaserColor,
                     shipLaserCutoffDistance);
       scene.addObj(laser.mesh);
@@ -75,6 +79,10 @@ function Ship(scene) {
     this.update = function(dt, trackingCamera) {
       if (this.shipLoaded == false) {
         return;
+      }
+
+      if (this.hitCount >= shipHitCountHealth) {
+        gameOver = true
       }
 
       // update any laser positions
@@ -135,18 +143,14 @@ function Ship(scene) {
 
       var cameraConst = undefined
       if (keyboard[FRONT] == true) {
-        cameraConst = 800
+        cameraConst = 1200
       } else {
-        cameraConst = -800
+        cameraConst = -1200
       }
       trackingCamera.position.add(vector.multiplyScalar(cameraConst));
       trackingCamera.position.y = Math.max(1, trackingCamera.position.y);
       trackingCamera.rotation.copy(this.mesh.rotation);
       trackingCamera.position.add(trackingCamera.up.clone().multiplyScalar(5));
       trackingCamera.lookAt(this.mesh.position);
-    }
-
-    this.handleShipHit = function() {
-
     }
 }
