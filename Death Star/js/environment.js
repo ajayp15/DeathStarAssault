@@ -25,6 +25,6 @@ function Environment() {
 
 	var directional = new THREE.DirectionalLight( 0xffffff, 1);
 	directional.position.set(3000, 3000, 3000);
-	directional.castShadow = true;
+	//directional.castShadow = true;
 	this.mesh.add( directional );
 }

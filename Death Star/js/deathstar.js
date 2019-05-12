@@ -45,8 +45,8 @@ function Deathstar(size, turretCount = 10, smallStructureCount = 1000) {
     this.smallStructures.push(smallStructure)
   }
 
-	this.mesh.receiveShadow = true;
-	this.mesh.castShadow=false;
+	//this.mesh.receiveShadow = true;
+	//this.mesh.castShadow=false;
 
   this.update = function(dt) {
     for (var i = this.turrets.length - 1; i >= 0; --i) {

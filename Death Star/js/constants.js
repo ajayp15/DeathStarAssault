@@ -23,8 +23,8 @@ var displayBoundingBoxes = false
 /*
   Gameplay constants
 */
-var shipYawVelocity = 120 * 3.14 / 180
-var shipPitchVelocity = 120 * 3.14 / 180
+var shipYawVelocity = 80 * 3.14 / 180
+var shipPitchVelocity = 80 * 3.14 / 180
 var shipRollVelocity = 200 * 3.14 / 180
 var shipVelocity = 70
 var shipRollMaximumAngle = 45 * 3.14 / 180

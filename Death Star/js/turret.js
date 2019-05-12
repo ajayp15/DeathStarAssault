@@ -72,7 +72,7 @@ function Turret(px, pz) {
   this.boundingBox.visible = displayBoundingBoxes
   this.mesh.add( this.boundingBox )
 
-  this.mesh.castShadow = true
+  //this.mesh.castShadow = true
   this.mesh.position.set(px, 60 / 2, pz);
 
   this.fireLasers = function(direction) {

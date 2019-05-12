@@ -16,7 +16,7 @@ function Structure(px, py, pz, sx, sy, sz) {
       new THREE.BoxGeometry(sx, sy, sz),
       structureMaterial
     );
-  this.outerStruct.castShadow=true;
+  //this.outerStruct.castShadow=true;
   this.outerStruct.position.set(px, py, pz);
 
   if (Math.random() < 0.5) { // half the time, add inner structure
@@ -25,7 +25,7 @@ function Structure(px, py, pz, sx, sy, sz) {
         new THREE.BoxGeometry(sx / 2, sy * 2, sz / 2),
         structureMaterial
       );
-    this.innerStruct.castShadow=true;
+    //this.innerStruct.castShadow=true;
     this.innerStruct.position.set(px, py, pz);
   }
 }

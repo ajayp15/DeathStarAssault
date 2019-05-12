@@ -20,7 +20,7 @@ function Ship(scene) {
     this.shipLoaded = false;
 
     this.laserClock = new THREE.Clock();
-    this.laserClock.start(); 
+    this.laserClock.start();
 
     var loader = new THREE.GLTFLoader();
 
@@ -40,7 +40,7 @@ function Ship(scene) {
 
         var light = new THREE.PointLight( 0xffaaaa, 1, 200 );
         light.position.set( 0, 0, 0);
-        light.castShadow = true
+        //light.castShadow = true
         ship.mesh.add( light );
 
         ship.boundingBox = new THREE.Mesh(
