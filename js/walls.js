@@ -123,9 +123,9 @@ function Walls(scene, explosions) {
 }
 
 function createWall(side) {
-    var wallWidth = 5
-    var wallHeight = 15
-    var wallDepth = 60
+    var wallWidth = sideWallWidth
+    var wallHeight = sideWallHeight
+    var wallDepth = sideWallDepth
     var wallShift = 5
 
     var geometry = new THREE.BoxGeometry(wallWidth, wallHeight, wallDepth)

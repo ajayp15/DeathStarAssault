@@ -19,7 +19,7 @@ var floorHeight = 50
 var wallMovementSpeed = 20
 var slowDownRate = wallMovementSpeed / 5
 var initWallMovementSpeed = wallMovementSpeed
-var phase1RequiredScore = 5
+var phase1RequiredScore = 30
 
 /*
 	Game variables

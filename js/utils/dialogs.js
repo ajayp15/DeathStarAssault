@@ -75,7 +75,7 @@ function createInitialObjectiveDialog(scene) {
     dialog.style.paddingLeft = 10 + "px"
     dialog.style.paddingRight = 10 + "px"
 
-    dialog.innerHTML = "Objective: Destroy 30 TIE Fighters while dodging them and their lasers!"
+    dialog.innerHTML = "Objective: Destroy " + phase1RequiredScore + " TIE Fighters while dodging them and their lasers!"
     dialog.innerHTML += "<br><br> Controls: Arrow keys to move, Spacebar to shoot"
 
     document.body.appendChild(dialog)

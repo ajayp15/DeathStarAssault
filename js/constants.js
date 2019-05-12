@@ -33,6 +33,10 @@ var aimRadius = 0.5
 var torpedoRadius = 0.4
 
 
+var sideWallWidth = 5
+var sideWallHeight = 15
+var sideWallDepth = 60
+
 var shipScale = 0.6
 // obstacles constants
 var obstaclesType = "sphere"
@@ -40,7 +44,7 @@ var obstaclesRadius = 0.5
 
 var groundLeeway = 1
 var ceilingLeeway = 50
-var wallsLeeway = 0.4 / 2 // (plane width / 2)
+var wallsLeeway = 1 // (plane width / 2)
 var wallNearPlaneGeneration = nearPlane
 
 // this will be the center point of the game, where the scale is determined by how
