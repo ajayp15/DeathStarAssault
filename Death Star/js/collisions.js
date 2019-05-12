@@ -4,6 +4,7 @@
 */
 
 function checkSceneForCollisions(ship, deathstar) {
+  if (ship.mesh.position.y == 0) { return }
   for (var i = 0; i < deathstar.turrets.length; ++i) {
     var turret = deathstar.turrets[i]
     var collidedWithTurret = checkIfCollidedCheap(turret.boundingBox, ship.boundingBox)
@@ -51,29 +52,6 @@ function checkSceneForCollisions(ship, deathstar) {
       }
     }
   }
-}
-
-// this function assumes object == THREE.object3d, and mesh == THREE.mesh
-function checkIfCollided(object, mesh) {
-    for (var i = 0; i < object.children.length; i++) {
-        var child = object.children[i];
-        if (child.geometry == undefined) { continue }
-        for (var j = 0; j < child.geometry.vertices.length; j++) {
-            var localVertex = child.geometry.vertices[j].clone();
-            var globalVertex = localVertex.applyMatrix4(child.matrix);
-            var directionVector = globalVertex.sub(child.position);
-            var originPoint = child.position.clone()
-
-            var ray = new THREE.Raycaster(originPoint, directionVector.clone().normalize());
-            var collisionResults = ray.intersectObjects([mesh]);
-            if (collisionResults.length > 0 && collisionResults[0].distance < directionVector.length()) {
-                console.log("Hit")
-                return true
-            }
-        }
-    }
-
-    return false
 }
 
 // this just checks if any of the bounding boxes of either object intersect with each other

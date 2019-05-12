@@ -141,7 +141,7 @@ function Turret(px, pz) {
       var targetAngle = Math.atan2(targetVector.z, targetVector.x)
 
       // can we fire on target?
-      if (Math.abs(firingAngle - targetAngle) % Math.PI < 0.05) {
+      if (Math.abs(firingAngle - targetAngle) % Math.PI < 0.02) {
         var trueTargetVector = new THREE.Vector3().subVectors(shipPosition, turretPosition).normalize();
         firingVector.y = (turretPosition.y - shipPosition.y) / turretDistanceToShip
         if (Math.abs(turretPosition.y - shipPosition.y) < turretDistanceToShip) { // only allow guns to fire at max 45 degrees to the plane

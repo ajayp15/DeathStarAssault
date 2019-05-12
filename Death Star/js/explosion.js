@@ -17,7 +17,7 @@ function Explosion(scene, center, particleSize, color, velocityBias = zeroVec3) 
   this.explode = function () {
       var geometry = new THREE.Geometry();
       var objectSize = particleSize
-      var movementSpeed = 10
+      var movementSpeed = 100
 
       this.dirs = []
       this.numParticles = 100
@@ -62,7 +62,7 @@ function Explosion(scene, center, particleSize, color, velocityBias = zeroVec3) 
       }
       // stop it after some arbitrary time, don't want to render those particles
       // forever
-      var seconds = 30
+      var seconds = 4
       if (this.explosionIterations >= 60 * seconds) {
           this.scene.removeObj(this.explosionParticles);
           for (var i = 0; i < activeExplosions.length; ++i) {

@@ -22,6 +22,9 @@ function Ship(scene) {
     this.laserClock = new THREE.Clock();
     this.laserClock.start();
 
+    this.sFoilAnimationDuration = 0
+    this.animationClock = new THREE.Clock();
+
     var loader = new THREE.GLTFLoader();
 
     // Load a glTF resource
@@ -32,7 +35,10 @@ function Ship(scene) {
         ship.mesh.scale.x = shipScale
         ship.mesh.scale.y = shipScale
         ship.mesh.scale.z = shipScale
-        ship.animator = gltf.animations[0];
+
+        ship.animationMixer = new THREE.AnimationMixer( ship.mesh );
+        ship.sFoilAction = ship.animationMixer.clipAction( gltf.animations[0] );
+        sFoilAnimationDuration = gltf.animations[0].duration
 
         var light = new THREE.PointLight( 0xffaaaa, 1, 200 );
         light.position.set( 0, 0, 0);
@@ -48,9 +54,11 @@ function Ship(scene) {
 
 
         ship.mesh.add( ship.boundingBox )
-        ship.mesh.position.z = shipStartingAltitude
+        ship.mesh.position.set(0, shipStartingAltitude, 0)
+        ship.mesh.rotation.x = Math.PI / 2
 
         scene.addObj(ship.mesh);
+
         ship.shipLoaded = true;
     	},
     	function ( xhr ) {
@@ -68,7 +76,7 @@ function Ship(scene) {
       }
       this.laserClock.start();
       var laser = new Laser(
-                    this.mesh.position,
+                    this.mesh.position.clone().add(this.velocity.clone().normalize().multiplyScalar(2)),
                     this.velocity.clone().normalize().multiplyScalar(shipLaserVelocity),
                     shipLaserColor,
                     shipLaserCutoffDistance);
@@ -76,9 +84,18 @@ function Ship(scene) {
       this.lasers.push(laser);
     }
 
+    this.toggleSFoils = function() {
+      this.sFoilAction.play();
+    }
+
     this.update = function(dt, trackingCamera) {
       if (this.shipLoaded == false) {
         return;
+      }
+
+      this.animationMixer.update(dt)
+      if (keyboard[SKEY] == true) {
+        this.toggleSFoils();
       }
 
       if (this.hitCount >= shipHitCountHealth) {
@@ -138,11 +155,11 @@ function Ship(scene) {
       this.mesh.position.y = Math.max(Math.min(this.mesh.position.y + vy * dt, shipMaximumAltitude), shipMinimumAltitude);
       this.mesh.position.z = Math.max(Math.min(this.mesh.position.z + vz * dt, shipMaximumPlaneCoord), -shipMaximumPlaneCoord);
 
-      trackingCamera.position.copy(p);
+      trackingCamera.position.copy(this.mesh.position);
       var vector = new THREE.Vector3(vx, vy, vz).normalize().multiplyScalar(1 / shipVelocity);
 
       var cameraConst = undefined
-      if (keyboard[FRONT] == true) {
+      if (keyboard[FKEY] == true) {
         cameraConst = 1200
       } else {
         cameraConst = -1200

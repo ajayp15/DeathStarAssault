@@ -82,6 +82,10 @@ function Deathstar(size, turretCount = 10, smallStructureCount = 1000) {
         explosion3.explode()
         explosion4.explode()
         scene.removeObj(turret.mesh)
+        for (var j = 0; j < turret.lasers.length; ++j) {
+          turret.lasers[j].active = false
+          scene.removeObj(turret.lasers[j].mesh)
+        }
         this.turrets.splice(i, 1)
       }
     }
