@@ -21,6 +21,7 @@ function Plane(scene, walls, ground) {
   this.loaded = false
   this.boundingBox = undefined
   this.flipZ = false
+  this.target = undefined
 
   // explosion stuff
   this.dirs = undefined
@@ -228,6 +229,21 @@ function Plane(scene, walls, ground) {
 
     this.shots = []
   }
+
+  
+  this.addPlaneAim = function() {
+    var targetGeometry = new THREE.CircleGeometry(0.5, 20)
+    var material = new THREE.MeshLambertMaterial({ color: 0x24d114 , side: THREE.DoubleSide});
+
+    var target = new THREE.Mesh(targetGeometry, material)
+
+    // project it to the position of the back wall
+    target.position = this.mesh.position.clone()
+    target.position.z = this.walls.backWall.position.z
+
+    this.scene.addMesh(target)
+    this.target = target
+  }
 }
 
 function createPlaneMesh() {
@@ -284,7 +300,6 @@ function loadPlaneFromObj() {
 
       scene.addMesh(plane.mesh);
       plane.loaded = true;
-      console.log("here")
     },
     function ( xhr ) {
       console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );

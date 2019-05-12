@@ -83,6 +83,37 @@ function createInitialObjectiveDialog(scene) {
     return dialog
 }
 
+function createFinalObjectiveDialog(scene) {
+    var dialog = document.createElement('div');
+    var sceneWidth = scene.sceneWidth
+    var sceneHeight = scene.sceneHeight
+
+    var dialogWidth = sceneWidth / 2
+    var dialogHeight = sceneHeight / 2
+
+    dialog.id = "objectiveDisplay"
+
+    dialog.style.fontSize = dialogHeight / 12 + "px"
+
+    // position it
+    dialog.style.position = 'fixed';
+	dialog.style.width = dialogWidth + "px"; // sceneWidth / 5 
+    dialog.style.height = dialogHeight + "px";
+    
+    // shape it
+    dialog.style.borderRadius = 25 + "px"
+    dialog.style.paddingTop = 10 + "px"
+    dialog.style.paddingLeft = 10 + "px"
+    dialog.style.paddingRight = 10 + "px"
+
+    dialog.innerHTML = "Objective: Shoot your proton torpedos into the death star by aligning the aim!"
+    dialog.innerHTML += "<br><br> Controls: Arrow keys to move, Spacebar to shoot"
+
+    document.body.appendChild(dialog)
+
+    return dialog
+}
+
 function showGameOverDialog(scene) {
     var dialog = document.createElement('div');
     var sceneWidth = scene.sceneWidth

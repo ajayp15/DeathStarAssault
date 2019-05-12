@@ -15,6 +15,8 @@ var enemies
 var showStats = true; // turns stats on and off
 var floorWidth = 10
 var floorHeight = 50
+var slowDownRate = wallMovementSpeed / 5
+var initWallMovementSpeed = wallMovementSpeed
 
 /*
 	Game variables
@@ -37,6 +39,8 @@ var finishedShowingObjectivePhase1 = false
 var gameOver = false
 var showingGameOverScreen = false
 var finishedPhase1 = false
+var reducingWallSpeed = false
+var destroyedDeathStar = false
 
 /*
 	Game user inputs
@@ -133,6 +137,7 @@ function handleGameOver() {
 }
 
 function animate(){
+	var delta = clock.getDelta() // use this to adjust for variable frame rates
 	if (showStats) {
 		stats.update()
 	}
@@ -144,30 +149,58 @@ function animate(){
 		document.body.removeChild(objectiveDialog)
 		finishedShowingObjectivePhase1 = true
 	}
-	if (plane.score >= 30) {
+	if (plane.score >= 30 && !finishedPhase1) {
 		// move onto phase 2 (shooting the proton torpedos)
 		finishedPhase1 = true
 		
 		// start displaying something
+		objectiveDialog = createFinalObjectiveDialog(scene)
 
-		// start displaying the objective screen
+		// remove the enemies from screen
+		enemies.reset()
+
+		// generate the back wall that you will shoot the proton torpedos into
+		walls.createBackWall()
+
+		// and also slowly reduce the movement speed of the walls to make it seem more
+		// like slow motion
+		objectiveClock.start()
+		reducingWallSpeed = true
+
+		// add in your aiming target mesh (projected onto the backwall)
+		plane.addPlaneAim()
+	}
+	if (reducingWallSpeed) {
+		if (objectiveClock.getElapsedTime() > 5 || wallMovementSpeed < initWallMovementSpeed / 5) {
+			reducingWallSpeed = false
+
+			document.body.removeChild(objectiveDialog)
+		}
+
+		wallMovementSpeed -= delta * slowDownRate
+
+		// also move the ship to be behind the screen (so that it is pseudo first person)
+		plane.mesh.position.z += delta * slowDownRate / 3
+	}
+	if (destroyedDeathStar) {
+		// play final cutscene and end
+		console.log("Game completed!")
 	}
 
-	update();
+	update(delta);
 	render();
 	requestAnimationFrame(animate);//request next update
 }
 
-function update() {
-	var delta = clock.getDelta() // use this to adjust for variable frame rates
-	if (finishedShowingObjectivePhase1 && !gameOver) {
+function update(delta) {
+	if (finishedShowingObjectivePhase1 && !gameOver &&!finishedPhase1) {
 		enemies.handleEnemyMovements(delta)
 		enemies.handleLaserCollisions(plane.shots)
 		enemies.handleGenericLaserMovements(delta)
 	}
 	
 	// do this always, looks cool as movement in the background
-	walls.handleWallMovements(delta)
+	walls.handleWallMovements(delta, finishedPhase1)
 	ground.handleGroundMovements(delta)
 
 	if (finishedShowingObjectivePhase1 && !gameOver) {

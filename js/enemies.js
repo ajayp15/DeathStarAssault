@@ -263,10 +263,6 @@ function Enemies(scene, plane) {
                     hitShip = true
 
                     enemiesHit[j] = true
-
-                    // add to player score if they have destroyed a tie fighter
-                    // console.log(score)
-                    this.plane.updatePlayerScore()
                 }
             }
 
@@ -287,6 +283,9 @@ function Enemies(scene, plane) {
             this.enemies[enemyHit].mesh.position.z = farPlane
             this.enemies[enemyHit].mesh.position.x = (Math.random() * 2 - 1) * 1.5
             this.enemies[enemyHit].mesh.position.y = Math.random() * (4 - 1) + 2
+
+            // add to player score if they have destroyed a tie fighter
+            this.plane.updatePlayerScore()
         }
 
         this.plane.shots = shotsMissed

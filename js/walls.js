@@ -8,6 +8,7 @@ function Walls(scene) {
     this.leftMesh = createWall("left")
     this.rightMesh = createWall("right")
     this.designsOnWalls = createDesigns()
+    this.backWall = undefined
 
     this.computeWallBoundary = function(side) {
         if (side == "left") {
@@ -21,15 +22,39 @@ function Walls(scene) {
 
     this.leftWallX = this.computeWallBoundary("left")
     this.rightWallX = this.computeWallBoundary("right")
-    this.backMesh = createBackWall()
 
-    this.handleWallMovements = function (delta) {
+    this.handleWallMovements = function (delta, finishedPhase1) {
         for (var i = 0; i < this.designsOnWalls.length; i++) {
             this.designsOnWalls[i].position.z += wallMovementSpeed * delta
             if (this.designsOnWalls[i].position.z > wallNearPlaneGeneration) {
                 this.designsOnWalls[i].position.z = farPlane
             }
         }
+
+        // move the back wall with the missile shot location if in phase2
+        if (finishedPhase1) {
+            this.backWall.position.z += wallMovementSpeed * delta
+        }
+    }
+
+    this.createBackWall = function() {
+        var wallWidth = 10
+        var wallHeight = 15
+        var wallDepth = 5
+    
+        var geometry = new THREE.BoxGeometry(wallWidth, wallHeight, wallDepth)
+        var material = new THREE.MeshLambertMaterial({ color: 0x606670 , side: THREE.DoubleSide});
+    
+        var wall = new THREE.Mesh(geometry, material);
+        
+        wall.position.z = farPlane * 1.5; // a little further to give time for slowdown
+    
+        wall.receiveShadow = true;
+        wall.castShadow = true;
+    
+        this.scene.addMesh(wall)
+        
+        this.backWall = wall
     }
 }
 
@@ -109,24 +134,4 @@ function createDesigns() {
         designsOnWalls.push(box)
     }
     return designsOnWalls
-}
-
-function createBackWall() {
-    var wallWidth = 10
-    var wallHeight = 30
-    var wallDepth = 5
-
-    var geometry = new THREE.BoxGeometry(wallWidth, wallHeight, wallDepth)
-    var material = new THREE.MeshLambertMaterial({ color: 0x606670 , side: THREE.DoubleSide});
-
-    var wall = new THREE.Mesh(geometry, material);
-    
-    wall.position.z = -60; // as far as side walls go
-
-    wall.receiveShadow = true;
-    wall.castShadow = true;
-
-    // this.scene.addMesh(wall)
-    // console.log("hi")
-    return wall
 }
