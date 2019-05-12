@@ -107,8 +107,8 @@ function Walls(scene, explosions) {
         var center = this.backWall.position.clone()
         center.y += backWallHeight / 4
         center.z += backWallDepth / 2
-        var objectSize = 0.03
-        var numParticles = 1000
+        var objectSize = 0.1
+        var numParticles = 10000
         var color = 0xf4bc42
         var moveSpeed = 20
         this.explosions.addExplosion(center, objectSize, numParticles, color, moveSpeed)
