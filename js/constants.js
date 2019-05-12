@@ -26,6 +26,9 @@ var displayBoundingBoxes = false
 
 var laserGeometry = new THREE.CylinderGeometry(0.01, 0.01, 1, 4)
 var shipLaserMaterial = new THREE.MeshLambertMaterial({
+  color: 0xff0000,
+})
+var enemyLaserMaterial = new THREE.MeshLambertMaterial({
   color: 0x1bd127,
 })
 

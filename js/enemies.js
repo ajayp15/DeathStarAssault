@@ -270,9 +270,7 @@ function createEnemies() {
 
 function createGenericLaser() {
     var laserGeometry = new THREE.CylinderGeometry(0.01, 0.01, 1, 4)
-    var laserMaterial = new THREE.MeshLambertMaterial({
-        color: 0xff0000,
-    })
+    var laserMaterial = enemyLaserMaterial
     var laser = new THREE.Mesh(laserGeometry, laserMaterial);
     laser.rotation.x = Math.PI / 2
     return laser
