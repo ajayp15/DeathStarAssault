@@ -114,7 +114,7 @@ function createFinalObjectiveDialog(scene) {
     return dialog
 }
 
-function showGameOverDialog(scene, inPhase2) {
+function showGameOverDialog(scene, state = "default") {
     var dialog = document.createElement('div');
     var sceneWidth = scene.sceneWidth
     var sceneHeight = scene.sceneHeight
@@ -141,8 +141,11 @@ function showGameOverDialog(scene, inPhase2) {
     var endingMessage = document.createElement('div')
     dialog.appendChild(endingMessage)
     endingMessage.innerHTML = "You were blasted to bits. You'll get 'em on the next run pilot!"
-    if (inPhase2) {
-        endingMessage.innerHTML = "You were unsuccessful in destroying the death star. Aim for the cavity in the wall next time pilot!"
+    if (state == "phase2") {
+        endingMessage.innerHTML = "You were unsuccessful in destroying the death star. Aim for the cavity in the wall next time, pilot!"
+        dialog.style.fontSize = dialogHeight / 15 + "px"
+    } else if (state == "deathStarDestroyed") {
+        endingMessage.innerHTML = "Great work pilot! You've destroyed the empire's prized possession, the death star. Hope they don't rebuild it..."
         dialog.style.fontSize = dialogHeight / 15 + "px"
     }
 

@@ -126,9 +126,15 @@ function setup(){
 
 function restartGame() {
 	console.log("Restarting game.")
-	document.body.removeChild(scene.renderer.domElement)
-	document.body.removeChild(gameOverDialog)
-	document.body.removeChild(document.getElementById("statusDisplay"))
+	if (document.body.contains(scene.renderer.domElement)) {
+		document.body.removeChild(scene.renderer.domElement)
+	}
+	if (document.body.contains(gameOverDialog)) {
+		document.body.removeChild(gameOverDialog)
+	}
+	if (document.body.contains(document.getElementById("statusDisplay"))) {
+		document.body.removeChild(document.getElementById("statusDisplay"))
+	}
 	resetGameState()
 	init()
 }
@@ -136,7 +142,7 @@ function restartGame() {
 function handleGameOver() {
 	plane.blowUp()
 	gameOver = true
-	gameOverDialog = showGameOverDialog(scene, inPhase2)
+	gameOverDialog = showGameOverDialog(scene, "phase2")
 }
 
 function animate(){
@@ -208,11 +214,10 @@ function animate(){
 
 			// show restart button here TODO, fix this
 			setTimeout(function() {
-				resetGameState()
-
 				var video = document.getElementById("video")
 				document.body.removeChild(video)
-				init()
+
+				gameOverDialog = showGameOverDialog(scene, "deathStarDestroyed")
 			}, 5000)
 		}, 1500)
 	}
