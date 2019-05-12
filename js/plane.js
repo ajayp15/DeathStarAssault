@@ -346,7 +346,7 @@ function loadPlaneFromObj() {
       plane.mesh.visible = true
 
       plane.boundingBox = new THREE.Mesh(
-        new THREE.BoxGeometry(0.7, 0.3, 1),
+        new THREE.BoxGeometry(1, 0.2, 1),
         bbMat
       );
       plane.boundingBox.visible = displayBoundingBoxes
@@ -358,7 +358,8 @@ function loadPlaneFromObj() {
       plane.mesh.rotation.y = Math.PI
       plane.flipZ = true
 
-      var light = new THREE.PointLight(0xffffff, 0.5, 2)
+      var light = new THREE.PointLight(0xffffff,1, 1)
+      light.position.z = 1
       plane.mesh.add(light)
 
       scene.addMesh(plane.mesh);
