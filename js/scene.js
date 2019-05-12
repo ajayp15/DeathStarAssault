@@ -15,7 +15,7 @@ function Scene() {
   // this.camera.position.z = 6.5;
 	// this.camera.position.y = 2.5;
 	this.camera.position.z = 6.5;
-	this.camera.position.y = center
+	this.camera.position.y = center * 1.1
 
 	// create renderer
 	this.renderer = new THREE.WebGLRenderer({alpha:true}); // allow somewhat transparent items (alpha buffer)
