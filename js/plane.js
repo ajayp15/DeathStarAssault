@@ -358,6 +358,9 @@ function loadPlaneFromObj() {
       plane.mesh.rotation.y = Math.PI
       plane.flipZ = true
 
+      var light = new THREE.PointLight(0xffffff, 0.5, 2)
+      plane.mesh.add(light)
+
       scene.addMesh(plane.mesh);
       plane.loaded = true;
     },
