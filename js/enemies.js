@@ -5,7 +5,7 @@
 var fighterRadius = obstaclesRadius / 1.3
 var wingRadius = obstaclesRadius * 1.5
 var numEnemies = 8
-var numLasers = 15
+var numLasers = 30
 
 // singular enemy
 function Enemy(scene, explosions) {
@@ -176,7 +176,7 @@ function Enemies(scene, plane, explosions) {
                 // send it back to the far plane
                 this.lasers[i].position.x = (Math.random() * 2 - 1) * 2
                 this.lasers[i].position.y = Math.random() * (4 - 1) + 2
-                this.lasers[i].position.z = farPlane + (i / numEnemies) * (farPlane - nearPlane)
+                this.lasers[i].position.z = farPlane + (i / numLasers) * (farPlane - nearPlane)
             }
 
             // also check if it has hit the player, while we are at it

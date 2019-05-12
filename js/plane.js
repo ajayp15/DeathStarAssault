@@ -125,8 +125,9 @@ function Plane(scene, walls, ground, explosions) {
 
   this.handleLaserMovements = function (delta) {
     var shotsToKeep = []
+    var laserSpeed = 10
     for (var i = 0; i < this.shots.length; i++) {
-      this.shots[i].translateY(-5 * delta) // y because rotated around x
+      this.shots[i].translateY(-laserSpeed * delta) // y because rotated around x
 
       // check if it has gone out of scene, remove it then
       if (this.shots[i].position.z < farPlane / 16) {  // arbitrary distance to stop them at
