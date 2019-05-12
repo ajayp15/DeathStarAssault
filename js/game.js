@@ -42,6 +42,7 @@ var showingGameOverScreen = false
 var finishedPhase1 = false
 var reducingWallSpeed = false
 var destroyedDeathStar = false
+var canShootLaser = false
 
 /*
 	Game user inputs
@@ -149,16 +150,19 @@ function animate(){
 	if (!finishedShowingObjectivePhase1 && objectiveClock.getElapsedTime() > 5 && (!loadModel || plane.loaded)) {
 		document.body.removeChild(objectiveDialog)
 		finishedShowingObjectivePhase1 = true
+		canShootLaser = true
 	}
 	if (plane.score >= phase1RequiredScore && !finishedPhase1) {
 		// move onto phase 2 (shooting the proton torpedos)
 		finishedPhase1 = true
+		canShootLaser = false // don't need it anymore, proton torpedos now
 		
 		// start displaying something
 		objectiveDialog = createFinalObjectiveDialog(scene)
 
 		// remove the enemies from screen
 		enemies.reset()
+		plane.reset()
 
 		// generate the back wall that you will shoot the proton torpedos into
 		walls.createBackWall()
@@ -199,6 +203,9 @@ function update(delta) {
 		enemies.handleLaserCollisions(plane.shots)
 		enemies.handleGenericLaserMovements(delta)
 	}
+
+	// always do this, so that we don't have frozen explosions
+	enemies.updateEnemyExplosions(delta)
 	
 	// do this always, looks cool as movement in the background
 	walls.handleWallMovements(delta, finishedPhase1)
@@ -238,7 +245,9 @@ function handleKeyDown(keyEvent){
 		keyboard[40] = true
 	} else if ( keyEvent.keyCode == 32) { // space
 		keyboard[32] = true
-		plane.shootLaser();
+		if (canShootLaser) {
+			plane.shootLaser();
+		}
 	}
 }
 

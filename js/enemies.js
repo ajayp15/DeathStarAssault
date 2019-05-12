@@ -219,7 +219,11 @@ function Enemies(scene, plane) {
                 // record that plane was hit
                 this.plane.gotHit()
             }
+        }
+    }
 
+    this.updateEnemyExplosions = function(delta) {
+        for (var i = 0; i< this.enemies.length; i++) {
             // update explosions while here
             this.enemies[i].updateExplosion(delta)
         }

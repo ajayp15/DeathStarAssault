@@ -57,7 +57,7 @@ function Plane(scene, walls, ground) {
       this.target.position.y += changeInY
       
       // also clamp it to the back wall
-      this.target.position.z = this.walls.backWall.position.z + 5.05
+      this.target.position.z = this.walls.backWall.position.z + 2.505
     }
 
     // handle x movement
@@ -269,7 +269,7 @@ function Plane(scene, walls, ground) {
     // project it to the position of the back wall
     target.position = this.mesh.position.clone()
     target.position.y = center // this seems to be necessary?
-    target.position.z = this.walls.backWall.position.z + 5.05 // adjust for thickness of wall
+    target.position.z = this.walls.backWall.position.z + 2.505 // adjust for thickness of wall
 
     this.scene.addMesh(target)
     this.target = target
