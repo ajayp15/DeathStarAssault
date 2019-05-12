@@ -16,6 +16,7 @@ var explosions
 var showStats = true; // turns stats on and off
 var floorWidth = 10
 var floorHeight = 50
+var wallMovementSpeed = 20
 var slowDownRate = wallMovementSpeed / 5
 var initWallMovementSpeed = wallMovementSpeed
 var phase1RequiredScore = 5
@@ -204,6 +205,7 @@ function animate(){
 		// play final cutscene and end
 		setTimeout(function() {
 			var video = document.createElement('img')
+			video.id = "video"
 			video.style.width = "100%"
 			video.style.height = "100%"
 			video.style.position = "fixed"
@@ -212,9 +214,29 @@ function animate(){
 
 			// remove renderer and play the video
 			document.body.removeChild(scene.renderer.domElement)
+			document.body.removeChild(document.getElementById("statusDisplay"))
 			document.body.appendChild(video)
 
-			// show restart button here
+			// show restart button here TODO, fix this
+			setTimeout(function() {
+				finishedShowingObjectivePhase1 = false
+				gameOver = false
+				showingGameOverScreen = false
+				finishedPhase1 = false
+				reducingWallSpeed = false
+				destroyedDeathStar = false
+				canShootLaser = false
+				inPhase2 = false
+				canShootTorpedos = true
+				handledEndOfGame = false
+				wallMovementSpeed = 20
+				slowDownRate = wallMovementSpeed / 5
+				initWallMovementSpeed = wallMovementSpeed
+
+				var video = document.getElementById("video")
+				document.body.removeChild(video)
+				init()
+			}, 5000)
 		}, 1500)
 	}
 
