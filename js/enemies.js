@@ -176,7 +176,7 @@ function Enemies(scene, plane, explosions) {
                 // send it back to the far plane
                 this.lasers[i].position.x = (Math.random() * 2 - 1) * 2
                 this.lasers[i].position.y = Math.random() * (4 - 1) + 2
-                this.lasers[i].position.z = farPlane + (i / numLasers) * (farPlane - nearPlane)
+                this.lasers[i].position.z = farPlane
             }
 
             // also check if it has hit the player, while we are at it
@@ -186,7 +186,7 @@ function Enemies(scene, plane, explosions) {
                 // send it back to the far plane
                 this.lasers[i].position.x = (Math.random() * 2 - 1) * 2
                 this.lasers[i].position.y = Math.random() * (4 - 1) + 2
-                this.lasers[i].position.z = farPlane + (i / numLasers) * (farPlane - nearPlane)
+                this.lasers[i].position.z = farPlane
             }
         }
     }
