@@ -12,6 +12,22 @@ function SceneDS() {
 	// camera
 	this.camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.5, 20000 );//perspective camera
 
+	// create an AudioListener and add it to the camera
+	var listener = new THREE.AudioListener();
+	this.camera.add( listener );
+
+	// create a global audio source
+	this.sound = new THREE.Audio( listener );
+
+	// load a sound and set it as the Audio object's buffer
+	var audioLoader = new THREE.AudioLoader();
+	audioLoader.load( '/death-star/sound/asteroid.mp3', function( buffer ) {
+		sound.setBuffer( buffer );
+		sound.setLoop( true );
+		sound.setVolume( 0.5 );
+		sound.play();
+	});
+
 	// renderer
 	this.renderer = new THREE.WebGLRenderer({alpha:true});
 
