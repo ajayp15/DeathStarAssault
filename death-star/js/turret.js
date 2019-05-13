@@ -81,6 +81,9 @@ function Turret(px, pz) {
     }
     this.laserClock.start();
 
+    /*var audio = new Audio('/common/sounds/turret.mp3');
+  	audio.play();*/
+
     var leftLaserPosition = this.gunBarrelLeft.position.clone()
     this.gunBarrelLeft.localToWorld(leftLaserPosition)
     leftLaserPosition.y -= 15
@@ -171,6 +174,10 @@ function Turret(px, pz) {
   }
 
   this.handleTurretDestroyed = function() {
+
+    var audio = new Audio('/common/sounds/explosion.mp3');
+  	audio.play();
+
     var randomOffset = 10
     var explosion1 = new ExplosionDS(scene,
                         this.mesh.position.clone().add(new THREE.Vector3(

@@ -102,6 +102,8 @@ function animateDS(){
 			}
 		} else {
 			if (losingDialogDisplayed == false) {
+				var audio = new Audio('/common/sounds/weeoow.mp3');
+	      audio.play();
 				losingDialog = createLosingDialogDS()
 				losingDialogDisplayed = true
 			}
@@ -136,6 +138,9 @@ function handleIntroDS() {
 		document.body.removeChild(sFoilDialog)
 		introComplete = true
 		ship.toggleSFoils();
+		var audio = new Audio('/common/sounds/asteroid.mp3');
+		audio.volume = 0.5
+		audio.play()
 	}
 }
 

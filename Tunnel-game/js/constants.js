@@ -14,7 +14,7 @@ var turnSpeed = 0.25 * 60;
 var cameraDrift = 0.5
 var maxVelocity = 0.5 * 60;
 var planeVelocityConst = 0.05 * 60
-var windowOffset = 10; // to make it not have scroll bars
+var windowOffset = 0; // to make it not have scroll bars
 var initialHP = 100
 
 var loadModel = true // load plane model

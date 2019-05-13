@@ -72,6 +72,11 @@ function ShipDS(scene) {
       if (this.laserClock.getElapsedTime() < shipWeaponMinimumTimeDelay) {
         return
       }
+
+      var audio = new Audio('/common/sounds/laser.mp3');
+      audio.volume = 0.5
+      audio.play();
+
       this.laserClock.start();
       var laser = new Laser(
                     this.mesh.position.clone().add(this.velocity.clone().normalize().multiplyScalar(2)),
