@@ -21,7 +21,7 @@ function restartGameDS() {
 	deathstar.cleanup()
 	delete ship
 	delete deathstar
-	THREE.Cache.clear()
+	THREE.Cache.clear()*/
 
 	document.body.removeChild(losingDialog)
 	document.body.removeChild(scene.renderer.domElement)
@@ -29,7 +29,6 @@ function restartGameDS() {
 	if (showStats) {
 		document.body.removeChild(stats.dom);
 	}
-	initDS()*/
 	location.reload()
 }
 
@@ -167,17 +166,17 @@ function playEndingClipDS() {
 		video.style.width = "100%"
 		video.style.height = "100%"
 		video.style.position = "fixed"
-		video.src = "images/trench.gif"
+		video.src = "/death-star/images/trench.gif"
 
 		// remove renderer and play the video
-		//document.body.removeChild(scene.renderer.domElement)
-		//document.body.removeChild(statusDisplay.dialog)
+		document.body.removeChild(scene.renderer.domElement)
+		document.body.removeChild(statusDisplay.dialog)
 		document.body.prepend(video)
 
 		setTimeout(function() {
 			var video = document.getElementById("video")
 			document.body.removeChild(video)
-			restartGameT();
+			initT();
 		}, 11000)
 	}, 1500)
 }

@@ -68,8 +68,6 @@ var planeVelocityX = 0
 var planeVelocityY = 0
 var keyboard = {}
 
-initT();
-
 function initT() {
 	resetGameStateT();
 	setupT();	// set up the game
@@ -256,7 +254,7 @@ function animateT(){
 			video.style.width = "100%"
 			video.style.height = "100%"
 			video.style.position = "fixed"
-			video.src = "images/giphy.gif"
+			video.src = "/tunnel-game/images/giphy.gif"
 			// video.style.zIndex = 100
 
 			// remove renderer and play the video

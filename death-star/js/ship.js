@@ -26,12 +26,12 @@ function ShipDS(scene) {
 
     // Load a glTF resource
     loader.load(
-    	'../common/models/star_wars_x-wing/scene.gltf',
+    	'/common/models/star_wars_x-wing/scene.gltf',
     	function ( gltf ) {
     		ship.mesh = gltf.scene;
-        ship.mesh.scale.x = shipScale
-        ship.mesh.scale.y = shipScale
-        ship.mesh.scale.z = shipScale
+        ship.mesh.scale.x = shipScaleDS
+        ship.mesh.scale.y = shipScaleDS
+        ship.mesh.scale.z = shipScaleDS
 
         ship.animationMixer = new THREE.AnimationMixer( ship.mesh );
         ship.sFoilAction = ship.animationMixer.clipAction( gltf.animations[0] );

@@ -16,7 +16,7 @@ var deathstarPlaneSize = 10000
 var deathstarTurretCount = 30
 var deathstarSmallStructureCount = 2000
 var cameraTrailing = 0.5
-var shipScale = 15
+var shipScaleDS = 15
 
 var displayBoundingBoxes = false
 
@@ -50,7 +50,7 @@ var turretLaserCutoffDistance = 1200
 var turretLaserColor = 0x22ff22
 var turretHitHealth = 10
 
-var turretDestroyCount = 2
+var turretDestroyCount = 1
 
 var SPACE = 32
 var LEFT = 37

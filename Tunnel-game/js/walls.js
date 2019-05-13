@@ -46,14 +46,14 @@ function Walls(scene, explosions) {
         var wallWidth = backWallWidth
         var wallHeight = backWallHeight
         var wallDepth = backWallDepth
-    
+
         var geometry = new THREE.BoxGeometry(wallWidth, wallHeight, wallDepth)
         var material = new THREE.MeshLambertMaterial({ color: 0x606670 , side: THREE.DoubleSide});
-    
+
         var wall = new THREE.Mesh(geometry, material);
-        
+
         wall.position.z = farPlane * 1.5; // a little further to give time for slowdown
-    
+
         wall.receiveShadow = true;
         wall.castShadow = true;
 
@@ -80,7 +80,7 @@ function Walls(scene, explosions) {
         wall.add(circle)
 
         this.scene.addMesh(wall)
-        
+
         this.backWall = wall
     }
 
@@ -91,7 +91,7 @@ function Walls(scene, explosions) {
         var wallHitBox = new THREE.Sphere(center, aimRadius)
         for (var i = 0; i < shots.length; i++) {
             var shot = shots[i]
-            
+
             var bounding = new THREE.Sphere(shot.position, torpedoRadius)
             if (wallHitBox.intersectsSphere(bounding)) {
                 return true

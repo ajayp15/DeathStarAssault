@@ -17,7 +17,7 @@ function Ground(scene) {
             this.designsOnGround[i].position.z = farPlane
         }
     }
-  } 
+  }
 
 }
 
@@ -66,28 +66,4 @@ function createDesignsOnGround() {
       designsOnGround.push(box)
   }
   return designsOnGround
-}
-
-
-// not being used as of now
-function waterGeometry(width, height, light) {
-  var waterGeometry = new THREE.PlaneBufferGeometry( 10000, 10000 );
-	water = new THREE.Water(
-		waterGeometry,
-		{
-			textureWidth: width,
-			textureHeight: height,
-			waterNormals: new THREE.TextureLoader().load( 'textures/waternormals.jpg', function ( texture ) {
-				texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-			} ),
-			alpha: 1.0,
-			sunDirection: light.position.clone().normalize(),
-			sunColor: 0xffffff,
-			waterColor: 0x001e0f,
-			distortionScale: 3.7,
-			fog: scene.fog !== undefined
-		}
-	);
-  water.rotation.x = - Math.PI / 2;
-  return water
 }

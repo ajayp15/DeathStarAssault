@@ -56,4 +56,3 @@ var wallNearPlaneGeneration = nearPlane
 var center = 3;
 var xFar = 6
 var yFar = 5
-
