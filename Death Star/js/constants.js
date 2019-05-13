@@ -34,17 +34,17 @@ var shipMaximumAltitude = 250
 var shipStartingAltitude = 200
 
 var shipMaximumPlaneCoord = 2500
-var shipWeaponMinimumTimeDelay = 0.2
+var shipWeaponMinimumTimeDelay = 0.1
 var shipLaserColor = 0xff2222
-var shipLaserCutoffDistance = 800
-var shipHitCountHealth = 25
+var shipLaserCutoffDistance = 1000
+var shipHitCountHealth = 20
 var shipLaserVelocity = 800
 var shipHitDisruptionTime = 1.5
 
-var turretGunTurnSpeed = 40 * 3.14 / 180
+var turretGunTurnSpeed = 50 * 3.14 / 180
 var turretFireRadius = 1200
 var turretMinimumTimeDelay = 2
-var turretLaserVelocity = 15
+var turretLaserVelocity = 20
 var turretLaserSize = 0.2
 var turretLaserCutoffDistance = 1200
 var turretLaserColor = 0x22ff22
