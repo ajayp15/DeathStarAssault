@@ -98,29 +98,11 @@ function Plane(scene, walls, ground, explosions) {
 
   this.shootLaser = function () {
     if (this.shots.length >= maxLasers) return
-    // for (var i = 0; i < 4; i++) {
-    //   var laser = new THREE.Mesh(laserGeometry, shipLaserMaterial);
-    //   laser.rotation.x = Math.PI / 2
 
-    //   var wpVector = this.mesh.position.clone()
-    //   var shiftVertical = 0.05
-    //   if (i == 0) {
-    //     wpVector.x -= shipScale * shipScale
-    //     wpVector.y -= shipScale * shiftVertical
-    //   } else if (i == 1) {
-    //     wpVector.x -= shipScale * shipScale
-    //     wpVector.y += shipScale * shiftVertical
-    //   } else if (i == 2) {
-    //     wpVector.x += shipScale * shipScale
-    //     wpVector.y += shipScale * shiftVertical
-    //   } else if (i == 3) {
-    //     wpVector.x += shipScale * shipScale
-    //     wpVector.y -= shipScale * shiftVertical
-    //   }
-    //   laser.position.copy(wpVector); // start position - the tip of the weapon
-    //   this.scene.addMesh(laser);
-    //   this.shots.push(laser);
-    // }
+    var audio = new Audio('/common/sounds/laser.mp3');
+    audio.volume = 0.5
+    audio.play();
+
     var laser = new THREE.Mesh(laserGeometry, shipLaserMaterial);
     laser.rotation.x = Math.PI / 2
     laser.position.copy(this.mesh.position.clone())
@@ -195,6 +177,8 @@ function Plane(scene, walls, ground, explosions) {
 
   // run when the plane is destroyed @ game over
   this.blowUp = function () {
+    var audio = new Audio('/common/sounds/weeoow.mp3');
+    audio.play();
     this.explode()
     this.mesh.visible = false
   }
@@ -258,6 +242,9 @@ function Plane(scene, walls, ground, explosions) {
   this.protonDirs = [] // two direction vectors for the two torpedos to be moving in
   this.protonTorpedos = []
   this.shootProtonTorpedos= function() {
+    var audio = new Audio('/common/sounds/photon.mp3');
+    audio.play();
+
     // shoot them at the position of the target right now
     var pos = this.target.position.clone()
 

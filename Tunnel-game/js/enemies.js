@@ -40,6 +40,8 @@ function Enemy(scene, explosions, plane) {
     }
 
     this.explode = function () {
+        var audio = new Audio('/common/sounds/explosion.mp3');
+  	    audio.play();
         var objectSize = 0.03
         var numParticles = 50
         this.explosions.addExplosion(this.mesh.position, objectSize, numParticles)

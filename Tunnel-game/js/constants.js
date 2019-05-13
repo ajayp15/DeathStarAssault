@@ -14,7 +14,7 @@ var turnSpeed = 0.25 * 60;
 var cameraDrift = 0.5
 var maxVelocity = 0.5 * 60;
 var planeVelocityConst = 0.05 * 60
-var windowOffset = 0; // to make it not have scroll bars
+var windowOffset = 10; // to make it not have scroll bars
 var initialHP = 100
 
 var loadModel = true // load plane model
@@ -35,7 +35,7 @@ var enemyLaserMaterial = new THREE.MeshLambertMaterial({
 var aimRadius = 0.5
 var torpedoRadius = 0.4
 var endGameCutsceneTime = 12000
-var phase1RequiredScore = 1
+var phase1RequiredScore = 15
 
 var sideWallWidth = 5
 var sideWallHeight = 15
