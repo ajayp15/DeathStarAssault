@@ -29,7 +29,7 @@ function createStatusDisplay(scene) {
     // add enemies destroyed text
     var scoreText = document.createElement('div')
     dialog.appendChild(scoreText)
-    scoreText.innerHTML = "TIEs Destroyed: " + 0
+    scoreText.innerHTML = "TIE Destroyed: " + 0 + "/" + phase1RequiredScore
 
     // add health text
     var healthText = document.createElement('div')
@@ -62,7 +62,7 @@ function createInitialObjectiveDialog(scene) {
 
     dialog.id = "objectiveDisplay"
 
-    dialog.style.fontSize = dialogHeight / 12 + "px"
+    dialog.style.fontSize = dialogHeight / 14 + "px"
 
     // position it
     dialog.style.position = 'fixed';
@@ -75,7 +75,7 @@ function createInitialObjectiveDialog(scene) {
     dialog.style.paddingLeft = 10 + "px"
     dialog.style.paddingRight = 10 + "px"
 
-    dialog.innerHTML = "Objective: Destroy " + phase1RequiredScore + " TIE Fighters while dodging them and their lasers!"
+    dialog.innerHTML = "Objective: Destroy " + phase1RequiredScore + " TIE Fighters while dodging them and their lasers! The TIEs take 2 hits!"
     dialog.innerHTML += "<br><br> Controls: Arrow keys to move, Spacebar to shoot"
 
     document.body.appendChild(dialog)

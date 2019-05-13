@@ -19,7 +19,7 @@ var floorHeight = 50
 var wallMovementSpeed = 20
 var slowDownRate = wallMovementSpeed / 5
 var initWallMovementSpeed = wallMovementSpeed
-var phase1RequiredScore = 30
+var phase1RequiredScore = 15
 
 /*
 	Game variables
@@ -136,13 +136,16 @@ function restartGame() {
 		document.body.removeChild(document.getElementById("statusDisplay"))
 	}
 	resetGameState()
+	THREE.Cache.clear() // clear cache
+
 	init()
 }
 
 function handleGameOver() {
 	plane.blowUp()
 	gameOver = true
-	gameOverDialog = showGameOverDialog(scene, "phase2")
+	var phase = (inPhase2) ? "phase2" : "default"
+	gameOverDialog = showGameOverDialog(scene, phase)
 }
 
 function animate(){

@@ -8,7 +8,7 @@ var upAngle = Math.PI / 6
 var downAngle = -Math.PI / 6
 var rightAngle = Math.PI / 6
 var leftAngle = -Math.PI / 6
-var maxLasers = 20
+var maxLasers = 3 // 4 * 2
 
 function Plane(scene, walls, ground, explosions) {
   this.mesh = createPlaneMesh()
@@ -98,29 +98,34 @@ function Plane(scene, walls, ground, explosions) {
 
   this.shootLaser = function () {
     if (this.shots.length >= maxLasers) return
-    for (var i = 0; i < 4; i++) {
-      var laser = new THREE.Mesh(laserGeometry, shipLaserMaterial);
-      laser.rotation.x = Math.PI / 2
+    // for (var i = 0; i < 4; i++) {
+    //   var laser = new THREE.Mesh(laserGeometry, shipLaserMaterial);
+    //   laser.rotation.x = Math.PI / 2
 
-      var wpVector = this.mesh.position.clone()
-      var shiftVertical = 0.05
-      if (i == 0) {
-        wpVector.x -= shipScale * shipScale
-        wpVector.y -= shipScale * shiftVertical
-      } else if (i == 1) {
-        wpVector.x -= shipScale * shipScale
-        wpVector.y += shipScale * shiftVertical
-      } else if (i == 2) {
-        wpVector.x += shipScale * shipScale
-        wpVector.y += shipScale * shiftVertical
-      } else if (i == 3) {
-        wpVector.x += shipScale * shipScale
-        wpVector.y -= shipScale * shiftVertical
-      }
-      laser.position.copy(wpVector); // start position - the tip of the weapon
-      this.scene.addMesh(laser);
-      this.shots.push(laser);
-    }
+    //   var wpVector = this.mesh.position.clone()
+    //   var shiftVertical = 0.05
+    //   if (i == 0) {
+    //     wpVector.x -= shipScale * shipScale
+    //     wpVector.y -= shipScale * shiftVertical
+    //   } else if (i == 1) {
+    //     wpVector.x -= shipScale * shipScale
+    //     wpVector.y += shipScale * shiftVertical
+    //   } else if (i == 2) {
+    //     wpVector.x += shipScale * shipScale
+    //     wpVector.y += shipScale * shiftVertical
+    //   } else if (i == 3) {
+    //     wpVector.x += shipScale * shipScale
+    //     wpVector.y -= shipScale * shiftVertical
+    //   }
+    //   laser.position.copy(wpVector); // start position - the tip of the weapon
+    //   this.scene.addMesh(laser);
+    //   this.shots.push(laser);
+    // }
+    var laser = new THREE.Mesh(laserGeometry, shipLaserMaterial);
+    laser.rotation.x = Math.PI / 2
+    laser.position.copy(this.mesh.position.clone())
+    this.scene.addMesh(laser)
+    this.shots.push(laser)
   }
 
   this.handleLaserMovements = function (delta) {
@@ -130,7 +135,7 @@ function Plane(scene, walls, ground, explosions) {
       this.shots[i].translateY(-laserSpeed * delta) // y because rotated around x
 
       // check if it has gone out of scene, remove it then
-      if (this.shots[i].position.z < farPlane / 16) {  // arbitrary distance to stop them at
+      if (this.shots[i].position.z < farPlane / 8) {  // arbitrary distance to stop them at
         this.scene.removeMesh(this.shots[i])
       } else {
         shotsToKeep.push(this.shots[i])
@@ -142,7 +147,7 @@ function Plane(scene, walls, ground, explosions) {
 
   this.updatePlayerScore = function () {
     this.score += 1
-    scoreText.innerHTML = "TIEs Destroyed: " + this.score.toString();
+    scoreText.innerHTML = "TIE Destroyed: " + this.score.toString() + "/" + phase1RequiredScore;
   }
 
   this.checkIfCollided = function (shape) {
@@ -164,8 +169,13 @@ function Plane(scene, walls, ground, explosions) {
   }
 
   // this gets called when this plane gets hit
-  this.gotHit = function (locationOfHit) {
+  this.gotHit = function (locationOfHit, gotHitBy = "TIE") {
     var deduction = 10
+    if (gotHitBy == "TIE") {
+      deduction = 15
+    } else if (gotHitBy == "laser") {
+      deduction = 5
+    }
     this.HP -= deduction
     HPText.innerHTML = "Ship Status: " + this.HP + "%"
     HPBar.value -= deduction
@@ -179,7 +189,7 @@ function Plane(scene, walls, ground, explosions) {
     var color = 0xffffff // white
     var numParticles = 30 // small explosion
     var objectSize = 0.02
-    explosions.addExplosion(location, objectSize, numParticles, color)
+    this.explosions.addExplosion(location, objectSize, numParticles, color)
   }
 
   // run when the plane is destroyed @ game over
@@ -230,6 +240,10 @@ function Plane(scene, walls, ground, explosions) {
     target.add(mainCircle)
     target.add(outerAim)
     target.add(innerAim)
+
+    // add a small point light to it, to see it better
+    var light = new THREE.PointLight(0xffffff, 1, 15)
+    target.add(light)
 
     // project it to the position of the back wall
     target.position = this.mesh.position.clone()

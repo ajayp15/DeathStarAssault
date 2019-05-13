@@ -6,16 +6,19 @@ var fighterRadius = obstaclesRadius / 1.3
 var wingRadius = obstaclesRadius * 1.5
 var numEnemies = 8
 var numLasers = 30
+var enemyHP = 2 // multiply by 2 since player shoots 2 lasers, that most likely both hit
 
 // singular enemy
-function Enemy(scene, explosions) {
+function Enemy(scene, explosions, plane) {
     this.scene = scene
     this.explosions = explosions
+    this.plane = plane
     this.mesh = createEnemy()
     this.boundingBox = getEnemyBoundingBox()
     this.mesh.add(this.boundingBox)
     this.shots = []
     this.shotDirs = []
+    this.HP = enemyHP
 
     // explosion stuff
     this.dirs = undefined
@@ -40,6 +43,38 @@ function Enemy(scene, explosions) {
         var objectSize = 0.03
         var numParticles = 50
         this.explosions.addExplosion(this.mesh.position, objectSize, numParticles)
+    }
+
+    this.sendToFarPlane = function() {
+        this.mesh.position.z = farPlane
+        this.mesh.position.x = (Math.random() * 2 - 1) * 1.5
+        this.mesh.position.y = Math.random() * (4 - 1) + 2
+
+        // reset health whenever sent back to far plane
+        this.HP = enemyHP
+    }
+
+    // this enemy got hit --> explode it if HP is 0
+    this.gotHit = function() {
+        this.HP -= 1 // deduct 1 HP
+
+        if (this.HP <= 0) {
+            // explode the enemy and remove it from the scene
+            // (but don't actually remove it from the scene, just "explode" it
+            // and move it back to the far plane --> is this going to cause
+            // inefficiencies with things being generated in bulks sometimes?)
+            this.explode()
+            this.sendToFarPlane()
+
+            // add to player score if they have destroyed a tie fighter
+            this.plane.updatePlayerScore()
+        } else {
+            // do a small explosion to signify got hit
+            var color = 0xff0000 // red
+            var numParticles = 30 // small explosion
+            var objectSize = 0.04
+            this.explosions.addExplosion(this.mesh.position, objectSize, numParticles, color)
+        }
     }
 }
 
@@ -145,22 +180,18 @@ function Enemies(scene, plane, explosions) {
 
             // reposition them at far plane if they went out of view
             if (this.enemies[i].mesh.position.z > nearPlane) {
-                this.enemies[i].mesh.position.z = farPlane
-                this.enemies[i].mesh.position.x = (Math.random() * 2 - 1) * 1.5
-                this.enemies[i].mesh.position.y = Math.random() * (4 - 1) + 2
+                this.enemies[i].sendToFarPlane()
             }
 
             // also check if the player has hit any of them
             var shape = this.plane.boundingBox
             if (this.enemies[i].checkIfCollided(shape)) {
                 // record that plane was hit
-                this.plane.gotHit(this.enemies[i].mesh.position.clone())
+                this.plane.gotHit(this.enemies[i].mesh.position.clone(), "TIE")
 
                 // explode this ship and send it to the back
                 this.enemies[i].explode()
-                this.enemies[i].mesh.position.z = farPlane
-                this.enemies[i].mesh.position.x = (Math.random() * 2 - 1) * 1.5
-                this.enemies[i].mesh.position.y = Math.random() * (4 - 1) + 2
+                this.enemies[i].sendToFarPlane()
             }
         }
     }
@@ -181,7 +212,7 @@ function Enemies(scene, plane, explosions) {
 
             // also check if it has hit the player, while we are at it
             if (this.plane.checkIfCollided(this.lasers[i])) {
-                this.plane.gotHit(this.lasers[i].position.clone())
+                this.plane.gotHit(this.lasers[i].position.clone(), "laser")
 
                 // send it back to the far plane
                 this.lasers[i].position.x = (Math.random() * 2 - 1) * 2
@@ -215,17 +246,7 @@ function Enemies(scene, plane, explosions) {
 
         
         for (var enemyHit in enemiesHit) {
-            // explode the enemy and remove it from the scene
-            // (but don't actually remove it from the scene, just "explode" it
-            // and move it back to the far plane --> is this going to cause
-            // inefficiencies with things being generated in bulks sometimes?)
-            this.enemies[enemyHit].explode()
-            this.enemies[enemyHit].mesh.position.z = farPlane
-            this.enemies[enemyHit].mesh.position.x = (Math.random() * 2 - 1) * 1.5
-            this.enemies[enemyHit].mesh.position.y = Math.random() * (4 - 1) + 2
-
-            // add to player score if they have destroyed a tie fighter
-            this.plane.updatePlayerScore()
+            this.enemies[enemyHit].gotHit()
         }
 
         this.plane.shots = shotsMissed
@@ -253,7 +274,7 @@ function createEnemies() {
     var enemies = []
 
     for (var i = 1; i <= numEnemies; i++) {
-        enemy = new Enemy(this.scene, this.explosions)
+        enemy = new Enemy(this.scene, this.explosions, this.plane)
         enemies.push(enemy)
 
         enemy.mesh.position.x = (Math.random() * 2 - 1) * 2
