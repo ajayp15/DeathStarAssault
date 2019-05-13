@@ -12,6 +12,8 @@ var losingDialog
 var losingDialogDisplayed
 var beganPlayingEnding
 
+var didSwitchToOtherGame = false
+
 function restartGameDS() {
 	/*for (var i = scene.scene.children.length - 1; i >= 0; --i) {
 		dispose3(scene.scene.children[i])
@@ -85,6 +87,7 @@ function setupDS(){
 }
 
 function animateDS(){
+	if (didSwitchToOtherGame) { return }
 	if (showStats) {
 		stats.update()
 	}
@@ -92,6 +95,7 @@ function animateDS(){
 		updateDS();
 	} else {
 		if (didWin == true) {
+			updateDS();
 			if (beganPlayingEnding == false) {
 				beganPlayingEnding = true
 				playEndingClipDS()
@@ -176,7 +180,8 @@ function playEndingClipDS() {
 		setTimeout(function() {
 			var video = document.getElementById("video")
 			document.body.removeChild(video)
+			didSwitchToOtherGame = true
 			initT();
-		}, 11000)
+		}, 10000)
 	}, 1500)
 }

@@ -61,6 +61,10 @@ function resetGameStateT() {
 	initWallMovementSpeed = wallMovementSpeed
 }
 
+function resetToBeginning() {
+	location.reload()
+}
+
 /*
 	Game user inputs
 */
