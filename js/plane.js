@@ -124,6 +124,7 @@ function Plane(scene, walls, ground, explosions) {
     var laser = new THREE.Mesh(laserGeometry, shipLaserMaterial);
     laser.rotation.x = Math.PI / 2
     laser.position.copy(this.mesh.position.clone())
+    laser.position.z -= 0.1 // shift it forward a little bit
     this.scene.addMesh(laser)
     this.shots.push(laser)
   }
