@@ -19,8 +19,8 @@ var floorHeight = 50
 var wallMovementSpeed = 20
 var slowDownRate = wallMovementSpeed / 5
 var initWallMovementSpeed = wallMovementSpeed
-var phase1RequiredScore = 15
-var endGameCutsceneTime = 10000
+var phase1RequiredScore = 1
+var endGameCutsceneTime = 12000
 
 /*
 	Game variables
@@ -76,6 +76,7 @@ var keyboard = {}
 init();
 
 function init() {
+	resetGameState();
 	setup();	// set up the game
 	animate();	//call game loop
 }
@@ -210,7 +211,7 @@ function animate(){
 			video.style.width = "100%"
 			video.style.height = "100%"
 			video.style.position = "fixed"
-			video.src = "images/giphy.gif" 
+			video.src = "images/giphy.gif"
 			// video.style.zIndex = 100
 
 			// remove renderer and play the video
@@ -224,8 +225,8 @@ function animate(){
 				document.body.removeChild(video)
 
 				gameOverDialog = showGameOverDialog(scene, "deathStarDestroyed")
-			}, 5000)
-		}, endGameCutsceneTime)
+			}, endGameCutsceneTime)
+		}, 1500)
 	}
 
 	update(delta);
@@ -243,7 +244,7 @@ function update(delta) {
 	// always do this, so that we don't have frozen explosions
 	// enemies.updateEnemyExplosions(delta)
 	explosions.updateExplosions(delta)
-	
+
 	// do this always, looks cool as movement in the background
 	walls.handleWallMovements(delta, finishedPhase1)
 	ground.handleGroundMovements(delta)

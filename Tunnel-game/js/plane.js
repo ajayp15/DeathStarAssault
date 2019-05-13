@@ -56,7 +56,7 @@ function Plane(scene, walls, ground, explosions) {
     if (this.target != undefined) {
       this.target.position.x += changeInX
       this.target.position.y += changeInY
-      
+
       // also clamp it to the back wall
       this.target.position.z = this.walls.backWall.position.z + 2.51
     }
@@ -222,7 +222,7 @@ function Plane(scene, walls, ground, explosions) {
     this.shots = []
   }
 
-  
+
   this.addPlaneAim = function() {
     var largeCircleGeometry = new THREE.CircleGeometry(aimRadius, 20)
     var greenMaterial = new THREE.MeshLambertMaterial({ color: 0x245923, side: THREE.DoubleSide});
@@ -260,7 +260,7 @@ function Plane(scene, walls, ground, explosions) {
   this.shootProtonTorpedos= function() {
     // shoot them at the position of the target right now
     var pos = this.target.position.clone()
-    
+
     var leftPos = new THREE.Vector3(this.scene.camera.position.x - 1.5, this.scene.camera.position.y, this.scene.camera.position.z)
     var rightPos = new THREE.Vector3(this.scene.camera.position.x + 1.5, this.scene.camera.position.y, this.scene.camera.position.z)
     var dir1 = new THREE.Vector3().subVectors(pos, leftPos).normalize()
@@ -278,7 +278,7 @@ function Plane(scene, walls, ground, explosions) {
     })
     var torpedo1 = new THREE.Mesh(torpedoGeo, torpedoMaterial)
     var torpedo2 = new THREE.Mesh(torpedoGeo, torpedoMaterial)
-    
+
     this.protonTorpedos.push(torpedo1)
     this.protonTorpedos.push(torpedo2)
 
@@ -356,7 +356,7 @@ function loadPlaneFromObj() {
 
   // Load a glTF resource
   loader.load(
-    'models/star_wars_x-wing/scene.gltf',
+    '../common/models/star_wars_x-wing/scene.gltf',
     function ( gltf ) {
       var obj = new THREE.Object3D()
       obj.add(gltf.scene)
