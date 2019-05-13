@@ -20,6 +20,7 @@ var wallMovementSpeed = 20
 var slowDownRate = wallMovementSpeed / 5
 var initWallMovementSpeed = wallMovementSpeed
 var phase1RequiredScore = 15
+var endGameCutsceneTime = 10000
 
 /*
 	Game variables
@@ -126,6 +127,8 @@ function setup(){
 
 function restartGame() {
 	console.log("Restarting game.")
+	scene.scene.dispose()
+
 	if (document.body.contains(scene.renderer.domElement)) {
 		document.body.removeChild(scene.renderer.domElement)
 	}
@@ -222,7 +225,7 @@ function animate(){
 
 				gameOverDialog = showGameOverDialog(scene, "deathStarDestroyed")
 			}, 5000)
-		}, 1500)
+		}, endGameCutsceneTime)
 	}
 
 	update(delta);
