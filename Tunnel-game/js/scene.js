@@ -3,7 +3,7 @@
     necessary to make the scene
 */
 
-function Scene() {
+function SceneT() {
 	this.sceneWidth = window.innerWidth - windowOffset;
 	this.sceneHeight = window.innerHeight - windowOffset;
 
@@ -69,7 +69,8 @@ function Scene() {
 
   this.removeMesh = function(mesh) {
     mesh.visible = false
-    this.scene.remove(mesh)
+		this.scene.remove(mesh)
+		dispose3(mesh)
 	}
 
 	this.handleCameraMovement = function(dx, dy, dz, plane, delta, walls, ground) {

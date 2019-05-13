@@ -1,5 +1,5 @@
 
-function Environment() {
+function EnvironmentT() {
 
   // var skyGeo = new THREE.SphereGeometry(50, 25, 25);
   // var sky = new THREE.Mesh(skyGeo, material);

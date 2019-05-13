@@ -1,4 +1,4 @@
-var showStats = true; // turns stats on and off
+var showStats = false; // turns stats on and off
 var maxBasicObstacles = 50
 var floorWidth = 10 // arbitrarily chosen for now
 var floorHeight = 50
@@ -34,7 +34,8 @@ var enemyLaserMaterial = new THREE.MeshLambertMaterial({
 
 var aimRadius = 0.5
 var torpedoRadius = 0.4
-
+var endGameCutsceneTime = 12000
+var phase1RequiredScore = 1
 
 var sideWallWidth = 5
 var sideWallHeight = 15

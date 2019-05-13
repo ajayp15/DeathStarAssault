@@ -4,7 +4,7 @@
 */
 
 // one individual explosion
-function Explosion(scene) {
+function ExplosionT(scene) {
     this.scene = scene
     this.dirs = undefined
     this.explosionParticles = undefined
@@ -76,7 +76,7 @@ function Explosions(scene) {
     this.explosions = []
 
     this.addExplosion = function (location, objectSize, numParticles, color = 0xf4bc42, explosionMovementSpeed = 5) {
-        var explosion = new Explosion(scene)
+        var explosion = new ExplosionT(scene)
         this.explosions.push(explosion)
 
         explosion.explode(location, objectSize, numParticles, color, explosionMovementSpeed)

@@ -4,10 +4,8 @@
 */
 
 
-function createStatusDisplay(scene) {
+function createStatusDisplayT(scene) {
     var dialog = document.createElement('div');
-    var sceneWidth = scene.sceneWidth
-    var sceneHeight = scene.sceneHeight
 
     var dialogWidth = 150
 
@@ -52,7 +50,7 @@ function createStatusDisplay(scene) {
     return {score: scoreText, hpText: healthText, hpBar: healthBar}
 }
 
-function createInitialObjectiveDialog(scene) {
+function createInitialObjectiveDialogT(scene) {
     var dialog = document.createElement('div');
     var sceneWidth = scene.sceneWidth
     var sceneHeight = scene.sceneHeight
@@ -83,7 +81,7 @@ function createInitialObjectiveDialog(scene) {
     return dialog
 }
 
-function createFinalObjectiveDialog(scene) {
+function createFinalObjectiveDialogT(scene) {
     var dialog = document.createElement('div');
     var sceneWidth = scene.sceneWidth
     var sceneHeight = scene.sceneHeight
@@ -114,7 +112,7 @@ function createFinalObjectiveDialog(scene) {
     return dialog
 }
 
-function showGameOverDialog(scene, state = "default") {
+function showGameOverDialogT(scene, state = "default") {
     var dialog = document.createElement('div');
     var sceneWidth = scene.sceneWidth
     var sceneHeight = scene.sceneHeight
@@ -156,7 +154,7 @@ function showGameOverDialog(scene, state = "default") {
     replayButton.style.fontSize = dialogHeight / 10 + "px"
     replayButton.innerHTML = "Replay!"
 
-    replayButton.addEventListener("click", restartGame) // add this listener
+    replayButton.addEventListener("click", restartGameT) // add this listener
     dialog.appendChild(replayButton)
 
     document.body.appendChild(dialog)
