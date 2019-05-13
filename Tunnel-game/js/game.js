@@ -121,9 +121,59 @@ function setupT(){
 	objectiveDialog = createInitialObjectiveDialogT(scene)
 }
 
+function dispose3(obj) {
+	if (!obj) return
+    /**
+     *  @author Marco Sulla (marcosullaroma@gmail.com)
+     *  @date Mar 12, 2016
+     */
+
+    var children = obj.children;
+    var child;
+
+    if (children) {
+        for (var i=0; i<children.length; i+=1) {
+            child = children[i];
+
+            dispose3(child);
+        }
+    }
+
+    var geometry = obj.geometry;
+    var material = obj.material;
+
+    if (geometry) {
+        geometry.dispose();
+    }
+
+    if (material) {
+        var texture = material.map;
+
+        if (texture) {
+			if (material.length) {
+				for (var i = 0; i < material.length; i++) {
+					material[i].map.dispose()
+				}
+			} else {
+				texture.dispose();
+			}
+        }
+
+		if (material.dispose) {
+			material.dispose()
+		}
+    }
+}
+
+function disposeOfGameObjectsT() {
+	for (var i = scene.scene.children.length - 1; i >= 0; i--) {
+		dispose3(scene.scene.children[i])
+	}
+}
+
 function restartGameT() {
 	console.log("Restarting game.")
-	scene.scene.dispose()
+	disposeOfGameObjectsT()
 
 	if (document.body.contains(scene.renderer.domElement)) {
 		document.body.removeChild(scene.renderer.domElement)

@@ -69,7 +69,8 @@ function SceneT() {
 
   this.removeMesh = function(mesh) {
     mesh.visible = false
-    this.scene.remove(mesh)
+		this.scene.remove(mesh)
+		dispose3(mesh)
 	}
 
 	this.handleCameraMovement = function(dx, dy, dz, plane, delta, walls, ground) {

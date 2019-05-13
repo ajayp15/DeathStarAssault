@@ -3,10 +3,6 @@ function Ground(scene) {
   this.mesh = createGround();
   this.designsOnGround = createDesignsOnGround()
 
-  this.updateGroundEvolution = function(dt) {
-    this.mesh.material.uniforms[ 'time' ].value += dt;
-  }
-
   this.computeGroundTop = function() {
     this.mesh.geometry.computeBoundingBox()
     return this.mesh.geometry.boundingBox.max.y + this.mesh.position.y
