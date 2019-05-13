@@ -13,14 +13,9 @@ var explosions
 /*
 	Game Constants
 */
-var showStats = true; // turns stats on and off
-var floorWidth = 10
-var floorHeight = 50
 var wallMovementSpeed = 20
 var slowDownRate = wallMovementSpeed / 5
 var initWallMovementSpeed = wallMovementSpeed
-var phase1RequiredScore = 1
-var endGameCutsceneTime = 12000
 
 /*
 	Game variables
@@ -50,7 +45,7 @@ var inPhase2 = false
 var canShootTorpedos = true
 var handledEndOfGame = false
 
-function resetGameState() {
+function resetGameStateT() {
 	finishedShowingObjectivePhase1 = false
 	gameOver = false
 	showingGameOverScreen = false
@@ -73,15 +68,15 @@ var planeVelocityX = 0
 var planeVelocityY = 0
 var keyboard = {}
 
-init();
+initT();
 
-function init() {
-	resetGameState();
-	setup();	// set up the game
-	animate();	//call game loop
+function initT() {
+	resetGameStateT();
+	setupT();	// set up the game
+	animateT();	//call game loop
 }
 
-function setup(){
+function setupT(){
 	/*
 		Initialize game variables
 	*/
@@ -92,11 +87,11 @@ function setup(){
 	objectiveClock = new THREE.Clock()
 	objectiveClock.start()
 
-	scene = new Scene()
+	scene = new SceneT()
 	explosions = new Explosions(scene)
 	ground = new Ground(scene)
 	walls = new Walls(scene, explosions)
-	environment = new Environment();
+	environment = new EnvironmentT();
 	plane = new Plane(scene, walls, ground, explosions)
 	enemies = new Enemies(scene, plane, explosions)
 
@@ -115,18 +110,18 @@ function setup(){
 
 	window.addEventListener('resize', onWindowResize, false);//resize callback
 
-	document.onkeydown = handleKeyDown;
-	document.onkeyup = handleKeyUp;
+	document.onkeydown = handleKeyDownT;
+	document.onkeyup = handleKeyUpT;
 
-	statusDisplay = createStatusDisplay(scene)
+	statusDisplay = createStatusDisplayT(scene)
 	scoreText = statusDisplay.score
 	HPText = statusDisplay.hpText
 	HPBar = statusDisplay.hpBar
 
-	objectiveDialog = createInitialObjectiveDialog(scene)
+	objectiveDialog = createInitialObjectiveDialogT(scene)
 }
 
-function restartGame() {
+function restartGameT() {
 	console.log("Restarting game.")
 	scene.scene.dispose()
 
@@ -139,26 +134,26 @@ function restartGame() {
 	if (document.body.contains(document.getElementById("statusDisplay"))) {
 		document.body.removeChild(document.getElementById("statusDisplay"))
 	}
-	resetGameState()
+	resetGameStateT()
 	THREE.Cache.clear() // clear cache
 
-	init()
+	initT()
 }
 
-function handleGameOver() {
+function handleGameOverT() {
 	plane.blowUp()
 	gameOver = true
 	var phase = (inPhase2) ? "phase2" : "default"
-	gameOverDialog = showGameOverDialog(scene, phase)
+	gameOverDialog = showGameOverDialogT(scene, phase)
 }
 
-function animate(){
+function animateT(){
 	var delta = clock.getDelta() // use this to adjust for variable frame rates
 	if (showStats) {
 		stats.update()
 	}
 	if (plane.HP <= 0 && !showingGameOverScreen) {
-		handleGameOver()
+		handleGameOverT()
 		showingGameOverScreen = true
 	}
 	if (!finishedShowingObjectivePhase1 && objectiveClock.getElapsedTime() > 5 && (!loadModel || plane.loaded)) {
@@ -170,7 +165,7 @@ function animate(){
 		// move onto phase 2 (shooting the proton torpedos)
 		finishedPhase1 = true
 		canShootLaser = false // don't need it anymore, proton torpedos now
-		objectiveDialog = createFinalObjectiveDialog(scene)
+		objectiveDialog = createFinalObjectiveDialogT(scene)
 		enemies.reset()
 		plane.reset()
 
@@ -224,17 +219,17 @@ function animate(){
 				var video = document.getElementById("video")
 				document.body.removeChild(video)
 
-				gameOverDialog = showGameOverDialog(scene, "deathStarDestroyed")
+				gameOverDialog = showGameOverDialogT(scene, "deathStarDestroyed")
 			}, endGameCutsceneTime)
 		}, 1500)
 	}
 
-	update(delta);
-	render();
-	requestAnimationFrame(animate);//request next update
+	updateT(delta);
+	renderT();
+	requestAnimationFrame(animateT);//request next update
 }
 
-function update(delta) {
+function updateT(delta) {
 	if (finishedShowingObjectivePhase1 && !gameOver &&!finishedPhase1) {
 		enemies.handleEnemyMovements(delta)
 		enemies.handleLaserCollisions(plane.shots)
@@ -265,11 +260,11 @@ function update(delta) {
 	}
 }
 
-function render(){
+function renderT(){
 	scene.renderer.render(scene.scene, scene.camera);
 }
 
-function handleKeyDown(keyEvent){
+function handleKeyDownT(keyEvent){
 	// possible TODO: need to add clock.delta() here? or does velocity solve the issue
 	if ( keyEvent.keyCode === 37) { // left
 		planeVelocityX = -planeVelocityConst
@@ -295,7 +290,7 @@ function handleKeyDown(keyEvent){
 	}
 }
 
-function handleKeyUp(keyEvent){
+function handleKeyUpT(keyEvent){
 	// TODO: there is still a bug if you rapidly press buttons, you might end
 	// up going left when you are actually pressing right --> might be because
 	// keyboard detection isn't done in the update loop?

@@ -3,7 +3,7 @@
     necessary to make the scene
 */
 
-function Scene() {
+function SceneT() {
 	this.sceneWidth = window.innerWidth - windowOffset;
 	this.sceneHeight = window.innerHeight - windowOffset;
 

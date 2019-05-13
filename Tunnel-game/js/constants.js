@@ -34,7 +34,8 @@ var enemyLaserMaterial = new THREE.MeshLambertMaterial({
 
 var aimRadius = 0.5
 var torpedoRadius = 0.4
-
+var endGameCutsceneTime = 12000
+var phase1RequiredScore = 1
 
 var sideWallWidth = 5
 var sideWallHeight = 15
