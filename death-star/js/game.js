@@ -12,24 +12,33 @@ var losingDialog
 var losingDialogDisplayed
 var beganPlayingEnding
 
-init()
+function restartGameDS() {
+	/*for (var i = scene.scene.children.length - 1; i >= 0; --i) {
+		dispose3(scene.scene.children[i])
+	}
+	scene.scene.dispose()
+	ship.cleanup()
+	deathstar.cleanup()
+	delete ship
+	delete deathstar
+	THREE.Cache.clear()
 
-function restartGame() {
 	document.body.removeChild(losingDialog)
 	document.body.removeChild(scene.renderer.domElement)
 	document.body.removeChild(statusDisplay.dialog)
 	if (showStats) {
 		document.body.removeChild(stats.dom);
 	}
-	init()
+	initDS()*/
+	location.reload()
 }
 
-function init() {
-	setup();
-	animate();
+function initDS() {
+	setupDS();
+	animateDS();
 }
 
-function setup(){
+function setupDS(){
 	gameOver = false
 	didWin = false
 	introComplete = false
@@ -40,21 +49,21 @@ function setup(){
 	turretsDestroyed = 0
 	keyboard = {}
 
-	scene = new Scene()
+	scene = new SceneDS()
 
-	var environment = new Environment();
+	var environment = new EnvironmentDS();
 	scene.addObj(environment.mesh);
 
 	var deathstar_position = new THREE.Vector3(0, 0, 0);
-	deathstar = new Deathstar(
+	deathstar = new DeathstarDS(
 									deathstarPlaneSize,
 									deathstarTurretCount,
 									deathstarSmallStructureCount);
 	scene.addObj(deathstar.mesh, true);
 
-	ship = new Ship(scene);
+	ship = new ShipDS(scene);
 
-	statusDisplay = new StatusDisplay()
+	statusDisplay = new StatusDisplayDS()
 
 	document.body.appendChild(scene.renderer.domElement)
 
@@ -67,58 +76,58 @@ function setup(){
 		document.body.appendChild(stats.dom);
 	}
 
-	document.onkeydown = handleKeyDown;
-	document.onkeyup = handleKeyUp;
-	window.addEventListener('resize', onWindowResize, false);
+	document.onkeydown = handleKeyDownDS;
+	document.onkeyup = handleKeyUpDS;
+	window.addEventListener('resize', onWindowResizeDS, false);
 
 	objectiveClock = new THREE.Clock();
-	objectiveDialog = createObjectiveDialog()
+	objectiveDialog = createObjectiveDialogDS()
 	objectiveClock.start();
 }
 
-function animate(){
+function animateDS(){
 	if (showStats) {
 		stats.update()
 	}
 	if (!gameOver) {
-		update();
+		updateDS();
 	} else {
 		if (didWin == true) {
 			if (beganPlayingEnding == false) {
 				beganPlayingEnding = true
-				playEndingClip()
+				playEndingClipDS()
 			}
 		} else {
 			if (losingDialogDisplayed == false) {
-				losingDialog = createLosingDialog()
+				losingDialog = createLosingDialogDS()
 				losingDialogDisplayed = true
 			}
 		}
 	}
 
-	render();
-	requestAnimationFrame(animate);
+	renderDS();
+	requestAnimationFrame(animateDS);
 }
 
-function update() {
+function updateDS() {
 	if (ship.shipLoaded == false) { return }
 	if (!introComplete) {
-		handleIntro()
+		handleIntroDS()
 	}
 	var dt = gameClock.getDelta();
 	ship.update(dt, scene.camera);
 	if (introComplete) {
 		deathstar.update(dt);
-		updateExplosions(dt);
-		checkSceneForCollisions(ship, deathstar);
+		updateExplosionsDS(dt);
+		checkSceneForCollisionsDS(ship, deathstar);
 	}
 }
 
-function handleIntro() {
+function handleIntroDS() {
 	if (objectiveClock.getElapsedTime() >= timeToShowObjectiveScreen && objectiveDialogFinished == false) {
 		document.body.removeChild(objectiveDialog)
 		objectiveDialogFinished = true
-		sFoilDialog = createSFoilActionDialog()
+		sFoilDialog = createSFoilActionDialogDS()
 	}
 	if (keyboard[SKEY] == true && objectiveDialogFinished == true) {
 		document.body.removeChild(sFoilDialog)
@@ -127,23 +136,23 @@ function handleIntro() {
 	}
 }
 
-function render(){
+function renderDS(){
 	scene.renderer.render(scene.scene, scene.camera);
 }
 
-function handleKeyDown(keyEvent){
-	handleKeyEvent(keyEvent, true);
+function handleKeyDownDS(keyEvent){
+	handleKeyEventDS(keyEvent, true);
 }
 
-function handleKeyUp(keyEvent){
-	handleKeyEvent(keyEvent, false);
+function handleKeyUpDS(keyEvent){
+	handleKeyEventDS(keyEvent, false);
 }
 
-function handleKeyEvent(keyEvent, val) {
+function handleKeyEventDS(keyEvent, val) {
 	keyboard[keyEvent.keyCode] = val
 }
 
-function onWindowResize() {
+function onWindowResizeDS() {
 	scene.sceneHeight = window.innerHeight - windowOffset;
 	scene.sceneWidth = window.innerWidth - windowOffset;
 	scene.renderer.setSize(scene.sceneWidth, scene.sceneHeight);
@@ -151,7 +160,7 @@ function onWindowResize() {
 	scene.camera.updateProjectionMatrix();
 }
 
-function playEndingClip() {
+function playEndingClipDS() {
 	setTimeout(function() {
 		var video = document.createElement('img')
 		video.id = "video"
@@ -168,7 +177,7 @@ function playEndingClip() {
 		setTimeout(function() {
 			var video = document.getElementById("video")
 			document.body.removeChild(video)
-			gameOverDialog = showGameOverDialog(scene, "deathStarDestroyed")
+			restartGameT();
 		}, 11000)
 	}, 1500)
 }

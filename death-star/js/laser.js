@@ -29,4 +29,8 @@ function Laser(position, velocity, color, maximumDistance = 300, size = 0.2) {
     }
     this.mesh.position.add(this.velocity.clone().multiplyScalar(dt));
   }
+
+  this.cleanup = function() {
+    dispose3(this.mesh)
+  }
 }

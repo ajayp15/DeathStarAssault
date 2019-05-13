@@ -50,7 +50,7 @@ var turretLaserCutoffDistance = 1200
 var turretLaserColor = 0x22ff22
 var turretHitHealth = 10
 
-var turretDestroyCount = 15
+var turretDestroyCount = 2
 
 var SPACE = 32
 var LEFT = 37

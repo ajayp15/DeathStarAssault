@@ -3,7 +3,7 @@
     necessary to make the scene
 */
 
-function Scene() {
+function SceneDS() {
 	this.sceneWidth = window.innerWidth - windowOffset;
 	this.sceneHeight = window.innerHeight - windowOffset;
 
@@ -14,7 +14,7 @@ function Scene() {
 
 	// renderer
 	this.renderer = new THREE.WebGLRenderer({alpha:true});
-	
+
 	this.renderer.shadowMap.enabled = false;
 	/*this.renderer.shadowMap.enabled = true;
 	this.renderer.shadowMap.type = THREE.BasicShadowMap;
@@ -40,5 +40,6 @@ function Scene() {
   this.removeObj = function(obj) {
     obj.visible = false
     this.scene.remove(obj)
+		dispose3(obj)
 	}
 }

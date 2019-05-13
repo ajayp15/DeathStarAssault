@@ -4,7 +4,7 @@
     animate it, etc.
 */
 
-function Deathstar(size, turretCount = 10, smallStructureCount = 1000) {
+function DeathstarDS(size, turretCount = 10, smallStructureCount = 1000) {
   this.turrets = []
   this.smallStructures = []
   this.orphanedLasers = []
@@ -75,5 +75,18 @@ function Deathstar(size, turretCount = 10, smallStructureCount = 1000) {
       gameOver = true
       didWin = true
     }
+  }
+
+  this.cleanup = function() {
+    for (var i = 0; i < this.turrets.length; ++i) {
+      this.turrets[i].cleanup()
+    }
+    for (var i = 0; i < this.smallStructures.length; ++i) {
+      this.smallStructures[i].cleanup()
+    }
+    for (var i = 0; i < this.orphanedLasers.length; ++i) {
+      this.orphanedLasers[i].cleanup()
+    }
+    dispose3(this.mesh);
   }
 }

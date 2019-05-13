@@ -10,27 +10,46 @@
     </head>
     <body>
         <link href="https://fonts.googleapis.com/css?family=Roboto+Mono" rel="stylesheet">
-        <link href="css/dialogs.css" rel="stylesheet">
-        <script src="libjs/three.min.js"></script>
-        <script src="libjs/GLTFLoader.js"></script>
-        <script src="libjs/stats.min.js"></script> <!-- Pulled from mrdoob/stat.js github -->
+        <link href="common/css/dialogs.css" rel="stylesheet">
+        <script src="common/libjs/three.min.js"></script>
+        <script src="common/libjs/GLTFLoader.js"></script>
+        <script src="common/libjs/TGALoader.js"></script>
+        <script src="common/libjs/stats.min.js"></script> <!-- Pulled from mrdoob/stat.js github -->
 
-        <!-- Helper files -->
-        <script src="js/globals.js"></script>
-        <script src="js/collisions.js"></script>
-        <script src="js/constants.js"></script>
-        <script src="js/environment.js"></script>
-        <script src="js/explosion.js"></script>
-        <script src="js/laser.js"></script>
-        <script src="js/ship.js"></script>
-        <script src="js/structure.js"></script>
-        <script src="js/turret.js"></script>
-        <script src="js/deathstar.js"></script>
-        <script src="js/scene.js"></script>
-        <script src="js/dialogs.js"></script>
+        <!-- Death star game files -->
+        <script src="death-star/js/globals.js"></script>
+        <script src="death-star/js/cleanup.js"></script>
+        <script src="death-star/js/collisions.js"></script>
+        <script src="death-star/js/constants.js"></script>
+        <script src="death-star/js/environment.js"></script>
+        <script src="death-star/js/explosion.js"></script>
+        <script src="death-star/js/laser.js"></script>
+        <script src="death-star/js/ship.js"></script>
+        <script src="death-star/js/structure.js"></script>
+        <script src="death-star/js/turret.js"></script>
+        <script src="death-star/js/deathstar.js"></script>
+        <script src="death-star/js/scene.js"></script>
+        <script src="death-star/js/dialogs.js"></script>
+        <script src="death-star/js/game.js"></script>
 
-        <!-- Main game logic goes here -->
-        <script src="js/game.js"></script>
+        <!-- Tunnel game files -->
+        <script src="tunnel-game/js/constants.js"></script>
+        <script src="tunnel-game/js/utils/collisions.js"></script>
+        <script src="tunnel-game/js/utils/dialogs.js"></script>
+        <script src="tunnel-game/js/environment.js"></script>
+        <script src="tunnel-game/js/explosions.js"></script>
+        <script src="tunnel-game/js/ground.js"></script>
+        <script src="tunnel-game/js/walls.js"></script>
+        <script src="tunnel-game/js/plane.js"></script>
+        <script src="tunnel-game/js/obstacles.js"></script>
+        <script src="tunnel-game/js/enemies.js"></script>
+        <script src="tunnel-game/js/scene.js"></script>
+        <script src="tunnel-game/js/game.js"></script>
+
+        <script>
+          initDS()
+        </script>
+
     </body>
 </html>
 

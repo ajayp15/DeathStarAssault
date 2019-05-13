@@ -4,7 +4,7 @@
 */
 
 
-function StatusDisplay() {
+function StatusDisplayDS() {
     this.dialog = document.createElement('div');
     var sceneWidth = scene.sceneWidth
     var sceneHeight = scene.sceneHeight
@@ -62,7 +62,7 @@ function StatusDisplay() {
     }
 }
 
-function createObjectiveDialog() {
+function createObjectiveDialogDS() {
     var dialog = document.createElement('div');
     var sceneWidth = scene.sceneWidth
     var sceneHeight = scene.sceneHeight
@@ -96,7 +96,7 @@ function createObjectiveDialog() {
     return dialog
 }
 
-function createSFoilActionDialog() {
+function createSFoilActionDialogDS() {
     var dialog = document.createElement('div');
     var sceneWidth = scene.sceneWidth
     var sceneHeight = scene.sceneHeight
@@ -127,7 +127,7 @@ function createSFoilActionDialog() {
     return dialog
 }
 
-function createLosingDialog() {
+function createLosingDialogDS() {
     var dialog = document.createElement('div');
     var sceneWidth = scene.sceneWidth
     var sceneHeight = scene.sceneHeight
@@ -162,7 +162,7 @@ function createLosingDialog() {
     replayButton.style.fontSize = dialogHeight / 10 + "px"
     replayButton.innerHTML = "Replay!"
 
-    replayButton.addEventListener("click", restartGame) // add this listener
+    replayButton.addEventListener("click", restartGameDS) // add this listener
     dialog.appendChild(replayButton)
 
     document.body.appendChild(dialog)

@@ -28,4 +28,11 @@ function Structure(px, py, pz, sx, sy, sz) {
     //this.innerStruct.castShadow=true;
     this.innerStruct.position.set(px, py, pz);
   }
+
+  this.cleanup = function() {
+    dispose3(this.outerStruct)
+    if (this.innerStruct != undefined) {
+      dispose3(this.innerStruct)
+    }
+  }
 }

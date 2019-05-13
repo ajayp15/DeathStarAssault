@@ -6,7 +6,7 @@
 
 
 
-function Ship(scene) {
+function ShipDS(scene) {
     this.lasers = []
 
     this.hitCount = 0
@@ -172,7 +172,7 @@ function Ship(scene) {
     }
     this.handleShipHitByLaser = function(laser) {
       var pos = this.mesh.position.clone().add(new THREE.Vector3(Math.random(), Math.random(), Math.random()))
-      var explosion = new Explosion(scene, pos, 0.3, 0xf4bc42, this.velocity)
+      var explosion = new ExplosionDS(scene, pos, 0.3, 0xf4bc42, this.velocity)
       explosion.explode()
       laser.alive = false
       this.hitCount += 1
@@ -184,5 +184,11 @@ function Ship(scene) {
     }
     this.handleShipCollidedWithStructure = function(structure) {
       gameOver = true
+    }
+    this.cleanup = function() {
+      for (var i = 0; i < this.lasers.length; ++i) {
+        this.lasers[i].cleanup()
+      }
+      dispose3(this.mesh)
     }
 }

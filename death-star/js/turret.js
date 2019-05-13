@@ -164,7 +164,7 @@ function Turret(px, pz) {
   }
 
   this.handleTurretHitByLaser = function(laser) {
-    var explosion = new Explosion(scene, this.mesh.position, 1, 0xff2222)
+    var explosion = new ExplosionDS(scene, this.mesh.position, 1, 0xff2222)
     explosion.explode()
     laser.alive = false
     this.hitCount += 1
@@ -172,25 +172,25 @@ function Turret(px, pz) {
 
   this.handleTurretDestroyed = function() {
     var randomOffset = 10
-    var explosion1 = new Explosion(scene,
+    var explosion1 = new ExplosionDS(scene,
                         this.mesh.position.clone().add(new THREE.Vector3(
                           Math.random() * randomOffset,
                           Math.random() * randomOffset,
                           Math.random() * randomOffset)),
                         1, 0xffffff)
-    var explosion2 = new Explosion(scene,
+    var explosion2 = new ExplosionDS(scene,
                         this.mesh.position.clone().add(new THREE.Vector3(
                           Math.random() * randomOffset,
                           Math.random() * randomOffset,
                           Math.random() * randomOffset)),
                         1, 0xf4a742)
-    var explosion3 = new Explosion(scene,
+    var explosion3 = new ExplosionDS(scene,
                         this.mesh.position.clone().add(new THREE.Vector3(
                           Math.random() * randomOffset,
                           Math.random() * randomOffset,
                           Math.random() * randomOffset)),
                         1, 0xf4e841)
-    var explosion4 = new Explosion(scene,
+    var explosion4 = new ExplosionDS(scene,
                         this.mesh.position.clone().add(new THREE.Vector3(
                           Math.random() * randomOffset,
                           Math.random() * randomOffset,
@@ -200,5 +200,12 @@ function Turret(px, pz) {
     explosion2.explode()
     explosion3.explode()
     explosion4.explode()
+  }
+
+  this.cleanup = function() {
+    for (var i = 0; i < this.lasers.length; ++i) {
+      this.lasers[i].cleanup()
+    }
+    dispose3(this.mesh)
   }
 }

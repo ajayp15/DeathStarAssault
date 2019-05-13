@@ -4,13 +4,13 @@
 
 var activeExplosions = []
 
-function updateExplosions(dt) {
+function updateExplosionsDS(dt) {
   for (var i = 0; i < activeExplosions.length; ++i) {
     activeExplosions[i].update(dt)
   }
 }
 
-function Explosion(scene, center, particleSize, color, velocityBias = zeroVec3) {
+function ExplosionDS(scene, center, particleSize, color, velocityBias = zeroVec3) {
   this.scene = scene
   this.center = center
 

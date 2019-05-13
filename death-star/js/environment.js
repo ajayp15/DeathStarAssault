@@ -1,5 +1,5 @@
 
-function Environment() {
+function EnvironmentDS() {
   this.mesh = new THREE.Object3D();
 
   var skyGeo = new THREE.SphereGeometry(10000, 25, 25);
