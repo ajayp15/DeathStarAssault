@@ -155,6 +155,7 @@ function showGameOverDialogT(scene, state = "default") {
         replayButton.addEventListener("click", restartGameT) // add this listener
     } else if (state == "deathStarDestroyed") {
         endingMessage.innerHTML = "Great work pilot! You've destroyed the empire's prized possession, the death star. Hope they don't rebuild it..."
+        endingMessage.innerHTML += "<br> Game developers: Antony Toron, Ajay Penmatcha"
         dialog.style.fontSize = dialogHeight / 15 + "px"
         replayButton.addEventListener("click", resetToBeginning) // add this listener
     }
