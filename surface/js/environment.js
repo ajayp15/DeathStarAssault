@@ -4,7 +4,7 @@ function EnvironmentDS() {
 
   var skyGeo = new THREE.SphereGeometry(10000, 25, 25);
   var loader  = new THREE.TextureLoader(),
-  texture = loader.load( "/death-star/images/background.jpg" );
+  texture = loader.load( "/surface/images/background.jpg" );
   var material = new THREE.MeshPhongMaterial({
         map: texture,
   });

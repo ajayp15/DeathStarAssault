@@ -26,7 +26,7 @@ function ShipDS(scene) {
 
     // Load a glTF resource
     loader.load(
-    	'/common/models/star_wars_x-wing/scene.gltf',
+    	'/common/models/x-wing/scene.gltf',
     	function ( gltf ) {
     		ship.mesh = gltf.scene;
         ship.mesh.scale.x = shipScaleDS
