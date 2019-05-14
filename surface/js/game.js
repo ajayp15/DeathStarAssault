@@ -175,7 +175,7 @@ function playEndingClipDS() {
 		video.style.width = "100%"
 		video.style.height = "100%"
 		video.style.position = "fixed"
-		video.src = "/death-star/images/trench.gif"
+		video.src = "/surface/images/trench.gif"
 
 		// remove renderer and play the video
 		document.body.removeChild(scene.renderer.domElement)
