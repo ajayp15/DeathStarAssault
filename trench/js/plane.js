@@ -99,7 +99,7 @@ function Plane(scene, walls, ground, explosions) {
   this.shootLaser = function () {
     if (this.shots.length >= maxLasers) return
 
-    var audio = new Audio('../common/sounds/laser.mp3');
+    var audio = new Audio('common/sounds/laser.mp3');
     audio.volume = 0.5
     audio.play();
 
@@ -177,7 +177,7 @@ function Plane(scene, walls, ground, explosions) {
 
   // run when the plane is destroyed @ game over
   this.blowUp = function () {
-    var audio = new Audio('../common/sounds/weeoow.mp3');
+    var audio = new Audio('common/sounds/weeoow.mp3');
     audio.play();
     this.explode()
     this.mesh.visible = false
@@ -242,7 +242,7 @@ function Plane(scene, walls, ground, explosions) {
   this.protonDirs = [] // two direction vectors for the two torpedos to be moving in
   this.protonTorpedos = []
   this.shootProtonTorpedos= function() {
-    var audio = new Audio('../common/sounds/photon.mp3');
+    var audio = new Audio('common/sounds/photon.mp3');
     audio.play();
 
     // shoot them at the position of the target right now
@@ -343,7 +343,7 @@ function loadPlaneFromObj() {
 
   // Load a glTF resource
   loader.load(
-    '../common/models/x-wing/scene.gltf',
+    'common/models/x-wing/scene.gltf',
     function ( gltf ) {
       var obj = new THREE.Object3D()
       obj.add(gltf.scene)
