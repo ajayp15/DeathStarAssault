@@ -22,7 +22,7 @@ function EnvironmentT() {
 
 function getTexture(str) {
   var loader  = new THREE.TGALoader(),
-  texture = loader.load( "/tunnel-game/images/ame_nebula/purplenebula_" + str + ".tga" );
+  texture = loader.load( "/trench/images/nebula/purplenebula-" + str + ".tga" );
   var material = new THREE.MeshPhongMaterial({
         map: texture,
         side: THREE.DoubleSide,
