@@ -153,7 +153,7 @@ function createLosingDialogDS() {
 
     var endingMessage = document.createElement('div')
     dialog.appendChild(endingMessage)
-    endingMessage.innerHTML = "Your ship is too damaged to continue. You'll get 'em on the next run pilot!"
+    endingMessage.innerHTML = "The rebel alliance has lost. The galactic empire reigns supreme."
 
     var replayButton = document.createElement('button')
     replayButton.id = "replayButton"

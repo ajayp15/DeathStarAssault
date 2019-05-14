@@ -91,11 +91,9 @@ function animateDS(){
 	if (showStats) {
 		stats.update()
 	}
-	if (!gameOver) {
-		updateDS();
-	} else {
+	updateDS()
+	if (gameOver) {
 		if (didWin == true) {
-			updateDS();
 			if (beganPlayingEnding == false) {
 				beganPlayingEnding = true
 				playEndingClipDS()

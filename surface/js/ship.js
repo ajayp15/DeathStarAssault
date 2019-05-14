@@ -79,7 +79,7 @@ function ShipDS(scene) {
 
       this.laserClock.start();
       var laser = new Laser(
-                    this.mesh.position.clone().add(this.velocity.clone().normalize().multiplyScalar(2)),
+                    this.mesh.position.clone().add(this.velocity.clone().normalize().multiplyScalar(5)),
                     this.velocity.clone().normalize().multiplyScalar(shipLaserVelocity),
                     shipLaserColor,
                     shipLaserCutoffDistance);
@@ -93,17 +93,13 @@ function ShipDS(scene) {
 
 
     this.update = function(dt, trackingCamera) {
-      if (this.shipLoaded == false) {
+      if (this.shipLoaded == false || gameOver) {
         return;
       }
 
       this.animationMixer.update(dt)
       if (this.sFoilAction.time >= this.sFoilAnimationCutoffTime) {
         this.sFoilAction.paused = true
-      }
-
-      if (this.hitCount >= shipHitCountHealth) {
-        gameOver = true
       }
 
       // update any laser positions
@@ -183,12 +179,61 @@ function ShipDS(scene) {
       this.hitCount += 1
       var health = (1 - this.hitCount / shipHitCountHealth) * 100
       statusDisplay.setHealthPct(health)
+
+      if (this.hitCount >= shipHitCountHealth && !gameOver) {
+        this.explodeShip()
+        gameOver = true
+      }
     }
     this.handleShipCollidedWithTurret = function(turret) {
-      gameOver = true
+      if (!gameOver) {
+        statusDisplay.setHealthPct(0)
+        this.hitCount = shipHitCountHealth
+        this.explodeShip()
+        gameOver = true
+      }
     }
     this.handleShipCollidedWithStructure = function(structure) {
-      gameOver = true
+      if (!gameOver) {
+        statusDisplay.setHealthPct(0)
+        this.hitCount = shipHitCountHealth
+        this.explodeShip()
+        gameOver = true
+      }
+    }
+    this.explodeShip = function() {
+      var audio = new Audio('common/sounds/explosion.mp3');
+    	audio.play();
+      this.mesh.visible = false
+      var randomOffset = 10
+      var explosion1 = new ExplosionDS(scene,
+                          this.mesh.position.clone().add(new THREE.Vector3(
+                            Math.random() * randomOffset,
+                            Math.random() * randomOffset,
+                            Math.random() * randomOffset)),
+                          1, 0xffffff)
+      var explosion2 = new ExplosionDS(scene,
+                          this.mesh.position.clone().add(new THREE.Vector3(
+                            Math.random() * randomOffset,
+                            Math.random() * randomOffset,
+                            Math.random() * randomOffset)),
+                          1, 0xf4a742)
+      var explosion3 = new ExplosionDS(scene,
+                          this.mesh.position.clone().add(new THREE.Vector3(
+                            Math.random() * randomOffset,
+                            Math.random() * randomOffset,
+                            Math.random() * randomOffset)),
+                          1, 0xf4e841)
+      var explosion4 = new ExplosionDS(scene,
+                          this.mesh.position.clone().add(new THREE.Vector3(
+                            Math.random() * randomOffset,
+                            Math.random() * randomOffset,
+                            Math.random() * randomOffset)),
+                          2, 0xaaaaaa)
+      explosion1.explode()
+      explosion2.explode()
+      explosion3.explode()
+      explosion4.explode()
     }
     this.cleanup = function() {
       for (var i = 0; i < this.lasers.length; ++i) {
@@ -196,4 +241,5 @@ function ShipDS(scene) {
       }
       dispose3(this.mesh)
     }
+
 }
