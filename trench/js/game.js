@@ -258,7 +258,7 @@ function animateT(){
 			video.style.width = "100%"
 			video.style.height = "100%"
 			video.style.position = "fixed"
-			video.src = "/tunnel-game/images/giphy.gif"
+			video.src = "../trench/images/giphy.gif"
 			// video.style.zIndex = 100
 
 			// remove renderer and play the video
