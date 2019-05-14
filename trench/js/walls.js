@@ -104,7 +104,7 @@ function Walls(scene, explosions) {
     this.backWallExplode = function() {
         this.scene.removeMesh(this.backWall)
 
-        var audio = new Audio('/common/sounds/deathstarexplode.mp3');
+        var audio = new Audio('common/sounds/deathstarexplode.mp3');
         audio.play();
 
         var center = this.backWall.position.clone()
