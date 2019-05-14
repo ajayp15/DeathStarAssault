@@ -175,7 +175,7 @@ function Turret(px, pz) {
 
   this.handleTurretDestroyed = function() {
 
-    var audio = new Audio('/common/sounds/explosion.mp3');
+    var audio = new Audio('common/sounds/explosion.mp3');
   	audio.play();
 
     var randomOffset = 10
