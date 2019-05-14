@@ -28,6 +28,8 @@ function DeathstarDS(size, turretCount = 10, smallStructureCount = 1000) {
     this.turrets.push(turret);
   }
 
+  var singleGeometry = new THREE.Geometry()
+
   for (var i = 0; i < smallStructureCount; ++i) {
     var sx = Math.random() * 50 + 25
     var sy = Math.random() * 10 + 5
@@ -38,12 +40,22 @@ function DeathstarDS(size, turretCount = 10, smallStructureCount = 1000) {
     var pz = Math.random() * shipMaximumPlaneCoord * 2 - shipMaximumPlaneCoord
 
     var smallStructure = new Structure(px, py, pz, sx, sy, sz)
-    scene.addObj(smallStructure.outerStruct)
+
+    smallStructure.outerStruct.updateMatrix()
+    singleGeometry.merge(smallStructure.outerStruct.geometry, smallStructure.outerStruct.matrix)
+    // scene.addObj(smallStructure.outerStruct)
     if (smallStructure.innerStruct != undefined) {
-      scene.addObj(smallStructure.innerStruct)
+      smallStructure.innerStruct.updateMatrix()
+      singleGeometry.merge(smallStructure.innerStruct.geometry, smallStructure.innerStruct.matrix)
+      // this.mesh.geometry.mergeMesh(smallStructure.innerStruct)
+      // scene.addObj(smallStructure.innerStruct)
     }
     this.smallStructures.push(smallStructure)
   }
+
+  var structureMaterial = new THREE.MeshPhongMaterial( { map: structureTexture } );
+  var singleMesh = new THREE.Mesh(singleGeometry, structureMaterial)
+  scene.addObj(singleMesh)
 
 	//this.mesh.receiveShadow = true;
 	//this.mesh.castShadow=false;
