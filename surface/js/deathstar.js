@@ -11,7 +11,7 @@ function DeathstarDS(size, turretCount = 10, smallStructureCount = 1000) {
 
   // add deathstar plane
   var planeGeometry =  new THREE.PlaneGeometry( size, size, 200, 200 );
-  var planeTexture = THREE.ImageUtils.loadTexture( '/surface/images/deathstar-diffuse.jpg' );
+  var planeTexture = THREE.ImageUtils.loadTexture( '../surface/images/deathstar-diffuse.jpg' );
   planeTexture.wrapS = planeTexture.wrapT = THREE.RepeatWrapping;
 	planeTexture.repeat.set( 100, 100);
 	var planeMaterial = new THREE.MeshPhongMaterial( { map: planeTexture, side: THREE.FrontSide } );
