@@ -102,7 +102,7 @@ function animateDS(){
 			}
 		} else {
 			if (losingDialogDisplayed == false) {
-				var audio = new Audio('../common/sounds/weeoow.mp3');
+				var audio = new Audio('common/sounds/weeoow.mp3');
 	      audio.play();
 				losingDialog = createLosingDialogDS()
 				losingDialogDisplayed = true
@@ -138,7 +138,7 @@ function handleIntroDS() {
 		document.body.removeChild(sFoilDialog)
 		introComplete = true
 		ship.toggleSFoils();
-		var audio = new Audio('../common/sounds/asteroid.mp3');
+		var audio = new Audio('common/sounds/asteroid.mp3');
 		audio.volume = 0.5
 		audio.play()
 	}
@@ -175,7 +175,7 @@ function playEndingClipDS() {
 		video.style.width = "100%"
 		video.style.height = "100%"
 		video.style.position = "fixed"
-		video.src = "../surface/images/trench.gif"
+		video.src = "surface/images/trench.gif"
 
 		// remove renderer and play the video
 		document.body.removeChild(scene.renderer.domElement)

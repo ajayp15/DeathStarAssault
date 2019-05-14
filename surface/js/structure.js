@@ -2,7 +2,7 @@
   structures.js
 */
 
-var structureTexture = THREE.ImageUtils.loadTexture( '../surface/images/structures-diffuse.jpg' );
+var structureTexture = THREE.ImageUtils.loadTexture( 'surface/images/structures-diffuse.jpg' );
 structureTexture.wrapS = structureTexture.wrapT = THREE.RepeatWrapping;
 structureTexture.repeat.set( 1, 1 );
 var structureMaterial = new THREE.MeshPhongMaterial( { map: structureTexture } );

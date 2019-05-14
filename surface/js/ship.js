@@ -26,7 +26,7 @@ function ShipDS(scene) {
 
     // Load a glTF resource
     loader.load(
-    	'../common/models/x-wing/scene.gltf',
+    	'common/models/x-wing/scene.gltf',
     	function ( gltf ) {
     		ship.mesh = gltf.scene;
         ship.mesh.scale.x = shipScaleDS
@@ -73,7 +73,7 @@ function ShipDS(scene) {
         return
       }
 
-      var audio = new Audio('../common/sounds/laser.mp3');
+      var audio = new Audio('common/sounds/laser.mp3');
       audio.volume = 0.5
       audio.play();
 
