@@ -4,7 +4,7 @@
 
 var turretClipHeight = 50
 
-var turretTexture = THREE.ImageUtils.loadTexture( '../surface/images/towers-diffuse.jpg' );
+var turretTexture = THREE.ImageUtils.loadTexture( '../DeathStarAssault/surface/images/towers-diffuse.jpg' );
 turretTexture.wrapS = turretTexture.wrapT = THREE.RepeatWrapping;
 turretTexture.repeat.set( 2, 2 );
 
