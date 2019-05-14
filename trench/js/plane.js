@@ -343,7 +343,7 @@ function loadPlaneFromObj() {
 
   // Load a glTF resource
   loader.load(
-    '/common/models/star_wars_x-wing/scene.gltf',
+    '/common/models/x-wing/scene.gltf',
     function ( gltf ) {
       var obj = new THREE.Object3D()
       obj.add(gltf.scene)
