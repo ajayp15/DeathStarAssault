@@ -22,6 +22,14 @@ function ShipDS(scene) {
     this.laserClock = new THREE.Clock();
     this.laserClock.start();
 
+    this.isDodging = false
+    this.dodgeClock = new THREE.Clock();
+    this.rollAngleBeforeDodge = 0
+    this.dodgeDirection = undefined
+
+    this.cameraMode = THIRDPERSONCAM
+    this.isSwitchingCameraMode = false
+
     var loader = new THREE.GLTFLoader();
 
     // Load a glTF resource
@@ -91,6 +99,11 @@ function ShipDS(scene) {
       this.sFoilAction.play();
     }
 
+    this.startDodging = function() {
+      this.isDodging = true
+      this.rollAngleBeforeDodge = this.rollAngle
+      this.dodgeClock.start()
+    }
 
     this.update = function(dt, trackingCamera) {
       if (this.shipLoaded == false || gameOver) {
@@ -114,7 +127,7 @@ function ShipDS(scene) {
       }
 
       // update angles & rotation from user inputs
-      if (introComplete) { // only enable controls when intro is complete
+      if (introComplete && this.isDodging == false) { // only enable controls when intro is complete
         if (keyboard[LEFT] == true) {
       		this.rollAngle = Math.min(shipRollVelocity * dt + this.rollAngle, shipRollMaximumAngle)
           this.yawAngle += shipYawVelocity * dt
@@ -125,13 +138,35 @@ function ShipDS(scene) {
       	} else {
           this.rollAngle /= 1.3 ;
         }
-        if ((keyboard[DOWN] == true && this.mesh.position.y < shipMaximumAltitude) || this.mesh.position.y <= shipMinimumAltitude) {
+        if ((keyboard[DOWN] == true && this.mesh.position.y < shipMaximumAltitude)
+              || this.mesh.position.y <= shipMinimumAltitude) {
       		this.pitchAngle = Math.min(shipPitchVelocity * dt + this.pitchAngle, shipPitchMaximumAngle);
       	} else if (keyboard[UP] == true || this.mesh.position.y >= shipMaximumAltitude) {
           this.pitchAngle = Math.max(-shipPitchVelocity * dt + this.pitchAngle, -shipPitchMaximumAngle)
         }
         if (keyboard[SPACE] == true) {
           this.fireLasers();
+        }
+        if (keyboard[DKEY] == true) {
+          if (keyboard[LEFT] == true) {
+            this.dodgeDirection = LEFT
+            this.startDodging()
+          } else if (keyboard[RIGHT] == true) {
+            this.dodgeDirection = RIGHT
+            this.startDodging()
+          }
+        }
+        if (keyboard[CKEY] == true) {
+          if (isSwitchingCameraMode == false) {
+            isSwitchingCameraMode = true
+            if (this.cameraMode == THIRDPERSONCAM) {
+              this.cameraMode = FIRSTPERSONCAM
+            } else {
+              this.cameraMode = THIRDPERSONCAM
+            }
+          }
+        } else {
+          isSwitchingCameraMode = false
         }
       }
 
@@ -141,6 +176,25 @@ function ShipDS(scene) {
       var vx = shipVelocity * Math.cos(this.pitchAngle) * Math.sin(this.yawAngle)
       var vy = shipVelocity * Math.sin(this.pitchAngle);
       var vz = shipVelocity * Math.cos(this.pitchAngle) * Math.cos(this.yawAngle)
+
+      var vxDrift = 0
+      var vyDrift = 0
+      var vzDrift = 0
+
+      if (this.isDodging) {
+        if (this.dodgeClock.getElapsedTime() > shipDodgeTime) {
+          this.isDodging = false
+          this.dodgeClock.stop()
+          this.rollAngle = this.rollAngleBeforeDodge
+        } else {
+          var dodgeDirectionMp = (this.dodgeDirection == LEFT) ? 1 : -1
+          this.rollAngle =
+            dodgeDirectionMp * 2 * Math.PI * this.dodgeClock.getElapsedTime() / shipDodgeTime +
+            this.rollAngleBeforeDodge
+            vxDrift = shipDodgeVelocity * Math.cos(this.yawAngle) * dodgeDirectionMp
+            vzDrift = -shipDodgeVelocity * Math.sin(this.yawAngle) * dodgeDirectionMp
+        }
+      }
 
       this.velocity.set(vx, vy, vz);
 
@@ -152,24 +206,36 @@ function ShipDS(scene) {
       this.mesh.rotateOnWorldAxis(new THREE.Vector3(-vz, 0, vx).normalize(), this.pitchAngle);
       this.mesh.rotateOnWorldAxis(new THREE.Vector3(vx, vy, vz).normalize(), -this.rollAngle);
 
-      this.mesh.position.x = Math.max(Math.min(this.mesh.position.x + vx * dt, shipMaximumPlaneCoord), -shipMaximumPlaneCoord);
-      this.mesh.position.y = Math.max(Math.min(this.mesh.position.y + vy * dt, shipMaximumAltitude), shipMinimumAltitude);
-      this.mesh.position.z = Math.max(Math.min(this.mesh.position.z + vz * dt, shipMaximumPlaneCoord), -shipMaximumPlaneCoord);
+      this.mesh.position.x = Math.max(Math.min(this.mesh.position.x + (vx + vxDrift) * dt, shipMaximumPlaneCoord), -shipMaximumPlaneCoord);
+      this.mesh.position.y = Math.max(Math.min(this.mesh.position.y + (vy + vyDrift) * dt, shipMaximumAltitude), shipMinimumAltitude);
+      this.mesh.position.z = Math.max(Math.min(this.mesh.position.z + (vz + vzDrift) * dt, shipMaximumPlaneCoord), -shipMaximumPlaneCoord);
 
       trackingCamera.position.copy(this.mesh.position);
       var vector = new THREE.Vector3(vx, vy, vz).normalize().multiplyScalar(1 / shipVelocity);
 
       var cameraConst = undefined
-      if (keyboard[FKEY] == true) {
-        cameraConst = 1200
-      } else {
+      //if (this.cameraMode == THIRDPERSONCAM) {
         cameraConst = -1200
-      }
-      trackingCamera.position.add(vector.multiplyScalar(cameraConst));
-      trackingCamera.position.y = Math.max(1, trackingCamera.position.y);
-      trackingCamera.rotation.copy(this.mesh.rotation);
-      trackingCamera.position.add(trackingCamera.up.clone().multiplyScalar(5));
-      trackingCamera.lookAt(this.mesh.position);
+        if (keyboard[FKEY] == true) {
+          cameraConst *= -1
+        }
+        trackingCamera.position.add(vector.multiplyScalar(cameraConst));
+        trackingCamera.position.y = Math.max(1, trackingCamera.position.y);
+        trackingCamera.rotation.copy(this.mesh.rotation);
+        trackingCamera.position.add(trackingCamera.up.clone().multiplyScalar(5));
+        trackingCamera.lookAt(this.mesh.position);
+      /*} else { // first person cam
+        cameraConst = 0
+        trackingCamera.position.add(vector.multiplyScalar(cameraConst));
+        trackingCamera.rotation.x = 0
+        trackingCamera.rotation.y = this.yawAngle + Math.PI + this.rollAngle;
+        trackingCamera.rotation.z = 0
+        trackingCamera.rotateOnWorldAxis(new THREE.Vector3(-vz, 0, vx).normalize(), this.pitchAngle);
+        trackingCamera.rotateOnWorldAxis(new THREE.Vector3(vx, vy, vz).normalize(), -this.rollAngle);
+        trackingCamera.position.add(trackingCamera.up.clone().multiplyScalar(2));
+      }*/
+
+
     }
     this.handleShipHitByLaser = function(laser) {
       var pos = this.mesh.position.clone().add(new THREE.Vector3(Math.random(), Math.random(), Math.random()))

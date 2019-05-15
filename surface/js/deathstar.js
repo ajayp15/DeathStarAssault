@@ -11,7 +11,7 @@ function DeathstarDS(size, turretCount = 10, smallStructureCount = 1000) {
 
   // add deathstar plane
   var planeGeometry =  new THREE.PlaneGeometry( size, size, 200, 200 );
-  var planeTexture = THREE.ImageUtils.loadTexture( 'surface/images/deathstar-diffuse.jpg' );
+  var planeTexture = new THREE.TextureLoader().load( 'surface/images/deathstar-diffuse.jpg' );
   planeTexture.wrapS = planeTexture.wrapT = THREE.RepeatWrapping;
 	planeTexture.repeat.set( 100, 100);
 	var planeMaterial = new THREE.MeshPhongMaterial( { map: planeTexture, side: THREE.FrontSide } );
@@ -31,9 +31,9 @@ function DeathstarDS(size, turretCount = 10, smallStructureCount = 1000) {
   var singleGeometry = new THREE.Geometry()
 
   for (var i = 0; i < smallStructureCount; ++i) {
-    var sx = Math.random() * 50 + 25
-    var sy = Math.random() * 10 + 5
-    var sz = Math.random() * 50 + 25
+    var sx = Math.random() * 75 + 30
+    var sy = Math.random() * 15 + 7
+    var sz = Math.random() * 75 + 30
 
     var px = Math.random() * shipMaximumPlaneCoord * 2 - shipMaximumPlaneCoord
     var py = sy / 2
@@ -67,7 +67,8 @@ function DeathstarDS(size, turretCount = 10, smallStructureCount = 1000) {
       if (turret.hitCount >= turretHitHealth) {
         statusDisplay.setScore(++turretsDestroyed)
         turret.handleTurretDestroyed()
-        scene.removeObj(turret.mesh)
+        //scene.removeObj(turret.mesh) TOO SLOW!
+        turret.mesh.visible = false
         for (var j = 0; j < turret.lasers.length; ++j) {
           this.orphanedLasers.push(turret.lasers[j])
         }

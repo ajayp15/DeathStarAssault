@@ -89,7 +89,7 @@ function createObjectiveDialogDS() {
             "Objective: Destroy " +
             turretDestroyCount +
             " turrets while dodging their lasers and other obstacles in order to clear a path for alliance ships to the trench"
-    dialog.innerHTML += "<br><br> Controls: Arrow keys to move, Spacebar to shoot"
+    dialog.innerHTML += "<br><br> Controls: Arrow keys to move, Spacebar to shoot, D + Left or right key to dodge"
 
     document.body.appendChild(dialog)
 

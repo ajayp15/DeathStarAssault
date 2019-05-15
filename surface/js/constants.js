@@ -27,6 +27,8 @@ var shipYawVelocity = 80 * 3.14 / 180
 var shipPitchVelocity = 80 * 3.14 / 180
 var shipRollVelocity = 200 * 3.14 / 180
 var shipVelocity = 70
+var shipDodgeVelocity = 200
+var shipDodgeTime = 0.5
 var shipRollMaximumAngle = 45 * 3.14 / 180
 var shipPitchMaximumAngle = 80 * 3.14 / 180
 var shipMinimumAltitude = 4.5
@@ -59,6 +61,11 @@ var RIGHT = 39
 var DOWN = 40
 var FKEY = 70
 var SKEY = 83
+var DKEY = 68
+var CKEY = 67
+
+var THIRDPERSONCAM = 0
+var FIRSTPERSONCAM = 1
 
 var zeroVec3 = new THREE.Vector3(0, 0, 0)
 

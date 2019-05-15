@@ -4,7 +4,7 @@
 
 var turretClipHeight = 50
 
-var turretTexture = THREE.ImageUtils.loadTexture( 'surface/images/towers-diffuse.jpg' );
+var turretTexture = new THREE.TextureLoader().load( 'surface/images/towers-diffuse.jpg' );
 turretTexture.wrapS = turretTexture.wrapT = THREE.RepeatWrapping;
 turretTexture.repeat.set( 2, 2 );
 
@@ -149,9 +149,11 @@ function Turret(px, pz) {
       var targetAngle = Math.atan2(targetVector.z, targetVector.x)
 
       // can we fire on target?
-      if (Math.abs(firingAngle - targetAngle) % Math.PI < 0.02) {
-        firingVector.y = (turretPosition.y - shipPosition.y) / turretDistanceToShip
-        if (Math.abs(turretPosition.y - shipPosition.y) < turretDistanceToShip) { // only allow guns to fire at max 45 degrees to the plane
+      if (Math.abs(firingAngle - targetAngle) % Math.PI < 0.01) {
+        var deltaY = turretPosition.y - shipPosition.y
+        if (Math.abs(deltaY) < turretDistanceToShip) { // only allow guns to fire at max 45 degrees to the plane
+          firingVector.multiplyScalar(1 - Math.pow(deltaY / turretDistanceToShip, 2))
+          firingVector.y = deltaY / turretDistanceToShip
           this.fireLasers(firingVector.multiplyScalar(-1).normalize());
         }
       }

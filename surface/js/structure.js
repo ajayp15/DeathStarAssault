@@ -2,7 +2,7 @@
   structures.js
 */
 
-var structureTexture = THREE.ImageUtils.loadTexture( 'surface/images/structures-diffuse.jpg' );
+var structureTexture = new THREE.TextureLoader().load( 'surface/images/structures-diffuse.jpg' );
 structureTexture.wrapS = structureTexture.wrapT = THREE.RepeatWrapping;
 structureTexture.repeat.set( 1, 1 );
 var structureMaterial = new THREE.MeshPhongMaterial( { map: structureTexture } );
@@ -22,7 +22,7 @@ function Structure(px, py, pz, sx, sy, sz) {
   if (Math.random() < 0.5) { // half the time, add inner structure
     this.innerStruct =
       new THREE.Mesh(
-        new THREE.BoxGeometry(sx / 2, sy * 2, sz / 2),
+        new THREE.BoxGeometry(sx / 2, sy * 1.5, sz / 2),
         structureMaterial
       );
     //this.innerStruct.castShadow=true;
