@@ -195,7 +195,7 @@ function createDesign(wallHeight, wallWidth, wallDepth, zIndex, numDesigns, side
     var material = new THREE.MeshLambertMaterial({ map: structureTexture, color: 0x606670 , side: THREE.DoubleSide});
 
     material.polygonOffset = true
-    material.polygonOffsetFactor = -0.1 
+    material.polygonOffsetFactor = -0.1
     var box = new THREE.Mesh(geometry, material)
 
     box.position.x = (side == "left") ? wallWidth / 2 : -wallWidth / 2

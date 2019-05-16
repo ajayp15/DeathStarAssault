@@ -282,11 +282,11 @@ function animateT(){
 }
 
 function updateT(delta) {
-	if (finishedShowingObjectivePhase1 && !gameOver &&!finishedPhase1) {
+	/*if (finishedShowingObjectivePhase1 && !gameOver &&!finishedPhase1) {
 		enemies.handleEnemyMovements(delta)
 		enemies.handleLaserCollisions(plane.shots)
 		enemies.handleGenericLaserMovements(delta)
-	}
+	}*/
 
 	// always do this, so that we don't have frozen explosions
 	// enemies.updateEnemyExplosions(delta)

@@ -39,7 +39,7 @@ var phase1RequiredScore = 1
 
 var sideWallWidth = 5
 var sideWallHeight = 15
-var sideWallDepth = 120
+var sideWallDepth = 240
 
 var shipScale = 0.6
 // obstacles constants
