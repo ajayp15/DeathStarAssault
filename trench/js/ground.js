@@ -81,4 +81,3 @@ function createGroundDesign(groundDepth, zIndex, numDesigns) {
   box.position.z = (zIndex / numDesigns) * (groundDepth - depth) + depth / 2
   return box
 }
-

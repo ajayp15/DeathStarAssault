@@ -30,6 +30,11 @@ function Plane(scene, walls, ground, explosions) {
   this.explosionIterations = 0 // how many times this explosion has been updated
 
   this.handlePlaneMovement = function (planeVelocityX, planeVelocityY, delta) {
+    this.animationMixer.update(delta)
+    if (this.sFoilAction.time >= this.sFoilAnimationCutoffTime) {
+      this.sFoilAction.paused = true
+    }
+
     var changeInX = planeVelocityX * delta
     var changeInY = planeVelocityY * delta
     this.mesh.position.x += changeInX
@@ -304,6 +309,10 @@ function Plane(scene, walls, ground, explosions) {
     }
   }
 
+  this.toggleSFoils = function() {
+    this.sFoilAction.play();
+  }
+
   this.removeAim = function() {
     this.scene.removeMesh(this.target)
 
@@ -353,6 +362,11 @@ function loadPlaneFromObj() {
       plane.mesh.scale.z = shipScale
       plane.mesh.visible = true
 
+      plane.animationMixer = new THREE.AnimationMixer( plane.mesh );
+      plane.sFoilAction = plane.animationMixer.clipAction( gltf.animations[0] );
+      plane.sFoilAction.repetitions = 1
+      plane.sFoilAnimationCutoffTime = gltf.animations[0].duration / 2
+
       plane.boundingBox = new THREE.Mesh(
         new THREE.BoxGeometry(1, 0.2, 1),
         bbMat
@@ -372,6 +386,7 @@ function loadPlaneFromObj() {
 
       scene.addMesh(plane.mesh);
       plane.loaded = true;
+      plane.toggleSFoils();
     },
     function ( xhr ) {
       console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );

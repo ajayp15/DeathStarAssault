@@ -293,8 +293,10 @@ function updateT(delta) {
 	explosions.updateExplosions(delta)
 
 	// almost always do this, looks cool as movement in the background
-	walls.handleWallMovements(delta, finishedPhase1)
-	ground.handleGroundMovements(delta)
+	if (!gameOver) {
+		walls.handleWallMovements(delta, finishedPhase1)
+		ground.handleGroundMovements(delta)
+	}
 
 	if (finishedShowingObjectivePhase1 && !gameOver) {
 		plane.handlePlaneMovement(planeVelocityX, planeVelocityY, delta);
