@@ -11,3 +11,5 @@ var didWin
 var statusDisplay
 var turretsDestroyed
 var introComplete
+
+var gameAudio

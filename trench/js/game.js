@@ -270,7 +270,11 @@ function animateT(){
 			setTimeout(function() {
 				var video = document.getElementById("video")
 				document.body.removeChild(video)
-
+				gameAudio.pause()
+				gameAudio.currentTime = 0
+				gameAudio = new Audio('common/sounds/endtitle.mp3');
+				gameAudio.play()
+				
 				gameOverDialog = showGameOverDialogT(scene, "deathStarDestroyed")
 			}, endGameCutsceneTime)
 		}, 1500)
