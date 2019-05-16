@@ -1,4 +1,4 @@
-var showStats = true; // turns stats on and off
+var showStats = false; // turns stats on and off
 var maxBasicObstacles = 50
 var floorWidth = 10 // arbitrarily chosen for now
 var floorHeight = 50
