@@ -37,9 +37,11 @@ var torpedoRadius = 0.4
 var endGameCutsceneTime = 12000
 var phase1RequiredScore = 1
 
+var numWalls = 2
 var sideWallWidth = 5
 var sideWallHeight = 15
-var sideWallDepth = 240
+var totalSideWallDepth = 240
+var sideWallDepth = totalSideWallDepth / numWalls
 
 var shipScale = 0.6
 // obstacles constants
@@ -47,7 +49,6 @@ var obstaclesType = "sphere"
 var obstaclesRadius = 0.5
 
 
-var numWalls = 2
 var groundLeeway = 1
 var ceilingLeeway = 50
 var wallsLeeway = 1 // (plane width / 2)
@@ -55,7 +56,7 @@ var wallNearPlaneGeneration = sideWallDepth / numWalls
 
 var groundWidth = 10
 var groundHeight = 5
-var totalGroundDepth = sideWallDepth
+var totalGroundDepth = totalSideWallDepth
 var groundDepth = totalGroundDepth / numWalls
 
 // this will be the center point of the game, where the scale is determined by how

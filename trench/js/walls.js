@@ -28,17 +28,24 @@ function Walls(scene, explosions) {
     this.rightWallX = this.computeWallBoundary("right")
 
     this.handleWallMovements = function (delta, finishedPhase1) {
+        // left wall
         for (var i = 0; i < this.leftMesh.length; i++) {
             this.leftMesh[i].position.z += wallMovementSpeed * delta
-            if (this.leftMesh[i].position.z > wallNearPlaneGeneration) {
-                this.leftMesh[i].position.z = wallNearPlaneGeneration - sideWallDepth
-            }
         }
+        if (this.leftMesh[0].position.z - sideWallDepth / 2 >= nearPlane) {
+            this.leftMesh[0].position.z = this.leftMesh[1].position.z - groundDepth
+            // swap them
+            this.leftMesh = [this.leftMesh[1], this.leftMesh[0]]
+        }
+
+        // right wall
         for (var i = 0; i < this.rightMesh.length; i++) {
             this.rightMesh[i].position.z += wallMovementSpeed * delta
-            if (this.rightMesh[i].position.z > wallNearPlaneGeneration) {
-                this.rightMesh[i].position.z = wallNearPlaneGeneration - sideWallDepth
-            }
+        }
+        if (this.rightMesh[0].position.z - sideWallDepth / 2 >= nearPlane) {
+            this.rightMesh[0].position.z = this.rightMesh[1].position.z - groundDepth
+            // swap them
+            this.rightMesh = [this.rightMesh[1], this.rightMesh[0]]
         }
 
         // // move the back wall with the missile shot location if in phase2
@@ -134,20 +141,21 @@ var minPadding = 1
 
 function createWall(side) {
     var wall = []
-    for (var i = 0; i < numWalls; i++) {
-        var subWall = createSubWall(side, i)
-        wall.push(subWall)
-    }
+    var subWall = createSubWall(side)
+    var subWall2 = createSubWall(side)
+    subWall.position.z = nearPlane
+    subWall2.position.z = -sideWallDepth + nearPlane
+    wall = [subWall, subWall2]
 
     return wall
 }
 
-function createSubWall(side, index) {
+function createSubWall(side) {
     var wallWidth = sideWallWidth
     var wallHeight = sideWallHeight
-    var wallDepth = sideWallDepth / numWalls
+    var wallDepth = sideWallDepth
 
-    var numDesigns = Math.round(50 / numWalls)
+    var numDesigns = Math.round(sideWallDepth / numWalls)
 
     var planeTexture = new THREE.TextureLoader().load( 'surface/images/deathstar-diffuse.jpg' );
 
@@ -162,7 +170,6 @@ function createSubWall(side, index) {
     var designsGeometry = new THREE.Geometry()
     for (var i = 0; i < numDesigns; i++) {
         var design = createDesign(wallHeight, wallWidth, wallDepth, i, numDesigns, side)
-        // wall.add(design)
         design.updateMatrix()
         designsGeometry.merge(design.geometry, design.matrix)
     }
@@ -172,8 +179,6 @@ function createSubWall(side, index) {
 
     // set position
     wall.position.x = (side == "left") ? -wallShift : wallShift
-    wall.position.z = 0 - index * wallDepth // minux because negative z is forward
-    console.log(wall.position.z)
 
     this.scene.addMesh(wall)
 
@@ -203,56 +208,4 @@ function createDesign(wallHeight, wallWidth, wallDepth, zIndex, numDesigns, side
     box.position.z = (zIndex / numDesigns) * (wallDepth)
 
     return box
-}
-
-function createDesigns() {
-    var numDesigns = 50
-    var designsOnWalls = []
-    var width = 1
-    var height = 5
-    var depth = 5
-    var wallShift = 2.5
-    var minPadding = 1
-
-    // left wall
-    for (var i = 0; i < numDesigns; i++) {
-        var compWidth = Math.random() * width
-        var compHeight = Math.random() * (height - 1) + minPadding
-        var compDepth = Math.random() * (depth - 1) + minPadding
-
-        var geometry = new THREE.BoxGeometry(compWidth, compHeight, compDepth)
-        var material = new THREE.MeshLambertMaterial({ color: 0x606670 , side: THREE.DoubleSide});
-
-        var box = new THREE.Mesh(geometry, material)
-
-        box.receiveShadow = true;
-        box.castShadow = true;
-
-        box.position.x = -wallShift
-        box.position.y = Math.random() * 7
-        box.position.z = (i / numDesigns) * (farPlane - wallNearPlaneGeneration)
-        this.scene.addMesh(box)
-        designsOnWalls.push(box)
-    }
-    // right wall
-    for (var i = 0; i < numDesigns; i++) {
-        var compWidth = Math.random() * width
-        var compHeight = Math.random() * (height - 1) + minPadding
-        var compDepth = Math.random() * (depth - 1) + minPadding
-
-        var geometry = new THREE.BoxGeometry(compWidth, compHeight, compDepth)
-        var material = new THREE.MeshLambertMaterial({ color: 0x606670 , side: THREE.DoubleSide});
-
-        var box = new THREE.Mesh(geometry, material)
-
-        box.receiveShadow = true;
-        box.castShadow = true;
-
-        box.position.x = wallShift
-        box.position.y = Math.random() * 7
-        box.position.z = (i / numDesigns) * (farPlane - wallNearPlaneGeneration)
-        this.scene.addMesh(box)
-        designsOnWalls.push(box)
-    }
-    return designsOnWalls
 }

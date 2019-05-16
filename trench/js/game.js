@@ -282,21 +282,19 @@ function animateT(){
 }
 
 function updateT(delta) {
-	/*if (finishedShowingObjectivePhase1 && !gameOver &&!finishedPhase1) {
+	if (finishedShowingObjectivePhase1 && !gameOver &&!finishedPhase1) {
 		enemies.handleEnemyMovements(delta)
 		enemies.handleLaserCollisions(plane.shots)
 		enemies.handleGenericLaserMovements(delta)
-	}*/
+	}
 
 	// always do this, so that we don't have frozen explosions
 	// enemies.updateEnemyExplosions(delta)
 	explosions.updateExplosions(delta)
 
 	// almost always do this, looks cool as movement in the background
-	if (finishedShowingObjectivePhase1) {
-		walls.handleWallMovements(delta, finishedPhase1)
-		ground.handleGroundMovements(delta)
-	}
+	walls.handleWallMovements(delta, finishedPhase1)
+	ground.handleGroundMovements(delta)
 
 	if (finishedShowingObjectivePhase1 && !gameOver) {
 		plane.handlePlaneMovement(planeVelocityX, planeVelocityY, delta);

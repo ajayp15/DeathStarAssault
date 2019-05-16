@@ -5,13 +5,6 @@ function Ground(scene) {
   this.scene = scene
   this.mesh = createGround();
 
-  // this.computeGroundTop = function () {
-  //   this.mesh.geometry.computeBoundingBox()
-  //   return this.mesh.geometry.boundingBox.max.y + this.mesh.position.y
-  // }
-
-  // this.groundTop = this.computeGroundTop()
-
   this.handleGroundMovements = function (delta) {
     for (var i = 0; i < this.mesh.length; i++) {
       this.mesh[i].position.z += wallMovementSpeed * delta
@@ -62,7 +55,6 @@ function createSubGround() {
   ground.add(designs)
 
   ground.position.y = -2
-  // ground.position.z = 0 - index * groundDepth // minux because negative z is forward
 
   this.scene.addMesh(ground)
 
@@ -90,32 +82,3 @@ function createGroundDesign(groundDepth, zIndex, numDesigns) {
   return box
 }
 
-function createDesignsOnGround() {
-  var numDesigns = 100
-  var designsOnGround = []
-  var width = 5
-  var height = 1
-  var depth = 5
-  var minPadding = 1
-
-  for (var i = 0; i < numDesigns; i++) {
-    var compWidth = Math.random() * (width - 1) + minPadding
-    var compHeight = Math.random() * height
-    var compDepth = Math.random() * (depth - 1) + minPadding
-
-    var geometry = new THREE.BoxGeometry(compWidth, compHeight, compDepth)
-    var material = new THREE.MeshLambertMaterial({ color: 0x606670, side: THREE.DoubleSide });
-
-    var box = new THREE.Mesh(geometry, material)
-
-    box.receiveShadow = true;
-    box.castShadow = true;
-
-    box.position.x = (2 * Math.random() - 1) * 5
-    box.position.y = 0.5
-    box.position.z = (i / numDesigns) * (farPlane - wallNearPlaneGeneration)
-    this.scene.addMesh(box)
-    designsOnGround.push(box)
-  }
-  return designsOnGround
-}
