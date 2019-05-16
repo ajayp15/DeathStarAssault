@@ -97,7 +97,7 @@ function setupT(){
 	plane = new Plane(scene, walls, ground, explosions)
 	enemies = new Enemies(scene, plane, explosions)
 
-	scene.addMesh(ground.mesh)
+	// scene.addMesh(ground.mesh)
 	// scene.addMesh(plane.mesh, false)
 	scene.addMesh(environment.mesh)
 
@@ -292,9 +292,11 @@ function updateT(delta) {
 	// enemies.updateEnemyExplosions(delta)
 	explosions.updateExplosions(delta)
 
-	// do this always, looks cool as movement in the background
-	walls.handleWallMovements(delta, finishedPhase1)
-	ground.handleGroundMovements(delta)
+	// almost always do this, looks cool as movement in the background
+	if (finishedShowingObjectivePhase1) {
+		walls.handleWallMovements(delta, finishedPhase1)
+		ground.handleGroundMovements(delta)
+	}
 
 	if (finishedShowingObjectivePhase1 && !gameOver) {
 		plane.handlePlaneMovement(planeVelocityX, planeVelocityY, delta);

@@ -1,41 +1,98 @@
+
+var structureTexture = new THREE.TextureLoader().load( 'surface/images/structures-diffuse.jpg' );
+
 function Ground(scene) {
   this.scene = scene
   this.mesh = createGround();
-  this.designsOnGround = createDesignsOnGround()
 
-  this.computeGroundTop = function() {
-    this.mesh.geometry.computeBoundingBox()
-    return this.mesh.geometry.boundingBox.max.y + this.mesh.position.y
-  }
+  // this.computeGroundTop = function () {
+  //   this.mesh.geometry.computeBoundingBox()
+  //   return this.mesh.geometry.boundingBox.max.y + this.mesh.position.y
+  // }
 
-  this.groundTop = this.computeGroundTop()
+  // this.groundTop = this.computeGroundTop()
 
   this.handleGroundMovements = function (delta) {
-    for (var i = 0; i < this.designsOnGround.length; i++) {
-        this.designsOnGround[i].position.z += wallMovementSpeed * delta
-        if (this.designsOnGround[i].position.z > wallNearPlaneGeneration) {
-            this.designsOnGround[i].position.z = farPlane
-        }
+    for (var i = 0; i < this.mesh.length; i++) {
+      this.mesh[i].position.z += wallMovementSpeed * delta
+      // if (this.mesh[i].position.z + groundDepth / 2 > wallNearPlaneGeneration) {
+      //   this.mesh[i].position.z = wallNearPlaneGeneration - totalGroundDepth + groundDepth / 2
+      // }
+    }
+    // console.log(this.mesh[1].position.z)
+    if (this.mesh[1].position.z  <= 0) {
+      this.mesh[0].position.z = -groundDepth
+      // swap them
+      this.mesh = [this.mesh[1], this.mesh[0]]
     }
   }
 
 }
 
+var minPadding = 1
+
 function createGround() {
-  var groundWidth = 10
-  var groundHeight = 5
-  var groundDepth = 60
+  var ground = []
+  var subGround = createSubGround()
+  var subGround2 = subGround.clone(true)
+  subGround.position.z = 0
+  subGround2.position.z = -groundDepth
+  ground = [subGround, subGround2]
 
+  return ground
+}
+
+function createSubGround() {
+  var planeTexture = new THREE.TextureLoader().load( 'surface/images/deathstar-diffuse.jpg' );
   var geometry = new THREE.BoxGeometry(groundWidth, groundHeight, groundDepth)
-  var material = new THREE.MeshLambertMaterial({ color: 0x4b4b4f , side: THREE.DoubleSide});
-  var mesh = new THREE.Mesh( geometry, material );
+  var material = new THREE.MeshLambertMaterial({ map: planeTexture, color: 0x4b4b4f });
+  material.polygonOffset = true
+  material.polygonOffsetFactor = -0.1
+  var mainMesh = new THREE.Mesh(geometry, material);
+  var ground = new THREE.Object3D();
+  ground.add(mainMesh)
 
-  mesh.position.y = -2
+  var numDesigns = Math.round(50 / numWalls)
+  // add designs
+  var designGeometry = new THREE.Geometry()
+  for (var i = 0; i < numDesigns; i++) {
+    var design = createGroundDesign(groundDepth, i, numDesigns)
+    // ground.add(design)
+    design.updateMatrix()
+    designGeometry.merge(design.geometry, design.matrix)
+  }
+  var structureMat = new THREE.MeshLambertMaterial({ map: structureTexture, color: 0x606670, side: THREE.DoubleSide });
+  var designs = new THREE.Mesh(designGeometry, structureMat)
+  ground.add(designs)
 
-  mesh.receiveShadow = true;
-  mesh.castShadow = false;
+  ground.position.y = -2
+  // ground.position.z = 0 - index * groundDepth // minux because negative z is forward
 
-  return mesh
+  this.scene.addMesh(ground)
+
+  return ground
+}
+
+function createGroundDesign(groundDepth, zIndex, numDesigns) {
+  var width = 5
+  var height = 1
+  var depth = 5
+
+  var compWidth = Math.random() * width
+  var compHeight = Math.random() * (height - 1) + minPadding
+  var compDepth = Math.random() * (depth - 1) + minPadding
+
+  var geometry = new THREE.BoxGeometry(compWidth, compHeight, compDepth)
+  var material = new THREE.MeshLambertMaterial({ map: structureTexture, color: 0x606670, side: THREE.DoubleSide });
+  material.polygonOffset = true
+  material.polygonOffsetFactor = -0.1 
+  var box = new THREE.Mesh(geometry, material)
+
+  box.position.x = (2 * Math.random() - 1) * 5
+  box.position.y = 2 + Math.random() * 0.5
+  box.position.z = (zIndex / numDesigns) * (groundDepth)
+
+  return box
 }
 
 function createDesignsOnGround() {
@@ -47,23 +104,23 @@ function createDesignsOnGround() {
   var minPadding = 1
 
   for (var i = 0; i < numDesigns; i++) {
-      var compWidth = Math.random() * (width - 1) + minPadding
-      var compHeight = Math.random() * height
-      var compDepth = Math.random() * (depth - 1) + minPadding
+    var compWidth = Math.random() * (width - 1) + minPadding
+    var compHeight = Math.random() * height
+    var compDepth = Math.random() * (depth - 1) + minPadding
 
-      var geometry = new THREE.BoxGeometry(compWidth, compHeight, compDepth)
-      var material = new THREE.MeshLambertMaterial({ color: 0x606670 , side: THREE.DoubleSide});
+    var geometry = new THREE.BoxGeometry(compWidth, compHeight, compDepth)
+    var material = new THREE.MeshLambertMaterial({ color: 0x606670, side: THREE.DoubleSide });
 
-      var box = new THREE.Mesh(geometry, material)
+    var box = new THREE.Mesh(geometry, material)
 
-      box.receiveShadow = true;
-      box.castShadow = true;
+    box.receiveShadow = true;
+    box.castShadow = true;
 
-      box.position.x = (2 * Math.random() - 1) * 5
-      box.position.y = 0.5
-      box.position.z = (i / numDesigns) * (farPlane - wallNearPlaneGeneration)
-      this.scene.addMesh(box)
-      designsOnGround.push(box)
+    box.position.x = (2 * Math.random() - 1) * 5
+    box.position.y = 0.5
+    box.position.z = (i / numDesigns) * (farPlane - wallNearPlaneGeneration)
+    this.scene.addMesh(box)
+    designsOnGround.push(box)
   }
   return designsOnGround
 }

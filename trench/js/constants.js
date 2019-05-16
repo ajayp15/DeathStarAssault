@@ -1,4 +1,4 @@
-var showStats = false; // turns stats on and off
+var showStats = true; // turns stats on and off
 var maxBasicObstacles = 50
 var floorWidth = 10 // arbitrarily chosen for now
 var floorHeight = 50
@@ -35,21 +35,28 @@ var enemyLaserMaterial = new THREE.MeshLambertMaterial({
 var aimRadius = 0.5
 var torpedoRadius = 0.4
 var endGameCutsceneTime = 12000
-var phase1RequiredScore = 15
+var phase1RequiredScore = 1
 
 var sideWallWidth = 5
 var sideWallHeight = 15
-var sideWallDepth = 60
+var sideWallDepth = 120
 
 var shipScale = 0.6
 // obstacles constants
 var obstaclesType = "sphere"
 var obstaclesRadius = 0.5
 
+
+var numWalls = 2
 var groundLeeway = 1
 var ceilingLeeway = 50
 var wallsLeeway = 1 // (plane width / 2)
-var wallNearPlaneGeneration = nearPlane
+var wallNearPlaneGeneration = sideWallDepth / numWalls
+
+var groundWidth = 10
+var groundHeight = 5
+var totalGroundDepth = sideWallDepth
+var groundDepth = totalGroundDepth / numWalls
 
 // this will be the center point of the game, where the scale is determined by how
 // large/where we want to place this center (where the fixed camera will stay/move around)

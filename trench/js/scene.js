@@ -42,7 +42,7 @@ function SceneT() {
 
 	// this.scene.add(sun);
 	// var SHADOW_MAP_WIDTH = 2048, SHADOW_MAP_HEIGHT = 1024;
-	this.ambient = new THREE.AmbientLight( 0xffffff, 0.5 );
+	this.ambient = new THREE.AmbientLight( 0xffffff, 1 );
 	this.scene.add( this.ambient );
 
 	var spotLight = new THREE.SpotLight( 0xffffff, 0.7, 10, Math.PI / 2 );
