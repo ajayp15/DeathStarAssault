@@ -222,7 +222,7 @@ function animateT(){
 		plane.reset()
 
 		// generate the back wall that you will shoot the proton torpedos into
-		walls.createBackWall()
+		walls.backWall.visible = true
 
 		// and also slowly reduce the movement speed of the walls to make it seem more
 		// like slow motion

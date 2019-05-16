@@ -59,8 +59,9 @@ function Walls(scene, explosions) {
         var wallHeight = backWallHeight
         var wallDepth = backWallDepth
 
+        var planeTexture = new THREE.TextureLoader().load( 'surface/images/deathstar-diffuse.jpg' );
         var geometry = new THREE.BoxGeometry(wallWidth, wallHeight, wallDepth)
-        var material = new THREE.MeshLambertMaterial({ color: 0x606670 , side: THREE.DoubleSide});
+        var material = new THREE.MeshLambertMaterial({ map: planeTexture, color: 0x606670 , side: THREE.DoubleSide});
 
         var wall = new THREE.Mesh(geometry, material);
 
@@ -71,7 +72,7 @@ function Walls(scene, explosions) {
 
         // add a little cylindrical hole in the center to signify where to shoot
         var holeGeometry = new THREE.TorusGeometry(aimRadius * 2, aimRadius, 4, 8)
-        var holeMaterial = new THREE.MeshLambertMaterial({color: 0x4b4b4f, side: THREE.DoubleSide})
+        var holeMaterial = new THREE.MeshLambertMaterial({ map: planeTexture, color: 0x4b4b4f, side: THREE.DoubleSide})
         var hole = new THREE.Mesh(holeGeometry, holeMaterial)
 
         hole.position.x = 0
@@ -93,8 +94,11 @@ function Walls(scene, explosions) {
 
         this.scene.addMesh(wall)
 
-        this.backWall = wall
+        return wall
     }
+
+    this.backWall = this.createBackWall()
+    this.backWall.visible = false
 
     this.checkIfBlewUpBackWall = function(shots) {
         var center = this.backWall.position.clone()
